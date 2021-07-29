@@ -40,9 +40,13 @@ Steps to extract activities data:
 
        pip install requirements.txt
 
-2. run the main.py and specify the username index, low slicing bound of riders and high slicing bound of riders. for example:
+2. place a pickle folder that contains list of Riders.
+
+3. run the main.py and specify the username index, low slicing bound of riders and high slicing bound of riders. 
+
+for example:
 
        menu.py 2 100 500
 
-it will run with username[2] and riders[100:500]
+ will run with username[2] and riders[100:500]
 
