@@ -1,0 +1,6 @@
+requests
+pickle
+selenium
+chromium-chromedriver
+bs4
+numpy
