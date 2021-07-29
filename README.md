@@ -6,7 +6,7 @@ This repository contains code for extracting all activities from cyclists in str
 
 Steps to extract activities data:
 
-### First open "Extract athlete activities synchronous" notebook
+## Open "Extract athlete activities synchronous" notebook
 
 1. Create rider csv file. csv need to contain the following columns:
 
@@ -19,6 +19,11 @@ Steps to extract activities data:
        for index, row in df.iterrows():
            rider = Rider(row['full_name'], row['url'], row['cyclist_id'])
            riders.append(rider)
+        
+Each url needs to be in the following format:
+
+      https://www.strava.com/athletes/SOME_DIGITS 
+      https://www.strava.com/pros/SOME_DIGITS 
        
       
 3. Create an GetActivities object and provide it a username and the riders list
@@ -34,15 +39,15 @@ Steps to extract activities data:
        get_activities.run()
        
 
-### Second open the "cyclists" folder with pycharm.
+## Open the "extractor" folder with pycharm.
 
 1. Install all the required packages
 
        pip install requirements.txt
 
-2. place a pickle folder that contains list of Riders.
+2. Place a pickle folder that contains list of Riders inside the data folder.
 
-3. run the main.py and specify the username index, low slicing bound of riders and high slicing bound of riders. 
+3. Run the main.py and specify the username index, low slicing bound of riders and high slicing bound of riders. 
 
 for example:
 
