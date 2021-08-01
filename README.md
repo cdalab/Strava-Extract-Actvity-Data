@@ -1,14 +1,26 @@
 # Strava-Extract-Actvity-Data
 
-Welcome to the extractions repository.
+Welcome to the Strava activity extractor repository.
 
 This repository contains code for extracting all activities from cyclists in strava.
 
 Steps to extract activities data:
 
-## Open "Extract athlete activities synchronous" notebook
+## Install necessary packages
 
-1. Create rider csv file. csv need to contain the following columns:
+For pip:
+
+    pip install requirements.txt
+
+for conda:
+
+    conda create --name extractor
+    conda activate extractor
+    conda env update --file environment.yml
+
+## Prepare cyclists list from CSV
+
+1. Create rider csv file. The csv file needs to contain the following columns:
 
        full_name, url, cyclist_id
 
@@ -20,38 +32,43 @@ Steps to extract activities data:
            rider = Rider(row['full_name'], row['url'], row['cyclist_id'])
            riders.append(rider)
         
-Each url needs to be in the following format:
+    Each url needs to be in the following format:
 
       https://www.strava.com/athletes/SOME_DIGITS 
       https://www.strava.com/pros/SOME_DIGITS 
+   
+    You can use the function `valid_rider_url` inside the `extractor/utils` to check for validation
        
-      
-3. Create an GetActivities object and provide it a username and the riders list
+3. Save the riders to a pickle file
 
-       get_activities = GetActivities(username, riders)
+       with open(f'data/riders.pickle', 'wb') as handle:
+           pk.dump(riders, handle, protocol=pk.HIGHEST_PROTOCOL)
 
-4. Run the extract_activities(). It creates links fetch from the activity links
+    
 
-       get_activities.extract_activities()
-       
-5. Run the run(). It fetches activity links from the links created in step 3
+## Get Activity Links
 
-       get_activities.run()
-       
+Before fetching the activity data, we need to fetch all the activity links of the riders
 
-## Open the "extractor" folder with pycharm.
+1. open the `extractor` folder in terminal.
+2. run
+   
+       main.py link <riders_pickle_file> <username_index> <from_year> <to_year> <from_month> <to_month>
 
-1. Install all the required packages
+    example: `main.py link ISN_riders 2 2015 2021 1 12`
+   
+    Will run the get activity links from the ISN_riders.pickle file with username[2] from 2015 to 2021 (including) and from January to December (including)
 
-       pip install requirements.txt
+## Get Activity Data
 
-2. Place a pickle folder that contains list of Riders inside the data folder.
+After fetching the activity links, we can extract data from these links.
 
-3. Run the main.py and specify the username index, low slicing bound of riders and high slicing bound of riders. 
+1. open the `extractor` folder in terminal.
+3. run
 
-for example:
+       menu.py data <riders_pickle_file> <username_index> <start_rider_index> <end_rider_index>
 
-       menu.py 2 100 500
-
- will run with username[2] and riders[100:500]
+    exmaple: `main.py data ISN_riders 2 200 500`
+   
+    Will run the get activities data from ISN_riders.pickle file with username[2] and riders[100:500]
 

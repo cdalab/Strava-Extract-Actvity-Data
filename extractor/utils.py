@@ -2,6 +2,13 @@ import re
 import numpy as np
 
 
+def valid_rider_url(url):
+    pattern = re.compile("https://www.strava.com/[a-zA-Z]+/[0-9]+$")
+    found = pattern.search(url)
+    if not found:
+        return False
+    return True
+
 
 def to_hours(time_string):
     time = time_string.split(':')

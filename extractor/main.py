@@ -1,50 +1,57 @@
 import sys
 import pickle as pk
 import requests
-from extract_activity_data import Activities_Extractor
+from get_activities_data import Get_Activities_Data
+from get_activities_links import Get_Activities_Links
 from rider import Rider
-
-password = r'1357WorkWork!'
-password_cool_tables = '1357Worker!'
-usernames = [
-    r'kvspek@gmail.com',
-    r'spektork@post.bgu.ac.il',
-    r'kev_backup@yahoo.com',
-    r'cool_table@yahoo.com',
-    r'cool_table2@yahoo.com',
-    r'cool_table3@yahoo.com',
-    r'cool_table4@yahoo.com',
-    r'cool_table5@yahoo.com',
-    r'cool_table6@yahoo.com',
-    r'cool_table7@yahoo.com',
-    r'cool_table8@yahoo.com'
-]
-
-username_backup = r'kev_backup@yahoo.com'
-password_backup = r'1357Backup!'
+from usernames import *
 
 
 if __name__ == '__main__':
 
-    # run example : main.py 2 200 500
-
     ip = requests.get('http://ipinfo.io/json').json()['ip']
 
-    print("---- START ----")
-    riders_pickle = open('data/ISN_riders.pickle', 'rb')
+    activity_type = sys.argv[1]
+    file_name = sys.argv[2]
+    user_index = int(sys.argv[3])
+
+    riders_pickle = open(f'data/{file_name}.pickle', 'rb')
     riders = pk.load(riders_pickle)
 
-    user_index = int(sys.argv[1])
-    riders_range_low = int(sys.argv[2])
-    riders_range_high = int(sys.argv[3])
+    if activity_type == 'data':
 
-    extractor = Activities_Extractor(usernames[user_index], riders[riders_range_low:riders_range_high], ip)
-    extractor.run()
-    # for w in extractor.riders[0].workout:
-    #     print(w)
+        # run example : main.py data ISN_riders 2 200 500
+        print("---- START EXTRACTING DATA ----")
 
-    # save ...
-    with open(f'data/ISN_riders_{riders_range_low}_{riders_range_high}.pickle', 'wb') as handle:
-        pk.dump(extractor.riders, handle, protocol=pk.HIGHEST_PROTOCOL)
+        riders_range_low = int(sys.argv[4])
+        riders_range_high = int(sys.argv[5])
+
+        data_extractor = Get_Activities_Data(usernames[user_index], riders[riders_range_low :riders_range_high], ip)
+        data_extractor.run()
+
+        # save ...
+        with open(f'data/{file_name}_{riders_range_low}_{riders_range_high}.pickle', 'wb') as handle:
+            pk.dump(data_extractor.riders, handle, protocol=pk.HIGHEST_PROTOCOL)
+
+
+
+    elif activity_type == 'link':
+        # run example : main.py link ISN_riders 2 2015 2021 1 12
+        print("---- START EXTRACTING LINKS ----")
+
+        extract_from_year = int(sys.argv[4])
+        extract_to_year = int(sys.argv[5]) + 1
+        extract_from_month = int(sys.argv[6])
+        extract_to_month = int(sys.argv[7]) + 1
+
+        links_extractor = Get_Activities_Links(usernames[user_index],
+                                         list(range(extract_from_year, extract_to_year)),
+                                         list(range(extract_from_month, extract_to_month)))
+
+        links_extractor.create_links_for_extractions()
+        links_extractor.run()
+
+        with open(f'data/{file_name}_years_{extract_from_year}_{extract_to_year - 1}_months_{extract_from_month}_{extract_to_month - 1}.pickle', 'wb') as handle:
+            pk.dump(links_extractor.riders, handle, protocol=pk.HIGHEST_PROTOCOL)
 
     print("---- FINISH ----")

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 STRAVA_URL = 'https://www.strava.com'
 
-class Activities_Extractor:
+class Get_Activities_Data:
 
     def __init__(self, username, riders, id):
         self.username = username
