@@ -1,8 +1,9 @@
 import time as t
 from datetime import datetime
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from utils import *
-from bs4 import BeautifulSoup
+
 
 STRAVA_URL = 'https://www.strava.com'
 

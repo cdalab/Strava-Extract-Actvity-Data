@@ -1,4 +1,6 @@
 import sys
+sys.path.append('../')
+
 import pickle as pk
 import requests
 from get_activities_data import Get_Activities_Data
