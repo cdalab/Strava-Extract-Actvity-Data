@@ -2,5 +2,8 @@ requests
 pickle
 selenium
 chromium-chromedriver
+chromedriver
 bs4
 numpy
+firebase_admin
+jsonpickle

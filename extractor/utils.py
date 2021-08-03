@@ -332,7 +332,7 @@ def extract_graph_elevation_distance(soup):
     return dic
 
 
-def divide_to_tables(data):
+def divide_to_tables(data, rider_id):
     # columns!
     workout_columns = ['workout_id', 'workout_tp_id', 'workout_strava_id', 'cyclist_id', 'type' ,'tags', 'workout_week', 'workout_month', 'workout_datetime', 'total_time', 'workout_title', 'cyclist_mass', 'elevation_gain', 'elevation_loss', 'elevation_average', 'elevation_maximum', 'elevation_minimum', 'temp_avg', 'temp_min', 'temp_max','_1000_to_1500_m', '_1500_to_2000_m', '_2000_tp_2500_m', '_2500_to_3000_m', '_3000_to_3500_m', 'relative_effort', 'training_load', 'intensity', 'distance', 'energy', 'calories', 'if', 'tss_actual', 'tss_calculation_method', 'hidden','locked']
     workout_hrs_columns = ['workout_id', 'hr_maximum', 'hr_average','hr_5_seconds', 'hr_10_seconds', 'hr_12_seconds', 'hr_20_seconds', 'hr_30_seconds', 'hr_1_minute', 'hr_2_minutes', 'hr_5_minutes', 'hr_6_minutes', 'hr_10_minutes', 'hr_12_minutes', 'hr_20_minutes', 'hr_30_minutes', 'hr_1_hour', 'hr_90_minutes', 'hr_3_hours', 'hr_zone_1', 'hr_zone_2', 'hr_zone_3', 'hr_zone_4', 'hr_zone_5', 'hr_zone_1_min', 'hr_zone_2_min', 'hr_zone_3_min', 'hr_zone_4_min' ,'hr_zone_5_min']
@@ -347,6 +347,8 @@ def divide_to_tables(data):
     workout_powers_row = {}
     workout_speeds_row = {}
     key_not_found = []
+
+    workout_row['cyclist_id'] = rider_id
 
     for key, value in data.items():
         key = key.lower()

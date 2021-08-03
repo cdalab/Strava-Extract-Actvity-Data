@@ -37,6 +37,13 @@ class Get_Activities_Data:
     def _close_driver(self):
         self.browser.close()
 
+    def _is_logged_out(self):
+        site_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+        if site_soup.find('html')['class'][0] == 'logged-out': # logged out ...
+            print(f'logged out...')
+            return True
+        return False
+
     def _extract_activity_home(self, url):
         data = {}
         self.browser.get(url)
@@ -318,25 +325,35 @@ class Get_Activities_Data:
             for link in rider.activity_links:
                 t.sleep(0.5)
                 data = {}
-                home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
-                data.update(home)
 
-                if analysis_exist:
-                    analysis = self._extract_activity_analysis(link)
-                    data.update(analysis)
+                if not self._is_logged_out():
+                    home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
+                    data.update(home)
+                    try:
+                        if analysis_exist:
+                            analysis = self._extract_activity_analysis(link)
+                            data.update(analysis)
 
-                zones_distribution = self._extract_activity_zones_distribution(link, zones_distribution_exist, heart_rate_exists)
-                data.update(zones_distribution)
+                        zones_distribution = self._extract_activity_zones_distribution(link, zones_distribution_exist, heart_rate_exists)
+                        data.update(zones_distribution)
 
-                workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found = divide_to_tables(data)
-                rider.workout.append(workout_row)
-                rider.workout_hrs.append(workout_hrs_row)
-                rider.workout_cadences.append(workout_cadences_row)
-                rider.workout_powers.append(workout_powers_row)
-                rider.workout_speeds.append(workout_speeds_row)
+                        workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found = divide_to_tables(data, rider.rider_id)
+                        rider.workout.append(workout_row)
+                        rider.workout_hrs.append(workout_hrs_row)
+                        rider.workout_cadences.append(workout_cadences_row)
+                        rider.workout_powers.append(workout_powers_row)
+                        rider.workout_speeds.append(workout_speeds_row)
 
-                print(f'{i} / {total_links}, {link}, id: {self.id}')
-                i += 1
+                        print(f'{i} / {total_links}, {link}, id: {self.id}')
+                        i += 1
+                    except:
+                        print(f'BAD LINK: {link}')
+                        continue
+                else:
+                    self._close_driver()
+                    return
+
+        self._close_driver()
 
 
 
