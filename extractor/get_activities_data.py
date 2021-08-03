@@ -2,7 +2,7 @@ import time as t
 from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from .utils import *
+from utils import *
 from webdriver_manager.chrome import ChromeDriverManager
 
 
