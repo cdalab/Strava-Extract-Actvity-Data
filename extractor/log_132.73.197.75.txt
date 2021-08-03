@@ -1,0 +1,5 @@
+INFO 2021-08-03 15:22:53.414873 1 / 119, https://www.strava.com/activities/449645441
+INFO 2021-08-03 15:23:00.777129 2 / 119, https://www.strava.com/activities/449645867
+INFO 2021-08-03 15:23:07.518061 3 / 119, https://www.strava.com/activities/452863763
+INFO 2021-08-03 15:23:20.238292 4 / 119, https://www.strava.com/activities/449645379
+ERROR 2021-08-03 15:23:23.206680 BAD LINK: https://www.strava.com/activities/449646314

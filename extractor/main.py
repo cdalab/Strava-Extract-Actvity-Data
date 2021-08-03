@@ -66,6 +66,7 @@ def flow(username, csv_file, ip):
 
 if __name__ == '__main__':
 
+
     sys.path.append('../')
     from rider import Rider
 
