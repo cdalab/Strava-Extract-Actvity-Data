@@ -1,8 +1,9 @@
 requests
-pickle-mixin
+pickle
 selenium
+chromium-chromedriver
 chromedriver
 bs4
 numpy
-firebase_admin
 pandas
+firebase_admin

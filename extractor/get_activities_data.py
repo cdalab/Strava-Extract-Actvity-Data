@@ -8,6 +8,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 STRAVA_URL = 'https://www.strava.com'
 
+
+
+
+
+
 class Get_Activities_Data:
 
     def __init__(self, username, riders, id):
@@ -15,6 +20,20 @@ class Get_Activities_Data:
         self.riders = riders
         self.id = id
         self.STRAVA_URL = 'https://www.strava.com'
+
+
+    def _log(self, msg,level='INFO'):
+
+        try:
+            msg=f"{level} {datetime.now()} {msg}\n"
+            print(f'{msg}')
+            with open(f"log_{self.id}.txt",'a+') as f:
+                f.write(msg)
+            with open(f"S:/log_{self.id}.txt",'a+') as f:
+                f.write(msg)
+        except Exception as err:
+            pass
+
 
     def _open_driver(self):
 
@@ -41,7 +60,8 @@ class Get_Activities_Data:
     def _is_logged_out(self):
         site_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         if site_soup.find('html')['class'][0] == 'logged-out': # logged out ...
-            print(f'logged out...')
+            self._log("Logged out...")
+            #print(f'logged out...')
             return True
         return False
 
@@ -344,11 +364,15 @@ class Get_Activities_Data:
                         rider.workout_cadences.append(workout_cadences_row)
                         rider.workout_powers.append(workout_powers_row)
                         rider.workout_speeds.append(workout_speeds_row)
+                        msg = f'{i} / {total_links}, {link}'
 
-                        print(f'{i} / {total_links}, {link}, id: {self.id}')
+                        self._log(msg)
+
+
                         i += 1
                     except:
-                        print(f'BAD LINK: {link}')
+                        self._log(f'BAD LINK: {link}', 'ERROR')
+                       # print(f'BAD LINK: {link}')
                         continue
                 else:
                     self._close_driver()
