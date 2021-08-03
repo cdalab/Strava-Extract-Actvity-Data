@@ -85,9 +85,12 @@ if __name__ == '__main__':
 
         riders_range_low = int(sys.argv[4])
         riders_range_high = int(sys.argv[5])
-
-        data_riders = data(usernames[user_index], riders_load, riders_range_low, riders_range_high, ip)
+        data_riders = None
         saving_file_name = f'data/{file_name}_{riders_range_low}_{riders_range_high}'
+        try:
+            data_riders = data(usernames[user_index], riders_load, riders_range_low, riders_range_high, ip)
+        except:
+            pass
 
         # save ...
         upload_riders(saving_file_name, data_riders)
