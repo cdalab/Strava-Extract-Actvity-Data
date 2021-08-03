@@ -1,7 +1,6 @@
 requests
-pickle
+pickle-mixin
 selenium
-chromium-chromedriver
 chromedriver
 bs4
 numpy
