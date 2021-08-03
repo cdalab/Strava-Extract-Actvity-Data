@@ -2,7 +2,8 @@ import time as t
 from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from utils import *
+from .utils import *
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 STRAVA_URL = 'https://www.strava.com'
@@ -20,7 +21,7 @@ class Get_Activities_Data:
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
 
-        self.browser = webdriver.Chrome(options=options)
+        self.browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         URL = self.STRAVA_URL + '/login'
 
         self.browser.get(URL)

@@ -2,6 +2,7 @@ import time as t
 import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 class Get_Activities_Links():
 
@@ -18,7 +19,7 @@ class Get_Activities_Links():
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
 
-        self.browser = webdriver.Chrome(options=options)
+        self.browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         URL = self.STRAVA_URL + '/login'
 
         self.browser.get(URL)
