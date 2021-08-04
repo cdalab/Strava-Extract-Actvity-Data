@@ -132,10 +132,16 @@ class Get_Activities_Data:
             data['relative_effort'] = None
 
         date = activity_soup.find('time').text.replace('\n', '')
-        date = datetime.strptime(date, '%A, %d %B %Y')
-        data['workout_datetime'] = date
-        data['workout_week'] = date.isocalendar()[1]
-        data['workout_month'] = date.month
+        date_formats = ['%A, %d %B %Y', '%A, %d %B, %Y', '%A, %B %d %Y', '%A, %B %d, %Y']
+        for date_format in date_formats:
+            try:
+                date = datetime.strptime(date, date_format)
+                data['workout_datetime'] = date
+                data['workout_week'] = date.isocalendar()[1]
+                data['workout_month'] = date.month
+                break
+            except Exception as e:
+                continue
         #data['temp_avg'] = (float(re.sub('\D', '', activity_soup.find('div', {'class': 'weather-value'}).text)) - 32 ) * (5/9)
 
         tr = activity_soup.find_all("tr")

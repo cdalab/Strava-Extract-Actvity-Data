@@ -87,12 +87,14 @@ if __name__ == '__main__':
 
         saving_file_name = f'data/{file_name}_{riders_range_low}_{riders_range_high}'
         index = False
+
         try:
             i = sys.argv[6]
             if (i == "-i"):
                 start_from_index = int(sys.argv[7])
                 saving_file_name += f'_started from: {start_from_index}'
-        except:
+        except Exception as e:
+            print(e)
             start_from_index = 0
         data_riders = None
 
@@ -102,14 +104,16 @@ if __name__ == '__main__':
             print(e)
 
         # save ...
-        upload_riders(saving_file_name, data_riders)
+        try:
+            upload_riders(saving_file_name, data_riders)
+        except Exception as e:
+            print(e)
 
         with open(saving_file_name, 'wb') as handle:
             pk.dump(data_riders, handle, protocol=pk.HIGHEST_PROTOCOL)
 
     elif activity_type == 'link':
         # run example : main.py link ISN_riders 2 2015 2021 1 12
-
 
         extract_from_year = int(sys.argv[4])
         extract_to_year = int(sys.argv[5]) + 1
@@ -121,6 +125,7 @@ if __name__ == '__main__':
 
         with open(saving_file_name, 'wb') as handle:
             pk.dump(link_riders, handle, pk.HIGHEST_PROTOCOL)
+
     elif activity_type == 'flow':
 
         # run example: main.py flow rider_csv
