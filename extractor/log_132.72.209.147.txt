@@ -45,3 +45,4 @@ INFO 2021-08-04 09:25:23.607104 1 / 677, https://www.strava.com/activities/47451
 INFO 2021-08-04 09:25:32.521432 2 / 677, https://www.strava.com/activities/3344918232
 INFO 2021-08-04 09:25:47.780984 3 / 677, https://www.strava.com/activities/3018096647
 INFO 2021-08-04 09:28:00.346902 1 / 677, https://www.strava.com/activities/4241937915
+INFO 2021-08-04 09:50:30.621057 4 / 677, https://www.strava.com/activities/4171601250

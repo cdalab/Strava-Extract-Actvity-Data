@@ -11,10 +11,12 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 class Get_Activities_Data:
 
-    def __init__(self, username, riders, id):
+    def __init__(self, username, riders, id, start_from_index = 0):
         self.username = username
         self.riders = riders
         self.id = id
+        self.start_from_index = start_from_index
+
         self.STRAVA_URL = 'https://www.strava.com'
 
 
@@ -343,9 +345,12 @@ class Get_Activities_Data:
         i = 1
         for rider in self.riders:
 
-            for link in list(rider.activity_links)[2:3]:
+            for link in list(rider.activity_links):
                 t.sleep(0.5)
                 data = {}
+                if not i >= self.start_from_index:
+                    i += 1
+                    continue
                 try:
                     if not self._is_logged_out():
                         home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
@@ -368,7 +373,7 @@ class Get_Activities_Data:
 
                         self._log(msg)
 
-                        i += 1
+
 
                     else:
                         self._close_driver()
@@ -376,8 +381,12 @@ class Get_Activities_Data:
 
                 except Exception as e:
                     self._log(f'BAD LINK: {link}: {e}', 'ERROR')
-                    # print(f'BAD LINK: {link}')
+
                     continue
+
+                finally:
+
+                    i += 1
 
 
         self._close_driver()

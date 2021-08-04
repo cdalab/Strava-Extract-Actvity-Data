@@ -26,10 +26,10 @@ def link(username, riders, extract_from_year, extract_to_year, extract_from_mont
     return links_extractor.riders
 
 
-def data(username, riders, riders_range_low, riders_range_high, ip):
+def data(username, riders, riders_range_low, riders_range_high, ip, start_from_index):
 
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Data(username, riders[riders_range_low:riders_range_high], ip)
+    data_extractor = Get_Activities_Data(username, riders[riders_range_low:riders_range_high], ip, start_from_index)
     data_extractor.run()
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
     return data_extractor.riders
@@ -68,9 +68,6 @@ def flow(username, csv_file, ip):
 if __name__ == '__main__':
 
 
-
-
-
     ip = requests.get('http://ipinfo.io/json').json()['ip']
 
     activity_type = sys.argv[1]
@@ -83,15 +80,26 @@ if __name__ == '__main__':
     if activity_type == 'data':
 
         # run example : main.py data ISN_riders 2 200 500
+        # run example : main.py data ISN_riders 2 200 500 -i 4
 
         riders_range_low = int(sys.argv[4])
         riders_range_high = int(sys.argv[5])
-        data_riders = None
+
         saving_file_name = f'data/{file_name}_{riders_range_low}_{riders_range_high}'
+        index = False
         try:
-            data_riders = data(usernames[user_index], riders_load, riders_range_low, riders_range_high, ip)
+            i = sys.argv[6]
+            if (i == "-i"):
+                start_from_index = int(sys.argv[7])
+                saving_file_name += f'_started from: {start_from_index}'
         except:
-            pass
+            start_from_index = 0
+        data_riders = None
+
+        try:
+            data_riders = data(usernames[user_index], riders_load, riders_range_low, riders_range_high, ip, start_from_index)
+        except Exception as e:
+            print(e)
 
         # save ...
         upload_riders(saving_file_name, data_riders)
