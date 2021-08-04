@@ -96,8 +96,8 @@ if __name__ == '__main__':
         # save ...
         upload_riders(saving_file_name, data_riders)
 
-        # with open(saving_file_name, 'wb') as handle:
-        #     pk.dump(data_riders, handle, protocol=pk.HIGHEST_PROTOCOL)
+        with open(saving_file_name, 'wb') as handle:
+            pk.dump(data_riders, handle, protocol=pk.HIGHEST_PROTOCOL)
 
     elif activity_type == 'link':
         # run example : main.py link ISN_riders 2 2015 2021 1 12

@@ -44,3 +44,4 @@ ERROR 2021-08-04 09:19:00.354541 BAD LINK: https://www.strava.com/activities/346
 INFO 2021-08-04 09:25:23.607104 1 / 677, https://www.strava.com/activities/4745162642
 INFO 2021-08-04 09:25:32.521432 2 / 677, https://www.strava.com/activities/3344918232
 INFO 2021-08-04 09:25:47.780984 3 / 677, https://www.strava.com/activities/3018096647
+INFO 2021-08-04 09:28:00.346902 1 / 677, https://www.strava.com/activities/4241937915

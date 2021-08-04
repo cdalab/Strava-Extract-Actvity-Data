@@ -343,7 +343,7 @@ class Get_Activities_Data:
         i = 1
         for rider in self.riders:
 
-            for link in rider.activity_links:
+            for link in list(rider.activity_links)[2:3]:
                 t.sleep(0.5)
                 data = {}
                 try:
