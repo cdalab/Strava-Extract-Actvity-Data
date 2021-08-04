@@ -6,10 +6,6 @@ from utils import *
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-STRAVA_URL = 'https://www.strava.com'
-
-
-
 
 
 
@@ -134,7 +130,7 @@ class Get_Activities_Data:
             data['relative_effort'] = None
 
         date = activity_soup.find('time').text.replace('\n', '')
-        date = datetime.strptime(date, '%A, %B %d, %Y')
+        date = datetime.strptime(date, '%A, %d %B %Y')
         data['workout_datetime'] = date
         data['workout_week'] = date.isocalendar()[1]
         data['workout_month'] = date.month
@@ -350,11 +346,11 @@ class Get_Activities_Data:
             for link in rider.activity_links:
                 t.sleep(0.5)
                 data = {}
+                try:
+                    if not self._is_logged_out():
+                        home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
+                        data.update(home)
 
-                if not self._is_logged_out():
-                    home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
-                    data.update(home)
-                    try:
                         if analysis_exist:
                             analysis = self._extract_activity_analysis(link)
                             data.update(analysis)
@@ -372,17 +368,16 @@ class Get_Activities_Data:
 
                         self._log(msg)
 
-
                         i += 1
-                    except:
-                        self._log(f'BAD LINK: {link}', 'ERROR')
-                       # print(f'BAD LINK: {link}')
-                        continue
 
-                else:
+                    else:
+                        self._close_driver()
+                        return
 
-                    self._close_driver()
-                    return
+                except Exception as e:
+                    self._log(f'BAD LINK: {link}: {e}', 'ERROR')
+                    # print(f'BAD LINK: {link}')
+                    continue
 
 
         self._close_driver()

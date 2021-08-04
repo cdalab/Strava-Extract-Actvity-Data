@@ -7,6 +7,7 @@ from get_activities_links import Get_Activities_Links
 from usernames import *
 from utils import valid_rider_url
 from firebase import upload_riders
+from rider import Rider
 
 
 def link(username, riders, extract_from_year, extract_to_year, extract_from_month, extract_to_month):
@@ -67,8 +68,8 @@ def flow(username, csv_file, ip):
 if __name__ == '__main__':
 
 
-    sys.path.append('../')
-    from rider import Rider
+
+
 
     ip = requests.get('http://ipinfo.io/json').json()['ip']
 

@@ -1,0 +1,46 @@
+ERROR 2021-08-04 09:11:42.652747 BAD LINK: https://www.strava.com/activities/3350525573
+ERROR 2021-08-04 09:11:46.211410 BAD LINK: https://www.strava.com/activities/4528980222
+ERROR 2021-08-04 09:11:49.315159 BAD LINK: https://www.strava.com/activities/1255283435
+ERROR 2021-08-04 09:11:54.177284 BAD LINK: https://www.strava.com/activities/4738687099
+ERROR 2021-08-04 09:11:59.603700 BAD LINK: https://www.strava.com/activities/5547599686
+ERROR 2021-08-04 09:12:05.794535 BAD LINK: https://www.strava.com/activities/3692035466
+ERROR 2021-08-04 09:12:11.238409 BAD LINK: https://www.strava.com/activities/4420324539
+ERROR 2021-08-04 09:12:15.875025 BAD LINK: https://www.strava.com/activities/3284337955
+ERROR 2021-08-04 09:12:19.238391 BAD LINK: https://www.strava.com/activities/1250798253
+ERROR 2021-08-04 09:12:23.924804 BAD LINK: https://www.strava.com/activities/1215664922
+ERROR 2021-08-04 09:12:29.061138 BAD LINK: https://www.strava.com/activities/5043566060
+ERROR 2021-08-04 09:12:35.160424 BAD LINK: https://www.strava.com/activities/1215663757
+ERROR 2021-08-04 09:12:38.805373 BAD LINK: https://www.strava.com/activities/3179387441
+ERROR 2021-08-04 09:12:43.032099 BAD LINK: https://www.strava.com/activities/3940839114
+ERROR 2021-08-04 09:12:47.092361 BAD LINK: https://www.strava.com/activities/3018096695
+ERROR 2021-08-04 09:12:50.813208 BAD LINK: https://www.strava.com/activities/4765210138
+ERROR 2021-08-04 09:12:55.390952 BAD LINK: https://www.strava.com/activities/4307734093
+ERROR 2021-08-04 09:13:12.232653 BAD LINK: https://www.strava.com/activities/4246827359
+ERROR 2021-08-04 09:13:27.064098 BAD LINK: https://www.strava.com/activities/1215665113
+ERROR 2021-08-04 09:14:47.024575 BAD LINK: https://www.strava.com/activities/438182920
+ERROR 2021-08-04 09:14:49.584881 BAD LINK: https://www.strava.com/activities/451711369
+ERROR 2021-08-04 09:14:52.843960 BAD LINK: https://www.strava.com/activities/449644984
+ERROR 2021-08-04 09:14:56.113005 BAD LINK: https://www.strava.com/activities/449646070
+ERROR 2021-08-04 09:14:59.675817 BAD LINK: https://www.strava.com/activities/449645543
+ERROR 2021-08-04 09:15:06.175306 BAD LINK: https://www.strava.com/activities/555685428
+ERROR 2021-08-04 09:15:10.290099 BAD LINK: https://www.strava.com/activities/449644868
+ERROR 2021-08-04 09:15:14.616788 BAD LINK: https://www.strava.com/activities/3257861266
+ERROR 2021-08-04 09:15:18.361295 BAD LINK: https://www.strava.com/activities/449645497
+ERROR 2021-08-04 09:15:21.621296 BAD LINK: https://www.strava.com/activities/449646123
+ERROR 2021-08-04 09:15:24.127011 BAD LINK: https://www.strava.com/activities/449645893
+ERROR 2021-08-04 09:15:27.805710 BAD LINK: https://www.strava.com/activities/3267296293
+ERROR 2021-08-04 09:15:32.229598 BAD LINK: https://www.strava.com/activities/570638742
+ERROR 2021-08-04 09:15:35.045619 BAD LINK: https://www.strava.com/activities/449646152
+ERROR 2021-08-04 09:15:38.569661 BAD LINK: https://www.strava.com/activities/449645760
+ERROR 2021-08-04 09:15:43.343195 BAD LINK: https://www.strava.com/activities/573180053
+ERROR 2021-08-04 09:17:43.505390 BAD LINK: https://www.strava.com/activities/4771164380: time data 'Thursday, 11 February 2021' does not match format '%A, %B %d, %Y'
+ERROR 2021-08-04 09:17:47.438768 BAD LINK: https://www.strava.com/activities/1215662737: time data 'Wednesday, 26 July 2017' does not match format '%A, %B %d, %Y'
+ERROR 2021-08-04 09:17:50.526702 BAD LINK: https://www.strava.com/activities/4297530976: time data 'Friday, 6 November 2020' does not match format '%A, %B %d, %Y'
+ERROR 2021-08-04 09:17:56.548691 BAD LINK: https://www.strava.com/activities/5631213289: time data 'Thursday, 15 July 2021' does not match format '%A, %B %d, %Y'
+ERROR 2021-08-04 09:18:06.332092 BAD LINK: https://www.strava.com/activities/521512804: time data 'Saturday, 19 March 2016' does not match format '%A, %B %d, %Y'
+ERROR 2021-08-04 09:18:27.565237 BAD LINK: https://www.strava.com/activities/3020518569: time data 'Saturday, 18 January 2020' does not match format '%A, %B %d, %Y'
+ERROR 2021-08-04 09:18:55.210932 BAD LINK: https://www.strava.com/activities/3370499154: time data 'Wednesday, 29 April 2020' does not match format '%A, %B %d %Y'
+ERROR 2021-08-04 09:19:00.354541 BAD LINK: https://www.strava.com/activities/3460348809: time data 'Saturday, 16 May 2020' does not match format '%A, %B %d %Y'
+INFO 2021-08-04 09:25:23.607104 1 / 677, https://www.strava.com/activities/4745162642
+INFO 2021-08-04 09:25:32.521432 2 / 677, https://www.strava.com/activities/3344918232
+INFO 2021-08-04 09:25:47.780984 3 / 677, https://www.strava.com/activities/3018096647
