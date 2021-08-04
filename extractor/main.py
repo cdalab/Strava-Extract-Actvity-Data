@@ -162,8 +162,8 @@ if __name__ == '__main__':
 
     elif activity_type == 'flow':
 
-        # run example: main.py flow rider_csv
-        # run example: main.py flow rider_csv -i 100 153 164
+        # run example: main.py flow rider_csv 2
+        # run example: main.py flow rider_csv 3 -i 100 153 164
         team_ids = None
         try:
             i = sys.argv[4]
