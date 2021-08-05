@@ -403,7 +403,7 @@ class Get_Activities_Data:
 
                     i += 1
                     if i % 100 == 0:
-                        t.sleep(5)
+                        t.sleep(1)
 
 
         self._close_driver()
