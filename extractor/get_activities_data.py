@@ -65,8 +65,7 @@ class Get_Activities_Data:
 
             return False
         except:
-
-            return True # Failed to check if logged in....
+            return False # Failed to check if logged in....
 
     def _extract_activity_home(self, url):
         data = {}
@@ -355,6 +354,7 @@ class Get_Activities_Data:
         for rider in self.riders:
             total_links += len(rider.activity_links)
         i = 1
+        logged_out_counter = 0
         for rider in self.riders:
 
             for link in list(rider.activity_links):
