@@ -2,7 +2,6 @@ import sys
 import pickle as pk
 import requests
 import pandas as pd
-import csv
 from get_activities_data import Get_Activities_Data
 from get_activities_links import Get_Activities_Links
 from usernames import *
@@ -36,12 +35,14 @@ def data(username, riders, riders_range_low, riders_range_high, ip, start_from_i
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
     return data_extractor.riders
 
-def flow(username, csv_file, ip, team_ids = None):
+
+def flow(username, csv_file, ip, team_ids=None):
     print("---- START FLOW ----")
     print("---- START CREATING LIST OF RIDERS ----")
     df = pd.read_csv(f'data/{csv_file}.csv')
     df = df[df['url'].notna()]
     riders = []
+
 
     for index, row in df.iterrows():
         rider = Rider(row['full_name'], row['url'], row['cyclist_id'])

@@ -1,0 +1,5 @@
+INFO 2021-08-05 10:45:50.288655 1 / 7077, https://www.strava.com/activities/3747538949
+ERROR 2021-08-05 10:59:43.152888 BAD LINK: https://www.strava.com/activities/1184177687: 'NoneType' object has no attribute 'text'
+ERROR 2021-08-05 11:03:29.812809 BAD LINK: https://www.strava.com/activities/2210714117: 'NoneType' object has no attribute 'text'
+ERROR 2021-08-05 11:04:29.664796 BAD LINK: https://www.strava.com/activities/3231587774: 'NoneType' object has no attribute 'text'
+INFO 2021-08-05 11:04:30.180687 Logged out...

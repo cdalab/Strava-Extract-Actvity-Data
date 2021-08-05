@@ -65,12 +65,14 @@ class Get_Activities_Data:
 
             return False
         except:
+
             return True # Failed to check if logged in....
 
     def _extract_activity_home(self, url):
         data = {}
+        t.sleep(0.5)
         self.browser.get(url)
-        t.sleep(0.2)
+        t.sleep(0.5)
         # print(self.browser.current_url)
 
         activity_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -229,9 +231,11 @@ class Get_Activities_Data:
     def _extract_activity_analysis(self, url):
 
         data = {}
+        t.sleep(0.5)
         self.browser.get(url + '/analysis')
+        t.sleep(0.5)
         #     print(browser.current_url)
-        t.sleep(0.2)
+
         analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         chart = analysis_soup.find_all('g', {'class': "label-box"})
         svg = analysis_soup.find_all('defs')
@@ -303,9 +307,11 @@ class Get_Activities_Data:
         for extension in url_extensions:
             if not (j == 0 and zones_distribution_exist or j == 1 and heart_rate_exists):
                 continue
+            t.sleep(0.5)
             self.browser.get(url + extension)
+            t.sleep(0.5)
             #         print(browser.current_url)
-            t.sleep(0.2)
+
             zone_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
             zones = zone_soup.find_all('tr')
             while len(zones) is None:
@@ -352,17 +358,19 @@ class Get_Activities_Data:
         for rider in self.riders:
 
             for link in list(rider.activity_links):
-                t.sleep(0.5)
-                data = {}
                 if not i >= self.start_from_index:
                     i += 1
                     continue
+                t.sleep(1)
+                data = {}
+
                 try:
                     if not self._is_logged_out():
                         home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
                         data.update(home)
 
                         if analysis_exist:
+
                             analysis = self._extract_activity_analysis(link)
                             data.update(analysis)
 
@@ -382,6 +390,7 @@ class Get_Activities_Data:
 
 
                     else:
+                        self._log("Logged out...")
                         self._close_driver()
                         return
 
@@ -393,6 +402,8 @@ class Get_Activities_Data:
                 finally:
 
                     i += 1
+                    if i % 100 == 0:
+                        t.sleep(5)
 
 
         self._close_driver()
