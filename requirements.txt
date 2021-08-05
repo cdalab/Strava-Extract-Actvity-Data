@@ -6,3 +6,4 @@ bs4
 numpy
 pandas
 firebase_admin
+webdriver_manager
