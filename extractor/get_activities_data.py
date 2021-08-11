@@ -84,7 +84,6 @@ class Get_Activities_Data:
             t.sleep(seconds_to_wait)
             self._open_driver()
 
-
         print(self.browser.current_url)
 
 
@@ -441,8 +440,8 @@ class Get_Activities_Data:
 
                 finally:
                     i += 1
-                    rand = random.randint(8,12)
-                    t.sleep(rand)
+
+                    t.sleep(1)
 
         self._close_driver()
 
