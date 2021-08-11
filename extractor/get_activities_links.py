@@ -9,7 +9,7 @@ from utils import log
 
 class Get_Activities_Links():
 
-    def __init__(self, riders, id, years = list(range(2020,2021)), months = list(range(1,13))):
+    def __init__(self, riders, id, years = list(range(2015,2022)), months = list(range(1,13))):
         self.activity_links = set()
         self.id = id
         self.riders = riders
