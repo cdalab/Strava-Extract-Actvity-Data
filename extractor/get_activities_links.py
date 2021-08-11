@@ -126,13 +126,14 @@ class Get_Activities_Links():
                                 rider.links.append(link.replace(interval1, interval2))
 
                 except:
-                    log(f'Rider is not included. rider_id: {rider.rider_id}', 'ERROR', id=self.id)
                     problematic_riders.append(rider)
                 finally:
                     i += 1
         except:
             log(f'Unexpected error...', 'ERROR', id=self.id)
-
+        if len(problematic_riders) > 0:
+            for rider in problematic_riders:
+                log(f'Problematic rider: {rider}', 'ERROR', id=self.id)
         self.riders = [rider for rider in self.riders if rider not in problematic_riders]
         self._close_driver()
 
