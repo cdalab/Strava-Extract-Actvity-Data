@@ -1,4 +1,6 @@
 import time as t
+import re
+import random
 from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -6,18 +8,21 @@ from utils import *
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-
+MIN_RAND_SLEEP = 5
+MAX_RAND_SLEEP = 20
+PROXY = "147.161.13.218:16996"
 
 
 class Get_Activities_Data:
 
-    def __init__(self, username, riders, id, start_from_index = 0):
-        self.username = username
+    def __init__(self, usernames, riders, id, start_from_index = 0,):
+        self.usernames = usernames
         self.riders = riders
         self.id = id
         self.start_from_index = start_from_index
-
         self.STRAVA_URL = 'https://www.strava.com'
+        self.user_index = 0
+
 
 
     def _log(self, msg,level='INFO'):
@@ -32,25 +37,57 @@ class Get_Activities_Data:
         except Exception as err:
             pass
 
+    def _check_if_too_many_requests(self, url_to_refresh):
+        soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+        found = re.search('too many requests' ,str(soup).lower())
+        if found is not None:
+            # Too many requests
+            self._log('Too many requests: SWITCHING ACCOUNT', 'ERROR')
+            self._switchAccount(url_to_refresh)
+
+    def _switchAccount(self, url_to_refresh):
+        self._close_driver()
+        self._open_driver()
+        self.browser.get(url_to_refresh)
+        t.sleep(0.5)
+
+    def _get_username(self):
+        user = self.usernames[self.user_index % len(self.usernames)]
+        self.user_index += 1
+        return user
 
     def _open_driver(self):
 
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
+        self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-        self.browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         URL = self.STRAVA_URL + '/login'
-
         self.browser.get(URL)
         email = self.browser.find_element_by_id("email")
         password = self.browser.find_element_by_id("password")
 
-        email.send_keys(self.username)
+        email.send_keys(self._get_username())
         password.send_keys('12345678')
 
         self.browser.find_element_by_id("login-button").click()
         t.sleep(1)
+        if not self.browser.current_url == 'https://www.strava.com/onboarding':
+            # BAD ACCOUNT! need
+            self._log(f"BAD ACCOUNT {self.usernames[self.user_index % len(self.usernames)]} - Switching to another")
+            self._switchAccount()
+        elif self.browser.current_url == 'https://www.strava.com/login':
+            # ip blocked...
+            seconds_to_wait = 300
+            self._log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...")
+            self._close_driver()
+            t.sleep(seconds_to_wait)
+            self._open_driver()
+
+
         print(self.browser.current_url)
+
+
 
     def _close_driver(self):
         self.browser.close()
@@ -72,6 +109,7 @@ class Get_Activities_Data:
         t.sleep(0.5)
         self.browser.get(url)
         t.sleep(0.5)
+        self._check_if_too_many_requests(url)
         # print(self.browser.current_url)
 
         activity_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -123,7 +161,7 @@ class Get_Activities_Data:
             data['training_load'] = None
 
         if 'intensity' in strong_dict.keys():
-            data['intensity'] = float(strong_dict['intensity'][:-1])
+            data['intensity'] = float(strong_dict['intensity'][:-1])/100
         else:
             data['intensity'] = None
 
@@ -233,6 +271,7 @@ class Get_Activities_Data:
         t.sleep(0.5)
         self.browser.get(url + '/analysis')
         t.sleep(0.5)
+        self._check_if_too_many_requests(url)
         #     print(browser.current_url)
 
         analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -309,6 +348,7 @@ class Get_Activities_Data:
             t.sleep(0.5)
             self.browser.get(url + extension)
             t.sleep(0.5)
+            self._check_if_too_many_requests(url)
             #         print(browser.current_url)
 
             zone_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -347,14 +387,17 @@ class Get_Activities_Data:
 
         return data
 
-    def run(self):
-        self._open_driver()
+    def _rand_sleep(self):
+        pass
 
+    def run(self):
+
+        self._open_driver()
         total_links = 0
         for rider in self.riders:
             total_links += len(rider.activity_links)
         i = 1
-        logged_out_counter = 0
+
         for rider in self.riders:
 
             for link in list(rider.activity_links):
@@ -387,24 +430,19 @@ class Get_Activities_Data:
 
                         self._log(msg)
 
-
-
                     else:
                         self._log("Logged out...")
                         self._close_driver()
                         return
 
                 except Exception as e:
-                    self._log(f'BAD LINK: {link}: {e}', 'ERROR')
-
+                    self._log(f'{i} / {total_links}, BAD LINK: {link}: {e}', 'ERROR')
                     continue
 
                 finally:
-
                     i += 1
-                    if i % 100 == 0:
-                        t.sleep(1)
-
+                    rand = random.randint(8,12)
+                    t.sleep(rand)
 
         self._close_driver()
 
