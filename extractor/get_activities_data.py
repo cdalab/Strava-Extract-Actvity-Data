@@ -2,9 +2,11 @@ import time as t
 import re
 import random
 from datetime import datetime
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from utils import *
+from usernames import *
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -15,34 +17,19 @@ PROXY = "147.161.13.218:16996"
 
 class Get_Activities_Data:
 
-    def __init__(self, usernames, riders, id, start_from_index = 0,):
-        self.usernames = usernames
+    def __init__(self, riders, id, start_from_index = 0,):
         self.riders = riders
         self.id = id
         self.start_from_index = start_from_index
         self.STRAVA_URL = 'https://www.strava.com'
-        self.user_index = 0
 
-
-
-    def _log(self, msg,level='INFO'):
-
-        try:
-            msg=f"{level} {datetime.now()} {msg}\n"
-            print(f'{msg}')
-            with open(f"log_{self.id}.txt",'a+') as f:
-                f.write(msg)
-            with open(f"S:/log_{self.id}.txt",'a+') as f:
-                f.write(msg)
-        except Exception as err:
-            pass
 
     def _check_if_too_many_requests(self, url_to_refresh):
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         found = re.search('too many requests' ,str(soup).lower())
         if found is not None:
             # Too many requests
-            self._log('Too many requests: SWITCHING ACCOUNT', 'ERROR')
+            log('Too many requests: SWITCHING ACCOUNT', 'ERROR', id=self.id)
             self._switchAccount(url_to_refresh)
 
     def _switchAccount(self, url_to_refresh):
@@ -52,9 +39,8 @@ class Get_Activities_Data:
         t.sleep(0.5)
 
     def _get_username(self):
-        user = self.usernames[self.user_index % len(self.usernames)]
-        self.user_index += 1
-        return user
+        rand_index = random.randint(0, len(usernames)-1)
+        return usernames[rand_index]
 
     def _open_driver(self):
 
@@ -66,25 +52,26 @@ class Get_Activities_Data:
         self.browser.get(URL)
         email = self.browser.find_element_by_id("email")
         password = self.browser.find_element_by_id("password")
-
-        email.send_keys(self._get_username())
+        user = self._get_username()
+        email.send_keys(user)
         password.send_keys('12345678')
 
         self.browser.find_element_by_id("login-button").click()
         t.sleep(1)
         if not self.browser.current_url == 'https://www.strava.com/onboarding':
             # BAD ACCOUNT! need
-            self._log(f"BAD ACCOUNT {self.usernames[self.user_index % len(self.usernames)]} - Switching to another")
-            self._switchAccount()
+            log(f"BAD ACCOUNT {user} - Switching to another", id=self.id)
+            self._close_driver()
+            self._open_driver()
         elif self.browser.current_url == 'https://www.strava.com/login':
             # ip blocked...
             seconds_to_wait = 300
-            self._log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...")
+            log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", id=self.id)
             self._close_driver()
             t.sleep(seconds_to_wait)
             self._open_driver()
-
-        print(self.browser.current_url)
+        else:
+            log(self.browser.current_url, id=self.id)
 
 
 
@@ -95,7 +82,7 @@ class Get_Activities_Data:
         try:
             site_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
             if site_soup.find('html')['class'][0] == 'logged-out': # logged out ...
-                self._log("Logged out...")
+                log("Logged out...", id=self.id)
                 #print(f'logged out...')
                 return True
 
@@ -427,15 +414,15 @@ class Get_Activities_Data:
                         rider.workout_speeds.append(workout_speeds_row)
                         msg = f'{i} / {total_links}, {link}'
 
-                        self._log(msg)
+                        log(msg, id=self.id)
 
                     else:
-                        self._log("Logged out...")
+                        log("Logged out...", id=self.id)
                         self._close_driver()
                         return
 
                 except Exception as e:
-                    self._log(f'{i} / {total_links}, BAD LINK: {link}: {e}', 'ERROR')
+                    log(f'{i} / {total_links}, BAD LINK: {link}: {e}', 'ERROR', id=self.id)
                     continue
 
                 finally:

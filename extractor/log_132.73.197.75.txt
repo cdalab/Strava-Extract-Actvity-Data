@@ -68,3 +68,397 @@ INFO 2021-08-11 11:11:42.719469 55 / 2163, https://www.strava.com/activities/940
 INFO 2021-08-11 11:12:12.133304 56 / 2163, https://www.strava.com/activities/1990681837
 INFO 2021-08-11 11:12:38.376894 57 / 2163, https://www.strava.com/activities/5529586988
 INFO 2021-08-11 11:18:04.062015 1 / 2163, https://www.strava.com/activities/3730182593
+INFO 2021-08-11 15:31:43.780577 Fetched successfully from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0
+INFO 2021-08-11 15:31:56.408624 Fetched successfully from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0
+ERROR 2021-08-11 15:32:02.691596 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0
+ERROR 2021-08-11 15:32:02.721908 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+ERROR 2021-08-11 15:32:02.728939 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+ERROR 2021-08-11 15:32:02.733402 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+ERROR 2021-08-11 15:32:02.742943 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202101&year_offset=0
+ERROR 2021-08-11 15:32:02.751111 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202102&year_offset=0
+ERROR 2021-08-11 15:32:02.762846 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202103&year_offset=0
+ERROR 2021-08-11 15:32:02.768384 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202104&year_offset=0
+ERROR 2021-08-11 15:32:02.776944 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202105&year_offset=0
+ERROR 2021-08-11 15:32:02.784541 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202106&year_offset=0
+ERROR 2021-08-11 15:32:02.794006 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202107&year_offset=0
+ERROR 2021-08-11 15:32:02.805954 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=1
+ERROR 2021-08-11 15:32:02.816712 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201908&year_offset=1
+ERROR 2021-08-11 15:32:02.825387 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201909&year_offset=1
+ERROR 2021-08-11 15:32:02.830234 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201910&year_offset=1
+ERROR 2021-08-11 15:32:02.834900 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201911&year_offset=1
+ERROR 2021-08-11 15:32:02.839576 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201912&year_offset=1
+ERROR 2021-08-11 15:32:02.848756 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 15:32:02.854443 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 15:32:02.860672 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 15:32:02.866218 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 15:32:02.875153 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 15:32:02.882044 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 15:32:02.887283 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+ERROR 2021-08-11 15:32:02.892301 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=2
+ERROR 2021-08-11 15:32:02.906523 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201808&year_offset=2
+ERROR 2021-08-11 15:32:02.917256 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201809&year_offset=2
+ERROR 2021-08-11 15:32:02.921578 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201810&year_offset=2
+ERROR 2021-08-11 15:32:02.927708 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201811&year_offset=2
+ERROR 2021-08-11 15:32:02.935126 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201812&year_offset=2
+ERROR 2021-08-11 15:32:02.942888 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201901&year_offset=2
+ERROR 2021-08-11 15:32:02.949752 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201902&year_offset=2
+ERROR 2021-08-11 15:32:02.956715 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201903&year_offset=2
+ERROR 2021-08-11 15:32:02.964839 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201904&year_offset=2
+ERROR 2021-08-11 15:32:02.970708 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201905&year_offset=2
+ERROR 2021-08-11 15:32:02.981589 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201906&year_offset=2
+ERROR 2021-08-11 15:32:02.988475 Problem fetching activities from: https://www.strava.com/athletes/38162237#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=2
+INFO 2021-08-11 15:32:02.988994 finished rider: 8, number of activities: 0
+ERROR 2021-08-11 15:32:02.997660 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0
+ERROR 2021-08-11 15:32:03.006838 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0
+ERROR 2021-08-11 15:32:03.012970 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0
+ERROR 2021-08-11 15:32:03.023800 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+ERROR 2021-08-11 15:32:03.029304 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+ERROR 2021-08-11 15:32:03.037321 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+ERROR 2021-08-11 15:32:03.044182 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202101&year_offset=0
+ERROR 2021-08-11 15:32:03.053362 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202102&year_offset=0
+ERROR 2021-08-11 15:32:03.058413 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202103&year_offset=0
+ERROR 2021-08-11 15:32:03.072323 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202104&year_offset=0
+ERROR 2021-08-11 15:32:03.076293 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202105&year_offset=0
+ERROR 2021-08-11 15:32:03.084265 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202106&year_offset=0
+ERROR 2021-08-11 15:32:03.092075 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202107&year_offset=0
+ERROR 2021-08-11 15:32:03.100656 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=1
+ERROR 2021-08-11 15:32:03.108184 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201908&year_offset=1
+ERROR 2021-08-11 15:32:03.119952 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201909&year_offset=1
+ERROR 2021-08-11 15:32:03.123664 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201910&year_offset=1
+ERROR 2021-08-11 15:32:03.129193 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201911&year_offset=1
+ERROR 2021-08-11 15:32:03.140787 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201912&year_offset=1
+ERROR 2021-08-11 15:32:03.148382 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 15:32:03.156341 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 15:32:03.165086 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 15:32:03.173464 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 15:32:03.183370 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 15:32:03.194175 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 15:32:03.204518 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+ERROR 2021-08-11 15:32:03.211199 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=2
+ERROR 2021-08-11 15:32:03.225039 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201808&year_offset=2
+ERROR 2021-08-11 15:32:03.236048 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201809&year_offset=2
+ERROR 2021-08-11 15:32:03.240421 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201810&year_offset=2
+ERROR 2021-08-11 15:32:03.252033 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201811&year_offset=2
+ERROR 2021-08-11 15:32:03.257754 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201812&year_offset=2
+ERROR 2021-08-11 15:32:03.267227 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201901&year_offset=2
+ERROR 2021-08-11 15:32:03.274208 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201902&year_offset=2
+ERROR 2021-08-11 15:32:03.287650 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201903&year_offset=2
+ERROR 2021-08-11 15:32:03.301667 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201904&year_offset=2
+ERROR 2021-08-11 15:32:03.309942 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201905&year_offset=2
+ERROR 2021-08-11 15:32:03.314879 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201906&year_offset=2
+ERROR 2021-08-11 15:32:03.320265 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=2
+ERROR 2021-08-11 15:32:03.326856 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201707&year_offset=3
+ERROR 2021-08-11 15:32:03.339505 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201708&year_offset=3
+ERROR 2021-08-11 15:32:03.349103 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201709&year_offset=3
+ERROR 2021-08-11 15:32:03.353933 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201710&year_offset=3
+ERROR 2021-08-11 15:32:03.375460 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201711&year_offset=3
+ERROR 2021-08-11 15:32:03.383482 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201712&year_offset=3
+ERROR 2021-08-11 15:32:03.394646 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201801&year_offset=3
+ERROR 2021-08-11 15:32:03.410832 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201802&year_offset=3
+ERROR 2021-08-11 15:32:03.422663 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201803&year_offset=3
+ERROR 2021-08-11 15:32:03.435191 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201804&year_offset=3
+ERROR 2021-08-11 15:32:03.440563 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201805&year_offset=3
+ERROR 2021-08-11 15:32:03.446448 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201806&year_offset=3
+ERROR 2021-08-11 15:32:03.451372 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=3
+ERROR 2021-08-11 15:32:03.463908 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201607&year_offset=4
+ERROR 2021-08-11 15:32:03.473546 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201608&year_offset=4
+ERROR 2021-08-11 15:32:03.479239 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201609&year_offset=4
+ERROR 2021-08-11 15:32:03.488009 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201610&year_offset=4
+ERROR 2021-08-11 15:32:03.495294 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201611&year_offset=4
+ERROR 2021-08-11 15:32:03.503285 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201612&year_offset=4
+ERROR 2021-08-11 15:32:03.518396 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201701&year_offset=4
+ERROR 2021-08-11 15:32:03.523723 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201702&year_offset=4
+ERROR 2021-08-11 15:32:03.527902 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201703&year_offset=4
+ERROR 2021-08-11 15:32:03.540441 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201704&year_offset=4
+ERROR 2021-08-11 15:32:03.550257 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201705&year_offset=4
+ERROR 2021-08-11 15:32:03.555814 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201706&year_offset=4
+ERROR 2021-08-11 15:32:03.570043 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201707&year_offset=4
+ERROR 2021-08-11 15:32:03.576031 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201507&year_offset=5
+ERROR 2021-08-11 15:32:03.583830 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201508&year_offset=5
+ERROR 2021-08-11 15:32:03.594629 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201509&year_offset=5
+ERROR 2021-08-11 15:32:03.604458 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201510&year_offset=5
+ERROR 2021-08-11 15:32:03.609616 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201511&year_offset=5
+ERROR 2021-08-11 15:32:03.622219 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201512&year_offset=5
+ERROR 2021-08-11 15:32:03.627012 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201601&year_offset=5
+ERROR 2021-08-11 15:32:03.635622 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201602&year_offset=5
+ERROR 2021-08-11 15:32:03.646899 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201603&year_offset=5
+ERROR 2021-08-11 15:32:03.654897 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201604&year_offset=5
+ERROR 2021-08-11 15:32:03.659211 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201605&year_offset=5
+ERROR 2021-08-11 15:32:03.668682 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201606&year_offset=5
+ERROR 2021-08-11 15:32:03.673637 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201607&year_offset=5
+ERROR 2021-08-11 15:32:03.678321 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201501&year_offset=6
+ERROR 2021-08-11 15:32:03.688243 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201502&year_offset=6
+ERROR 2021-08-11 15:32:03.700846 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201503&year_offset=6
+ERROR 2021-08-11 15:32:03.705556 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201504&year_offset=6
+ERROR 2021-08-11 15:32:03.710036 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201505&year_offset=6
+ERROR 2021-08-11 15:32:03.722675 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201506&year_offset=6
+ERROR 2021-08-11 15:32:03.729011 Problem fetching activities from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201507&year_offset=6
+INFO 2021-08-11 15:32:03.731070 finished rider: 9, number of activities: 0
+ERROR 2021-08-11 15:32:03.734356 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0
+ERROR 2021-08-11 15:32:03.744007 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0
+ERROR 2021-08-11 15:32:03.752689 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0
+ERROR 2021-08-11 15:32:03.760283 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+ERROR 2021-08-11 15:32:03.782529 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+ERROR 2021-08-11 15:32:03.788709 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+ERROR 2021-08-11 15:32:03.792897 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202101&year_offset=0
+ERROR 2021-08-11 15:32:03.806575 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202102&year_offset=0
+ERROR 2021-08-11 15:32:03.814844 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202103&year_offset=0
+ERROR 2021-08-11 15:32:03.819692 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202104&year_offset=0
+ERROR 2021-08-11 15:32:03.832795 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202105&year_offset=0
+ERROR 2021-08-11 15:32:03.838920 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202106&year_offset=0
+ERROR 2021-08-11 15:32:03.844199 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202107&year_offset=0
+ERROR 2021-08-11 15:32:03.854213 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=1
+ERROR 2021-08-11 15:32:03.858338 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201908&year_offset=1
+ERROR 2021-08-11 15:32:03.866735 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201909&year_offset=1
+ERROR 2021-08-11 15:32:03.877140 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201910&year_offset=1
+ERROR 2021-08-11 15:32:03.885376 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201911&year_offset=1
+ERROR 2021-08-11 15:32:03.890493 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201912&year_offset=1
+ERROR 2021-08-11 15:32:03.899484 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 15:32:03.904836 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 15:32:03.911000 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 15:32:03.918786 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 15:32:03.926359 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 15:32:03.937491 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 15:32:03.943039 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+ERROR 2021-08-11 15:32:03.948825 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=2
+ERROR 2021-08-11 15:32:03.959028 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201808&year_offset=2
+ERROR 2021-08-11 15:32:03.969599 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201809&year_offset=2
+ERROR 2021-08-11 15:32:03.974125 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201810&year_offset=2
+ERROR 2021-08-11 15:32:03.980917 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201811&year_offset=2
+ERROR 2021-08-11 15:32:03.990765 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201812&year_offset=2
+ERROR 2021-08-11 15:32:03.999851 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201901&year_offset=2
+ERROR 2021-08-11 15:32:04.010477 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201902&year_offset=2
+ERROR 2021-08-11 15:32:04.019999 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201903&year_offset=2
+ERROR 2021-08-11 15:32:04.025130 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201904&year_offset=2
+ERROR 2021-08-11 15:32:04.031232 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201905&year_offset=2
+ERROR 2021-08-11 15:32:04.043370 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201906&year_offset=2
+ERROR 2021-08-11 15:32:04.051560 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=2
+ERROR 2021-08-11 15:32:04.054813 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201707&year_offset=3
+ERROR 2021-08-11 15:32:04.069919 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201708&year_offset=3
+ERROR 2021-08-11 15:32:04.076483 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201709&year_offset=3
+ERROR 2021-08-11 15:32:04.084355 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201710&year_offset=3
+ERROR 2021-08-11 15:32:04.093548 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201711&year_offset=3
+ERROR 2021-08-11 15:32:04.105913 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201712&year_offset=3
+ERROR 2021-08-11 15:32:04.111035 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201801&year_offset=3
+ERROR 2021-08-11 15:32:04.119794 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201802&year_offset=3
+ERROR 2021-08-11 15:32:04.132265 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201803&year_offset=3
+ERROR 2021-08-11 15:32:04.139073 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201804&year_offset=3
+ERROR 2021-08-11 15:32:04.148123 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201805&year_offset=3
+ERROR 2021-08-11 15:32:04.157966 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201806&year_offset=3
+ERROR 2021-08-11 15:32:04.167206 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=3
+ERROR 2021-08-11 15:32:04.171923 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201607&year_offset=4
+ERROR 2021-08-11 15:32:04.183006 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201608&year_offset=4
+ERROR 2021-08-11 15:32:04.193478 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201609&year_offset=4
+ERROR 2021-08-11 15:32:04.202301 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201610&year_offset=4
+ERROR 2021-08-11 15:32:04.207477 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201611&year_offset=4
+ERROR 2021-08-11 15:32:04.227374 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201612&year_offset=4
+ERROR 2021-08-11 15:32:04.237432 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201701&year_offset=4
+ERROR 2021-08-11 15:32:04.241232 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201702&year_offset=4
+ERROR 2021-08-11 15:32:04.244891 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201703&year_offset=4
+ERROR 2021-08-11 15:32:04.255333 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201704&year_offset=4
+ERROR 2021-08-11 15:32:04.263414 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201705&year_offset=4
+ERROR 2021-08-11 15:32:04.270457 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201706&year_offset=4
+ERROR 2021-08-11 15:32:04.287110 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201707&year_offset=4
+ERROR 2021-08-11 15:32:04.293519 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201507&year_offset=5
+ERROR 2021-08-11 15:32:04.303895 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201508&year_offset=5
+ERROR 2021-08-11 15:32:04.319300 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201509&year_offset=5
+ERROR 2021-08-11 15:32:04.323873 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201510&year_offset=5
+ERROR 2021-08-11 15:32:04.330235 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201511&year_offset=5
+ERROR 2021-08-11 15:32:04.341336 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201512&year_offset=5
+ERROR 2021-08-11 15:32:04.350465 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201601&year_offset=5
+ERROR 2021-08-11 15:32:04.355501 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201602&year_offset=5
+ERROR 2021-08-11 15:32:04.369239 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201603&year_offset=5
+ERROR 2021-08-11 15:32:04.375868 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201604&year_offset=5
+ERROR 2021-08-11 15:32:04.383934 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201605&year_offset=5
+ERROR 2021-08-11 15:32:04.394413 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201606&year_offset=5
+ERROR 2021-08-11 15:32:04.403657 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201607&year_offset=5
+ERROR 2021-08-11 15:32:04.407803 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201501&year_offset=6
+ERROR 2021-08-11 15:32:04.416897 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201502&year_offset=6
+ERROR 2021-08-11 15:32:04.424283 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201503&year_offset=6
+ERROR 2021-08-11 15:32:04.433495 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201504&year_offset=6
+ERROR 2021-08-11 15:32:04.437691 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201505&year_offset=6
+ERROR 2021-08-11 15:32:04.451509 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201506&year_offset=6
+ERROR 2021-08-11 15:32:04.456640 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=201507&year_offset=6
+INFO 2021-08-11 15:32:04.457205 finished rider: 10, number of activities: 0
+INFO 2021-08-11 15:39:48.923675 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0
+INFO 2021-08-11 15:40:01.229204 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0
+INFO 2021-08-11 15:40:13.267575 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0
+INFO 2021-08-11 15:40:25.268358 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+INFO 2021-08-11 15:40:37.275967 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+INFO 2021-08-11 15:40:48.525089 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+INFO 2021-08-11 15:41:00.155264 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202101&year_offset=0
+INFO 2021-08-11 15:41:12.014652 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202102&year_offset=0
+INFO 2021-08-11 15:41:24.596386 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202103&year_offset=0
+INFO 2021-08-11 15:41:36.639701 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202104&year_offset=0
+INFO 2021-08-11 15:41:48.087346 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202105&year_offset=0
+INFO 2021-08-11 15:42:00.288269 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202106&year_offset=0
+INFO 2021-08-11 15:42:12.323195 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202107&year_offset=0
+INFO 2021-08-11 15:42:23.739865 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=1
+INFO 2021-08-11 15:42:35.342767 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201908&year_offset=1
+INFO 2021-08-11 15:42:46.841858 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201909&year_offset=1
+INFO 2021-08-11 15:42:58.620035 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201910&year_offset=1
+INFO 2021-08-11 15:43:10.905702 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201911&year_offset=1
+INFO 2021-08-11 15:43:23.269841 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201912&year_offset=1
+INFO 2021-08-11 15:43:35.686111 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+INFO 2021-08-11 15:43:48.252867 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+INFO 2021-08-11 15:44:00.682384 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+INFO 2021-08-11 15:44:13.021202 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+INFO 2021-08-11 15:44:25.372828 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+INFO 2021-08-11 15:44:37.318471 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+INFO 2021-08-11 15:44:49.800488 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+INFO 2021-08-11 15:45:02.428368 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=2
+INFO 2021-08-11 15:45:14.766031 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201808&year_offset=2
+INFO 2021-08-11 15:45:26.293755 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201809&year_offset=2
+INFO 2021-08-11 15:45:38.194245 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201810&year_offset=2
+INFO 2021-08-11 15:45:50.260696 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201811&year_offset=2
+INFO 2021-08-11 15:46:02.439963 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201812&year_offset=2
+INFO 2021-08-11 15:46:14.083961 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201901&year_offset=2
+INFO 2021-08-11 15:46:26.005786 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201902&year_offset=2
+INFO 2021-08-11 15:46:38.084731 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201903&year_offset=2
+INFO 2021-08-11 15:46:50.160277 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201904&year_offset=2
+INFO 2021-08-11 15:47:02.106858 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201905&year_offset=2
+INFO 2021-08-11 15:47:13.862653 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201906&year_offset=2
+INFO 2021-08-11 15:47:25.477685 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201907&year_offset=2
+INFO 2021-08-11 15:47:36.891481 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201707&year_offset=3
+INFO 2021-08-11 15:47:49.593475 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201708&year_offset=3
+INFO 2021-08-11 15:48:02.233076 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201709&year_offset=3
+INFO 2021-08-11 15:48:14.107470 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201710&year_offset=3
+INFO 2021-08-11 15:48:25.504096 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201711&year_offset=3
+INFO 2021-08-11 15:48:37.016307 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201712&year_offset=3
+INFO 2021-08-11 15:48:49.713218 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201801&year_offset=3
+INFO 2021-08-11 15:49:02.416860 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201802&year_offset=3
+INFO 2021-08-11 15:49:15.069078 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201803&year_offset=3
+INFO 2021-08-11 15:49:26.712870 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201804&year_offset=3
+INFO 2021-08-11 15:49:39.221218 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201805&year_offset=3
+INFO 2021-08-11 15:49:52.303267 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201806&year_offset=3
+INFO 2021-08-11 15:50:03.849322 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201807&year_offset=3
+INFO 2021-08-11 15:50:16.180840 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201607&year_offset=4
+INFO 2021-08-11 15:50:28.081305 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201608&year_offset=4
+INFO 2021-08-11 15:50:39.593207 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201609&year_offset=4
+INFO 2021-08-11 15:50:51.558252 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201610&year_offset=4
+INFO 2021-08-11 15:51:03.776169 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201611&year_offset=4
+INFO 2021-08-11 15:51:15.695728 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201612&year_offset=4
+INFO 2021-08-11 15:51:27.069092 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201701&year_offset=4
+INFO 2021-08-11 15:51:39.228535 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201702&year_offset=4
+INFO 2021-08-11 15:51:50.706369 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201703&year_offset=4
+INFO 2021-08-11 15:52:02.121168 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201704&year_offset=4
+INFO 2021-08-11 15:52:13.935189 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201705&year_offset=4
+INFO 2021-08-11 15:52:26.023741 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201706&year_offset=4
+INFO 2021-08-11 15:52:38.045989 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201707&year_offset=4
+INFO 2021-08-11 15:52:50.464853 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201507&year_offset=5
+INFO 2021-08-11 15:53:02.467588 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201508&year_offset=5
+INFO 2021-08-11 15:53:14.864428 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201509&year_offset=5
+INFO 2021-08-11 15:53:27.346102 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201510&year_offset=5
+INFO 2021-08-11 15:53:39.773828 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201511&year_offset=5
+INFO 2021-08-11 15:53:52.138996 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201512&year_offset=5
+INFO 2021-08-11 15:54:04.494627 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201601&year_offset=5
+INFO 2021-08-11 15:54:15.761889 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201602&year_offset=5
+INFO 2021-08-11 15:54:27.395584 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201603&year_offset=5
+INFO 2021-08-11 15:54:38.733479 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201604&year_offset=5
+INFO 2021-08-11 15:54:50.593209 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201605&year_offset=5
+INFO 2021-08-11 15:55:02.358646 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201606&year_offset=5
+INFO 2021-08-11 15:55:15.282694 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201607&year_offset=5
+INFO 2021-08-11 15:55:27.323001 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201501&year_offset=6
+INFO 2021-08-11 15:55:39.569851 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201502&year_offset=6
+INFO 2021-08-11 15:55:51.330738 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201503&year_offset=6
+INFO 2021-08-11 15:56:03.457580 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201504&year_offset=6
+INFO 2021-08-11 15:56:15.418296 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201505&year_offset=6
+INFO 2021-08-11 15:56:27.252791 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201506&year_offset=6
+INFO 2021-08-11 15:56:39.855121 Fetched successfully from: https://www.strava.com/pros/3488983#graph_date_range?chart_type=miles&interval_type=month&interval=201507&year_offset=6
+INFO 2021-08-11 15:56:39.857473 finished rider: 9, number of activities: 0
+INFO 2021-08-11 15:56:50.198669 https://www.strava.com/onboarding
+INFO 2021-08-11 16:16:32.270633 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+INFO 2021-08-11 16:16:44.601253 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0 0
+INFO 2021-08-11 16:16:56.756066 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0 0
+ERROR 2021-08-11 16:17:08.397539 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+ERROR 2021-08-11 16:17:08.413822 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+ERROR 2021-08-11 16:17:08.426649 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+ERROR 2021-08-11 16:17:08.441324 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 16:17:08.446820 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 16:17:08.451814 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 16:17:08.458491 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 16:17:08.472711 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 16:17:08.482413 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 16:17:08.489632 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+INFO 2021-08-11 16:17:08.490151 finished rider: 10, number of activities: 0
+INFO 2021-08-11 16:18:06.912935 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+INFO 2021-08-11 16:18:19.323019 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0 0
+INFO 2021-08-11 16:18:31.500933 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0 0
+INFO 2021-08-11 16:18:43.613117 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0 0
+INFO 2021-08-11 16:18:55.059189 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0 0
+INFO 2021-08-11 16:19:06.331427 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0 0
+INFO 2021-08-11 16:19:17.706258 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1 0
+INFO 2021-08-11 16:19:29.436585 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1 0
+ERROR 2021-08-11 16:19:29.565604 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 16:19:29.571394 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 16:19:29.580466 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 16:19:29.590614 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 16:19:29.596249 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+INFO 2021-08-11 16:19:29.598133 finished rider: 10, number of activities: 0
+INFO 2021-08-11 16:21:20.768221 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+INFO 2021-08-11 16:21:33.023023 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0 0
+INFO 2021-08-11 16:21:45.242927 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0 0
+INFO 2021-08-11 16:21:56.901266 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0 0
+INFO 2021-08-11 16:22:09.234888 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0 0
+INFO 2021-08-11 16:22:21.220562 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0 0
+INFO 2021-08-11 16:22:33.507662 Fetched successfully from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1 0
+ERROR 2021-08-11 16:22:43.162690 Problem fetching activities from: https://www.strava.com/athletes/21536765#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+INFO 2021-08-11 16:23:29.485568 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+INFO 2021-08-11 16:23:40.993962 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0 0
+INFO 2021-08-11 16:23:52.345755 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0 0
+INFO 2021-08-11 16:24:04.989024 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0 0
+INFO 2021-08-11 16:24:16.692237 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0 0
+INFO 2021-08-11 16:24:28.265336 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0 0
+ERROR 2021-08-11 16:24:35.459337 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 16:24:35.469947 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 16:24:35.493042 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 16:24:35.503816 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 16:24:35.511326 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 16:24:35.517050 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 16:24:35.526321 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+INFO 2021-08-11 16:24:35.526841 finished rider: 11, number of activities: 0
+INFO 2021-08-11 16:35:33.931136 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+INFO 2021-08-11 16:35:45.252057 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0 0
+ERROR 2021-08-11 16:35:49.268294 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0
+ERROR 2021-08-11 16:35:49.273164 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+ERROR 2021-08-11 16:35:49.302734 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+ERROR 2021-08-11 16:35:49.310431 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+ERROR 2021-08-11 16:35:49.322749 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 16:35:49.332267 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 16:35:49.341289 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 16:35:49.347405 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 16:35:49.353803 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 16:35:49.360410 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 16:35:49.364485 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+INFO 2021-08-11 16:35:49.365251 finished rider: 11, number of activities: 0
+INFO 2021-08-11 16:36:35.162092 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+ERROR 2021-08-11 16:36:38.768447 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0
+ERROR 2021-08-11 16:36:38.782575 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0
+ERROR 2021-08-11 16:36:38.807713 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0
+ERROR 2021-08-11 16:36:38.816027 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0
+ERROR 2021-08-11 16:36:38.823632 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0
+ERROR 2021-08-11 16:36:38.830025 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1
+ERROR 2021-08-11 16:36:38.842552 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1
+ERROR 2021-08-11 16:36:38.853881 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1
+ERROR 2021-08-11 16:36:38.856888 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1
+ERROR 2021-08-11 16:36:38.860485 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1
+ERROR 2021-08-11 16:36:38.866050 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1
+ERROR 2021-08-11 16:36:38.870488 Problem fetching activities from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1
+INFO 2021-08-11 16:36:38.870972 finished rider: 11, number of activities: 0
+INFO 2021-08-11 16:37:29.418491 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0 0
+INFO 2021-08-11 16:37:51.615993 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0 0
+INFO 2021-08-11 16:37:59.859060 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202009&year_offset=0 1
+INFO 2021-08-11 16:38:02.811624 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202010&year_offset=0 0
+INFO 2021-08-11 16:38:24.153743 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202011&year_offset=0 0
+INFO 2021-08-11 16:38:45.742259 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202012&year_offset=0 0
+INFO 2021-08-11 16:39:07.244015 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202001&year_offset=1 0
+INFO 2021-08-11 16:39:29.115708 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202002&year_offset=1 0
+INFO 2021-08-11 16:39:50.679709 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202003&year_offset=1 0
+INFO 2021-08-11 16:39:54.218958 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202004&year_offset=1 21
+INFO 2021-08-11 16:39:59.821160 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202005&year_offset=1 47
+INFO 2021-08-11 16:40:02.463128 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202006&year_offset=1 3
+INFO 2021-08-11 16:40:04.704504 Fetched successfully from: https://www.strava.com/pros/4111169#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=1 0
+INFO 2021-08-11 16:40:04.704872 finished rider: 11, number of activities: 51
+INFO 2021-08-11 16:40:16.481623 https://www.strava.com/onboarding
+INFO 2021-08-11 16:40:30.219937 1 / 51, https://www.strava.com/activities/3519505761
+INFO 2021-08-11 16:40:43.666667 2 / 51, https://www.strava.com/activities/3335203876

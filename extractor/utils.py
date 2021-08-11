@@ -1,6 +1,27 @@
 import re
 import numpy as np
+import time as t
+import random
+from datetime import datetime
+from usernames import *
+from selenium import webdriver
 
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+
+
+def log(msg,level='INFO', id = ''):
+
+    try:
+        msg=f"{level} {datetime.now()} {msg}\n"
+        print(f'{msg}')
+        with open(f"log_{id}.txt",'a+') as f:
+            f.write(msg)
+        with open(f"S:/log_{id}.txt",'a+') as f:
+            f.write(msg)
+    except Exception as err:
+        pass
 
 def valid_rider_url(url):
     pattern = re.compile("https://www.strava.com/[a-zA-Z]+/[0-9]+$")
