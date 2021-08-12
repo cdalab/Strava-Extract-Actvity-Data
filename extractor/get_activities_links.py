@@ -9,13 +9,14 @@ from utils import log
 
 class Get_Activities_Links():
 
-    def __init__(self, riders, id, years = list(range(2015,2022)), months = list(range(1,13))):
+    def __init__(self, riders, id, years = tuple(range(2015,2022)), months = tuple(range(1,13))):
         self.activity_links = set()
         self.id = id
         self.riders = riders
         self.years = years
         self.months = months
         self.STRAVA_URL = 'https://www.strava.com'
+        self.curr_user = ''
 
     def _switchAccount(self, url_to_refresh):
         self._close_driver()
@@ -25,15 +26,18 @@ class Get_Activities_Links():
 
     def _is_logged_out(self):
         site_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-
-        if site_soup.find('html')['class'][0] == 'logged-out': # logged out ...
-            log(f'logged out...', 'ERROR', id=self.id)
-            return True
-        else:
+        try:
+            if site_soup.find('html')['class'][0] == 'logged-out': # logged out ...
+                log(f'logged out. username: {self.curr_user}', 'ERROR', id=self.id)
+                return True
+            else:
+                return False
+        except:
             return False
 
     def _get_username(self):
         rand_index = random.randint(0, len(usernames)-1)
+        self.curr_user = usernames[rand_index]
         return usernames[rand_index]
 
     def _open_driver(self):

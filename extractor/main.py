@@ -63,6 +63,7 @@ def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
 
     links_extractor = Get_Activities_Links(riders, ip)
     links_extractor.create_links_for_extractions()
+
     links_extractor.run()
     riders = links_extractor.riders
 
@@ -178,6 +179,7 @@ if __name__ == '__main__':
         # run example: main.py flow rider_csv -i 100 153 164
         # run example: main.py flow rider_csv -r 10 20
         team_ids = None
+        flow_riders = []
         try:
             i = sys.argv[3]
             if i == "-i":
@@ -194,7 +196,10 @@ if __name__ == '__main__':
         except:
             flow_riders = flow(file_name, ip)
 
-        saving_file_name = f'data/{file_name}_{"" if teams_ids is None else teams_ids}_{flow}'
+        if not team_ids == None:
+            saving_file_name = f'data/{file_name}_{team_ids}_{flow}'
+        else:
+            saving_file_name = f'data/{file_name}_{flow}'
         save_csv(saving_file_name, flow_riders)
 
     print("---- FINISH ----")
