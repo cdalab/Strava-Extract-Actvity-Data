@@ -49,3 +49,4 @@ INFO 2021-08-15 17:13:02 Fetching links for extractions 3 / 4
 INFO 2021-08-15 17:13:10 Fetching links for extractions 4 / 4
 INFO 2021-08-15 17:13:21 https://www.strava.com/onboarding
 INFO 2021-08-15 17:13:21 Fetching activity links for: Rider_link: https://www.strava.com/pros/16275051, Rider name: aberasturi jon, Rider ID: 1
+INFO 2021-08-15 17:28:49 https://www.strava.com/onboarding

@@ -39,8 +39,15 @@ def data(riders, riders_range_low, riders_range_high, ip, start_from_index):
 def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
 
     print("---- START CREATING LIST OF RIDERS ----")
+
+    riders_pickle = open(f'data/ISN_riders.pickle', 'rb')
+    isn_riders = pk.load(riders_pickle)
+    isn_ids = [rider.rider_id for rider in isn_riders]
+
     df = pd.read_csv(f"data/{csv_file}.csv")
     df = df[df['url'].notna()]
+    df = df[~df['cyclist_id'].isin(isn_ids)]
+    print(len(df))
     riders = []
 
     i = 0
@@ -54,6 +61,7 @@ def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
                 rider_teams = []
             if valid_rider_url(rider.rider_url) :
                 if (team_ids is not None and len(list(set(rider_teams) & set(team_ids))) > 0) or team_ids is None :
+
                     riders.append(rider)
         i += 1
 
