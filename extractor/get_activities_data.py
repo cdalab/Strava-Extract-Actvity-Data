@@ -12,7 +12,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 MIN_RAND_SLEEP = 5
 MAX_RAND_SLEEP = 20
-PROXY = "147.161.13.218:16996"
+LOGGED_OUT_SLEEP = 1800
+LOGIN_URL = 'https://www.strava.com/login'
+ONBOARD_URL = 'https://www.strava.com/onboarding'
+
 
 
 class Get_Activities_Data:
@@ -60,20 +63,24 @@ class Get_Activities_Data:
 
         self.browser.find_element_by_id("login-button").click()
         t.sleep(1)
-        if not self.browser.current_url == 'https://www.strava.com/onboarding':
-            # BAD ACCOUNT! need
-            log(f"BAD ACCOUNT {user} - Switching to another", id=self.id)
-            self._close_driver()
-            self._open_driver()
-        elif self.browser.current_url == 'https://www.strava.com/login':
+
+        if self.browser.current_url == LOGIN_URL:
             # ip blocked...
-            seconds_to_wait = 300
-            log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", id=self.id)
+
+            log(f"IP BLOCKED - waiting for {LOGGED_OUT_SLEEP} seconds.", 'ERROR', id=self.id)
             self._close_driver()
-            t.sleep(seconds_to_wait)
+            t.sleep(LOGGED_OUT_SLEEP)
             self._open_driver()
+        elif not self.browser.current_url == 'https://www.strava.com/onboarding':
+            # BAD ACCOUNT! need
+            log(f"BAD ACCOUNT {user} - Switching to another", 'ERROR', id=self.id)
+
+            self._close_driver()
+            self._open_driver()
+            t.sleep(300)
+
         else:
-            log(self.browser.current_url, id=self.id)
+            log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
 
 
 
@@ -187,8 +194,8 @@ class Get_Activities_Data:
         tr = activity_soup.find_all("tr")
         tr_datas = BeautifulSoup(str(tr), "html.parser").get_text()
         tr_datas = tr_datas.strip('][').split(', ')[1:]
-        tr_datas = list(map(lambda x:x.split('\n'), tr_datas))
-        tr_datas = list(map(lambda dt :[x for x in dt if x], tr_datas))
+        tr_datas = list(map(lambda x: x.split('\n'), tr_datas))
+        tr_datas = list(map(lambda dt: [x for x in dt if x], tr_datas))
 
         tr_dict = {}
 
@@ -399,19 +406,19 @@ class Get_Activities_Data:
         i = 1
 
         for rider in self.riders:
-
+            log(f"WATCHING RIDER: {rider}")
             for link in list(rider.activity_links):
                 if not i >= self.start_from_index:
                     i += 1
                     continue
-                t.sleep(1)
+
                 data = {}
 
                 try:
-                    while self._is_logged_out():
+                    if self.browser.current_url == LOGIN_URL:
                         self._close_driver()
-                        t.sleep(300)
                         self._open_driver()
+
                     home, analysis_exist, zones_distribution_exist, heart_rate_exists = self._extract_activity_home(link)
                     data.update(home)
 
@@ -429,7 +436,7 @@ class Get_Activities_Data:
                     rider.workout_cadences.append(workout_cadences_row)
                     rider.workout_powers.append(workout_powers_row)
                     rider.workout_speeds.append(workout_speeds_row)
-                    msg = f'{i} / {total_links}, {link}'
+                    msg = f'{i} / {total_links},G {link}'
 
                     log(msg, id=self.id)
 
@@ -442,8 +449,8 @@ class Get_Activities_Data:
                 finally:
                     i += 1
 
-                    t.sleep(1)
-
+                    t.sleep(2)
+            log(f"----- STOPPED WATCHING RIDER -----")
         self._close_driver()
 
 

@@ -5,9 +5,10 @@ import pandas as pd
 from get_activities_data import Get_Activities_Data
 from get_activities_links import Get_Activities_Links
 from usernames import *
-from utils import valid_rider_url
+from utils import valid_rider_url, log
 from firebase import upload_data_firebase, init_firebase
 from rider import Rider
+
 
 
 
@@ -36,7 +37,7 @@ def data(riders, riders_range_low, riders_range_high, ip, start_from_index):
 
 
 def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
-    print("---- START FLOW ----")
+
     print("---- START CREATING LIST OF RIDERS ----")
     df = pd.read_csv(f"data/{csv_file}.csv")
     df = df[df['url'].notna()]
@@ -111,9 +112,6 @@ def save_csv(file_name, riders):
         print(e)
 
 
-
-
-
 if __name__ == '__main__':
 
 
@@ -138,7 +136,7 @@ if __name__ == '__main__':
 
         saving_file_name = f'data/{file_name}_{riders_range_low}_{riders_range_high}'
         index = False
-
+        start_from_index = 0
         try:
             i = sys.argv[5]
             if (i == "-i"):
@@ -146,7 +144,7 @@ if __name__ == '__main__':
                 saving_file_name += f'_started from: {start_from_index}'
         except Exception as e:
             print(e)
-            start_from_index = 0
+
         data_riders = None
 
         try:
@@ -174,11 +172,11 @@ if __name__ == '__main__':
             pk.dump(link_riders, handle, pk.HIGHEST_PROTOCOL)
 
     elif activity_type == 'flow':
-
+        print("---- START FLOW ----")
         # run example: main.py flow rider_csv
         # run example: main.py flow rider_csv -i 100 153 164
         # run example: main.py flow rider_csv -r 10 20
-        team_ids = None
+        saving_file_name = ""
         flow_riders = []
         try:
             i = sys.argv[3]
@@ -188,18 +186,21 @@ if __name__ == '__main__':
                 if len(team_ids) == 0:
                     teams_ids = None
                 flow_riders = flow(file_name, ip, team_ids=team_ids)
+                log(f'STARTING FLOW TEAM_IDS: {team_ids}')
+                saving_file_name = f'flow/{file_name}_team_id_{team_ids}_{flow}'
             elif i == '-r':
                 low_index = int(sys.argv[4])
                 high_index = int(sys.argv[5])
                 flow_riders = flow(file_name, ip, start_index=low_index, end_index=high_index)
+                log(f'STARTING FLOW INDEX: {low_index}_{high_index}')
+                saving_file_name = f'flow/{file_name}_index_{low_index}_{high_index}_{flow}'
 
         except:
             flow_riders = flow(file_name, ip)
+            saving_file_name = f'flow/{file_name}_{flow}'
+            log(f'STARTING FLOW ALL')
 
-        if not team_ids == None:
-            saving_file_name = f'data/{file_name}_{team_ids}_{flow}'
-        else:
-            saving_file_name = f'data/{file_name}_{flow}'
+
         save_csv(saving_file_name, flow_riders)
 
     print("---- FINISH ----")

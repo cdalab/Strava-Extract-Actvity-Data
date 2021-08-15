@@ -14,7 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 def log(msg,level='INFO', id = ''):
 
     try:
-        msg=f"{level} {datetime.now()} {msg}\n"
+        msg=f'{level} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
         print(f'{msg}')
         with open(f"log_{id}.txt",'a+') as f:
             f.write(msg)
