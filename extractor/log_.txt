@@ -36,3 +36,16 @@ INFO 2021-08-11 16:36:21.378008 https://www.strava.com/onboarding
 INFO 2021-08-11 16:36:53.071004 https://www.strava.com/onboarding
 INFO 2021-08-11 16:36:55.704596 Fetching links for extractions 1 / 1
 INFO 2021-08-11 16:37:05.100637 https://www.strava.com/onboarding
+INFO 2021-08-15 17:06:22 https://www.strava.com/onboarding
+INFO 2021-08-15 17:06:26 Fetching links for extractions 1 / 4
+INFO 2021-08-15 17:06:34 Fetching links for extractions 2 / 4
+INFO 2021-08-15 17:06:41 Fetching links for extractions 3 / 4
+INFO 2021-08-15 17:06:50 Fetching links for extractions 4 / 4
+INFO 2021-08-15 17:07:02 https://www.strava.com/onboarding
+INFO 2021-08-15 17:12:47 https://www.strava.com/onboarding
+INFO 2021-08-15 17:12:50 Fetching links for extractions 1 / 4
+INFO 2021-08-15 17:12:56 Fetching links for extractions 2 / 4
+INFO 2021-08-15 17:13:02 Fetching links for extractions 3 / 4
+INFO 2021-08-15 17:13:10 Fetching links for extractions 4 / 4
+INFO 2021-08-15 17:13:21 https://www.strava.com/onboarding
+INFO 2021-08-15 17:13:21 Fetching activity links for: Rider_link: https://www.strava.com/pros/16275051, Rider name: aberasturi jon, Rider ID: 1

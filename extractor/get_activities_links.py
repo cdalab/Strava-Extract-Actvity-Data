@@ -145,6 +145,7 @@ class Get_Activities_Links():
 
         self._open_driver()
         for rider in self.riders:
+            log(f'Fetching activity links for: {rider}')
             prev = set()
             curr = set()
             for link in rider.links:
@@ -164,7 +165,7 @@ class Get_Activities_Links():
                     t.sleep(1)
 
 
-                    timeout = t.time() + 20
+                    timeout = t.time() + 10
                     new_curr = set()
 
                     while curr == prev:
@@ -203,13 +204,14 @@ class Get_Activities_Links():
                         curr = new_curr
 
                         if t.time() > timeout:
-                            print('timedout! couldnt fetch any links...')
                             break
 
                     prev = curr
                     rider.activity_links = rider.activity_links.union(curr)
-
-                    log(f'Fetched successfully from: {link}, Links: {len(prev)}', id=self.id)
+                    if len(prev) > 0:
+                        log(f'Found activities: {len(prev)}, year: {link[-20:-16]} month: {link[-16:-14]}', id=self.id)
+                    else:
+                        log(f'No activities, year: {link[-20:-16]} month: {link[-16:-14]}', 'ERROR', id=self.id)
                 except Exception as e:
                     log(f'Problem fetching activities from: {link}, {e}', 'ERROR', id=self.id)
                     continue

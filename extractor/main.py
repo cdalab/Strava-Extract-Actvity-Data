@@ -41,7 +41,6 @@ def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
     print("---- START CREATING LIST OF RIDERS ----")
     df = pd.read_csv(f"data/{csv_file}.csv")
     df = df[df['url'].notna()]
-    print(len(df))
     riders = []
 
     i = 0

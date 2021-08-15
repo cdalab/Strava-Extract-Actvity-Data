@@ -12,7 +12,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 MIN_RAND_SLEEP = 5
 MAX_RAND_SLEEP = 20
-LOGGED_OUT_SLEEP = 1800
+LOGGED_OUT_SLEEP = 1801
 LOGIN_URL = 'https://www.strava.com/login'
 ONBOARD_URL = 'https://www.strava.com/onboarding'
 
@@ -450,7 +450,7 @@ class Get_Activities_Data:
                     i += 1
 
                     t.sleep(2)
-            log(f"----- STOPPED WATCHING RIDER -----")
+
         self._close_driver()
 
 

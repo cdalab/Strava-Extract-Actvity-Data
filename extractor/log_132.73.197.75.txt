@@ -462,3 +462,22 @@ INFO 2021-08-11 16:40:04.704872 finished rider: 11, number of activities: 51
 INFO 2021-08-11 16:40:16.481623 https://www.strava.com/onboarding
 INFO 2021-08-11 16:40:30.219937 1 / 51, https://www.strava.com/activities/3519505761
 INFO 2021-08-11 16:40:43.666667 2 / 51, https://www.strava.com/activities/3335203876
+INFO 2021-08-15 17:07:27 Fetched successfully from: 201907, Links: 0
+INFO 2021-08-15 17:07:49 Fetched successfully from: 201908, Links: 0
+INFO 2021-08-15 17:08:10 Fetched successfully from: 201909, Links: 0
+INFO 2021-08-15 17:08:33 Fetched successfully from: 201910, Links: 0
+INFO 2021-08-15 17:08:55 Fetched successfully from: 201911, Links: 0
+INFO 2021-08-15 17:09:16 Fetched successfully from: 201912, Links: 0
+INFO 2021-08-15 17:09:37 Fetched successfully from: 202001, Links: 0
+INFO 2021-08-15 17:09:59 Fetched successfully from: 202002, Links: 0
+INFO 2021-08-15 17:10:21 Fetched successfully from: 202003, Links: 0
+INFO 2021-08-15 17:10:43 Fetched successfully from: 202004, Links: 0
+INFO 2021-08-15 17:11:06 Fetched successfully from: 202005, Links: 0
+INFO 2021-08-15 17:11:28 Fetched successfully from: 202006, Links: 0
+INFO 2021-08-15 17:11:49 Fetched successfully from: 202007, Links: 0
+INFO 2021-08-15 17:12:12 Fetched successfully from: 201807, Links: 0
+INFO 2021-08-15 17:12:37 BAD ACCOUNT velo.yan40@yandex.com - Switching to another
+ERROR 2021-08-15 17:13:42 No activities, year: 2019 month: 07
+ERROR 2021-08-15 17:13:58 No activities, year: 2019 month: 08
+ERROR 2021-08-15 17:14:14 No activities, year: 2019 month: 09
+ERROR 2021-08-15 17:14:32 No activities, year: 2019 month: 10
