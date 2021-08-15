@@ -100,16 +100,16 @@ def save_csv(file_name, riders):
         new_file_name = f'{file_name}_{table_names[i]}.csv'
         pd.DataFrame(tables[i]).to_csv(new_file_name)
 
-    try:
-        init_firebase()
-        for i in range(len(tables)):
-            new_file_name = f'{file_name}_{table_names[i]}.csv'
-            try:
-                upload_data_firebase(new_file_name, str(pd.DataFrame(tables[i]).to_csv()))
-            except Exception as e:
-                print(e)
-    except Exception as e:
-        print(e)
+    # try:
+    #     init_firebase()
+    #     for i in range(len(tables)):
+    #         new_file_name = f'{file_name}_{table_names[i]}.csv'
+    #         try:
+    #             upload_data_firebase(new_file_name, str(pd.DataFrame(tables[i]).to_csv()))
+    #         except Exception as e:
+    #             print(e)
+    # except Exception as e:
+    #     print(e)
 
 
 if __name__ == '__main__':
@@ -187,17 +187,17 @@ if __name__ == '__main__':
                     teams_ids = None
                 flow_riders = flow(file_name, ip, team_ids=team_ids)
                 log(f'STARTING FLOW TEAM_IDS: {team_ids}')
-                saving_file_name = f'flow/{file_name}_team_id_{team_ids}_{flow}'
+                saving_file_name = f'flow/{file_name}_team_id_{team_ids}'
             elif i == '-r':
                 low_index = int(sys.argv[4])
                 high_index = int(sys.argv[5])
                 flow_riders = flow(file_name, ip, start_index=low_index, end_index=high_index)
                 log(f'STARTING FLOW INDEX: {low_index}_{high_index}')
-                saving_file_name = f'flow/{file_name}_index_{low_index}_{high_index}_{flow}'
+                saving_file_name = f'flow/{file_name}_index_{low_index}_{high_index}'
 
         except:
             flow_riders = flow(file_name, ip)
-            saving_file_name = f'flow/{file_name}_{flow}'
+            saving_file_name = f'flow/{file_name}_all'
             log(f'STARTING FLOW ALL')
 
 

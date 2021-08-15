@@ -157,7 +157,7 @@ class Get_Activities_Links():
                     self.browser.get(link)
                     while self._is_logged_out():
                         self._switchAccount(link)
-                        seconds_to_wait = 300
+                        seconds_to_wait = 1800
                         log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", id=self.id)
                         t.sleep(seconds_to_wait)
 
@@ -210,8 +210,8 @@ class Get_Activities_Links():
                     rider.activity_links = rider.activity_links.union(curr)
 
                     log(f'Fetched successfully from: {link}, Links: {len(prev)}', id=self.id)
-                except:
-                    log(f'Problem fetching activities from: {link}', 'ERROR', id=self.id)
+                except Exception as e:
+                    log(f'Problem fetching activities from: {link}, {e}', 'ERROR', id=self.id)
                     continue
             log(f'finished rider: {rider.rider_id}, number of activities: {len(rider.activity_links)}', id=self.id)
 
