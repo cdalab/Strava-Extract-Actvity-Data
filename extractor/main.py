@@ -196,10 +196,11 @@ if __name__ == '__main__':
                 log(f'STARTING FLOW TEAM_IDS: {team_ids}')
                 saving_file_name = f'flow/{file_name}_team_id_{team_ids}'
             elif i == '-r':
+
                 low_index = int(sys.argv[4])
                 high_index = int(sys.argv[5])
-                flow_riders = flow(file_name, ip, start_index=low_index, end_index=high_index)
                 log(f'STARTING FLOW INDEX: {low_index}_{high_index}')
+                flow_riders = flow(file_name, ip, start_index=low_index, end_index=high_index)
                 saving_file_name = f'flow/{file_name}_index_{low_index}_{high_index}'
 
         except:
