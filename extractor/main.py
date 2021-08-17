@@ -1,5 +1,5 @@
 import sys
-import pickle as pk
+import pickle5 as pk
 import requests
 import pandas as pd
 from get_activities_data import Get_Activities_Data
@@ -107,16 +107,16 @@ def save_csv(file_name, riders):
         new_file_name = f'{file_name}_{table_names[i]}.csv'
         pd.DataFrame(tables[i]).to_csv(new_file_name)
 
-    # try:
-    #     init_firebase()
-    #     for i in range(len(tables)):
-    #         new_file_name = f'{file_name}_{table_names[i]}.csv'
-    #         try:
-    #             upload_data_firebase(new_file_name, str(pd.DataFrame(tables[i]).to_csv()))
-    #         except Exception as e:
-    #             print(e)
-    # except Exception as e:
-    #     print(e)
+    try:
+        init_firebase()
+        for i in range(len(tables)):
+            new_file_name = f'{file_name}_{table_names[i]}.csv'
+            try:
+                upload_data_firebase(new_file_name, str(pd.DataFrame(tables[i]).to_csv()))
+            except Exception as e:
+                print(e)
+    except Exception as e:
+        print(e)
 
 
 if __name__ == '__main__':

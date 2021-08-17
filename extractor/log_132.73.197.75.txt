@@ -486,3 +486,72 @@ INFO 2021-08-15 17:29:07 BAD ACCOUNT velo.yan30@yandex.com - Switching to anothe
 ERROR 2021-08-15 18:09:38 Unexpected error...
 ERROR 2021-08-15 18:09:56 Unexpected error...
 ERROR 2021-08-15 18:10:14 Unexpected error...
+INFO 2021-08-17 12:52:10 STARTING FLOW ALL
+INFO 2021-08-17 12:54:51 https://www.strava.com/onboarding
+INFO 2021-08-17 12:54:59 https://www.strava.com/onboarding
+INFO 2021-08-17 12:55:07 LOGGED IN WITH velo.yan51@yandex.com, https://www.strava.com/onboarding
+INFO 2021-08-17 12:55:07 STARTING FLOW TEAM_IDS: [10, 11]
+INFO 2021-08-17 12:57:43 STARTING FLOW INDEX: 10_11
+INFO 2021-08-17 12:57:53 https://www.strava.com/onboarding
+INFO 2021-08-17 12:57:56 Fetching links for extractions 1 / 1
+INFO 2021-08-17 12:58:06 https://www.strava.com/onboarding
+INFO 2021-08-17 12:58:06 Fetching activity links for: Rider_link: https://www.strava.com/athletes/25605566, Rider name: bisolti alessandro, Rider ID: 103
+INFO 2021-08-17 12:58:10 Found activities: 5, year: 2020 month: 07
+INFO 2021-08-17 12:58:13 Found activities: 27, year: 2020 month: 08
+INFO 2021-08-17 12:58:17 Found activities: 24, year: 2020 month: 09
+INFO 2021-08-17 12:58:20 Found activities: 30, year: 2020 month: 10
+INFO 2021-08-17 12:58:23 Found activities: 9, year: 2020 month: 11
+INFO 2021-08-17 12:58:25 Found activities: 20, year: 2020 month: 12
+INFO 2021-08-17 12:58:28 Found activities: 20, year: 2021 month: 01
+INFO 2021-08-17 12:58:34 Found activities: 46, year: 2021 month: 02
+INFO 2021-08-17 12:58:38 Found activities: 26, year: 2021 month: 03
+INFO 2021-08-17 12:58:42 Found activities: 51, year: 2021 month: 04
+INFO 2021-08-17 12:58:47 Found activities: 29, year: 2021 month: 05
+INFO 2021-08-17 12:58:50 Found activities: 30, year: 2021 month: 06
+INFO 2021-08-17 12:58:55 Found activities: 58, year: 2021 month: 07
+INFO 2021-08-17 12:58:59 Found activities: 28, year: 2019 month: 07
+INFO 2021-08-17 12:59:02 Found activities: 26, year: 2019 month: 08
+INFO 2021-08-17 12:59:08 Found activities: 55, year: 2019 month: 09
+INFO 2021-08-17 12:59:08 STARTING FLOW ALL
+INFO 2021-08-17 12:59:17 STARTING FLOW INDEX: 15_16
+INFO 2021-08-17 12:59:25 https://www.strava.com/onboarding
+INFO 2021-08-17 12:59:29 Fetching links for extractions 1 / 1
+INFO 2021-08-17 12:59:39 https://www.strava.com/onboarding
+INFO 2021-08-17 12:59:39 Fetching activity links for: Rider_link: https://www.strava.com/pros/1796710, Rider name: cabot jérémy, Rider ID: 145
+INFO 2021-08-17 12:59:44 Found activities: 1, year: 2020 month: 07
+INFO 2021-08-17 12:59:47 Found activities: 24, year: 2020 month: 08
+INFO 2021-08-17 12:59:54 Found activities: 49, year: 2020 month: 09
+INFO 2021-08-17 13:00:00 Found activities: 25, year: 2020 month: 10
+INFO 2021-08-17 13:00:03 Found activities: 18, year: 2020 month: 11
+INFO 2021-08-17 13:00:05 Found activities: 24, year: 2020 month: 12
+INFO 2021-08-17 13:00:06 STARTING FLOW ALL
+INFO 2021-08-17 13:00:15 STARTING FLOW INDEX: 80_81
+INFO 2021-08-17 13:00:23 https://www.strava.com/onboarding
+INFO 2021-08-17 13:00:28 Fetching links for extractions 1 / 1
+INFO 2021-08-17 13:00:38 https://www.strava.com/onboarding
+INFO 2021-08-17 13:00:38 Fetching activity links for: Rider_link: https://www.strava.com/athletes/18885405, Rider name: tratnik jan, Rider ID: 872
+INFO 2021-08-17 13:00:43 Found activities: 7, year: 2020 month: 07
+INFO 2021-08-17 13:00:53 Found activities: 37, year: 2020 month: 08
+INFO 2021-08-17 13:00:57 Found activities: 30, year: 2020 month: 09
+INFO 2021-08-17 13:01:00 Found activities: 35, year: 2020 month: 10
+INFO 2021-08-17 13:01:01 STARTING FLOW ALL
+INFO 2021-08-17 13:05:22 STARTING FLOW INDEX: 80_81
+INFO 2021-08-17 13:05:22 STARTING FLOW ALL
+INFO 2021-08-17 13:05:29 STARTING FLOW INDEX: 0_1
+INFO 2021-08-17 13:05:39 https://www.strava.com/onboarding
+INFO 2021-08-17 13:05:42 Fetching links for extractions 1 / 1
+ERROR 2021-08-17 13:05:43 Problematic rider: Rider_link: https://www.strava.com/athletes/79259636, Rider name: random name, Rider ID: 11111111
+INFO 2021-08-17 13:05:51 https://www.strava.com/onboarding
+INFO 2021-08-17 13:06:00 LOGGED IN WITH velo.yan67@yandex.com, https://www.strava.com/onboarding
+INFO 2021-08-17 13:06:47 STARTING FLOW INDEX: 0_1
+INFO 2021-08-17 13:06:56 https://www.strava.com/onboarding
+INFO 2021-08-17 13:06:58 Fetching links for extractions 1 / 1
+ERROR 2021-08-17 13:06:59 Problematic rider: Rider_link: https://www.strava.com/athletes/79259636, Rider name: random name, Rider ID: 11111111
+INFO 2021-08-17 13:07:10 https://www.strava.com/onboarding
+INFO 2021-08-17 13:07:19 LOGGED IN WITH velo.yan4@yandex.com, https://www.strava.com/onboarding
+INFO 2021-08-17 13:08:17 STARTING FLOW INDEX: 0_1
+INFO 2021-08-17 13:08:27 https://www.strava.com/onboarding
+INFO 2021-08-17 13:08:29 Fetching links for extractions 1 / 1
+ERROR 2021-08-17 13:08:30 Problematic rider: Rider_link: https://www.strava.com/athletes/79259636, Rider name: random name, Rider ID: 11111111
+INFO 2021-08-17 13:08:38 https://www.strava.com/onboarding
+INFO 2021-08-17 13:08:47 LOGGED IN WITH velo.yan19@yandex.com, https://www.strava.com/onboarding

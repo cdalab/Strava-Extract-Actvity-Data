@@ -92,7 +92,26 @@ usernames = [
     r'velo.yan64@yandex.com',
     r'velo.yan65@yandex.com',
     r'velo.yan66@yandex.com',
-    r'velo.yan67@yandex.com'
+    r'velo.yan67@yandex.com',
+    r'velo1@yandex.com',
+    r'velo2@yandex.com',
+    r'velo3@yandex.com',
+    r'velo4@yandex.com',
+    r'velo5@yandex.com',
+    r'velo6@yandex.com',
+    r'velo7@yandex.com',
+    r'velo8@yandex.com',
+    r'velo9@yandex.com',
+    r'velo10@yandex.com',
+    r'velo11@yandex.com',
+    r'velo12@yandex.com',
+    r'velo13@yandex.com',
+    r'velo14@yandex.com',
+    r'velo14@yandex.com',
+    r'velo15@yandex.com',
+    r'velo16@yandex.com',
+    r'velo17@yandex.com',
+    r'velo18@yandex.com',
 
 ]
 
