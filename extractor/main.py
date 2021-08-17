@@ -1,5 +1,5 @@
 import sys
-import pickle5 as pk
+import pickle as pk
 import requests
 import pandas as pd
 from get_activities_data import Get_Activities_Data
