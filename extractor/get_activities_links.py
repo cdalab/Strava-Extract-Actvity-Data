@@ -69,7 +69,7 @@ class Get_Activities_Links():
             t.sleep(seconds_to_wait)
             self._open_driver()
         else:
-            log(self.browser.current_url)
+            log(self.browser.current_url, id=self.id)
 
 
     def _close_driver(self):
@@ -83,7 +83,7 @@ class Get_Activities_Links():
         try:
             for rider in self.riders:
                 self.browser.get(rider.rider_url)
-                log(f'Fetching links for extractions {i} / {len(self.riders)}')
+                log(f'Fetching links for extractions {i} / {len(self.riders)}', id=self.id)
                 t.sleep(1)
 
                 try:
@@ -145,7 +145,7 @@ class Get_Activities_Links():
 
         self._open_driver()
         for rider in self.riders:
-            log(f'Fetching activity links for: {rider}')
+            log(f'Fetching activity links for: {rider}', id=self.id)
             prev = set()
             curr = set()
             for link in rider.links:

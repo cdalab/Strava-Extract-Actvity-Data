@@ -73,7 +73,7 @@ class Get_Activities_Data:
             self._open_driver()
         elif not self.browser.current_url == 'https://www.strava.com/onboarding':
             # BAD ACCOUNT! need
-            log(f"BAD ACCOUNT {user} - Switching to another", 'ERROR', id=self.id)
+            log(f"BAD ACCOUNT {user} {self.browser.current_url}: SWITCHING ACCOUNT", 'ERROR', id=self.id)
 
             self._close_driver()
             self._open_driver()
@@ -269,7 +269,8 @@ class Get_Activities_Data:
 
         data = {}
         t.sleep(0.5)
-        self.browser.get(url + '/analysis')
+        curr_url = url + '/analysis'
+        self.browser.get(curr_url)
         t.sleep(0.5)
         self._check_if_too_many_requests(url)
         #     print(browser.current_url)
@@ -336,7 +337,7 @@ class Get_Activities_Data:
                 e_m_m_m = extract_mean_max_metrics(analysis_soup)
                 data.update(e_m_m_m)
         except Exception as e:
-            log(f'BAD LINK: | {url} | {e}' 'ERROR')
+            log(f'BAD LINK: | {curr_url} | {e}' 'ERROR', id=self.id)
 
         return data
 
@@ -349,7 +350,8 @@ class Get_Activities_Data:
             if not (j == 0 and zones_distribution_exist or j == 1 and heart_rate_exists):
                 continue
             t.sleep(0.5)
-            self.browser.get(url + extension)
+            curr_url = url + extension
+            self.browser.get(curr_url)
             t.sleep(0.5)
             self._check_if_too_many_requests(url)
             #         print(browser.current_url)
@@ -388,7 +390,7 @@ class Get_Activities_Data:
                         data[f'{prefixes[j]}_zone_{i}_min'] = None
 
             except Exception as e:
-                log(f'BAD LINK: | {url} | {e}' 'ERROR')
+                log(f'BAD LINK: | {curr_url} | {e}' 'ERROR', id=self.id)
             finally:
                 j += 1
 
@@ -406,7 +408,7 @@ class Get_Activities_Data:
         i = 1
 
         for rider in self.riders:
-            log(f"WATCHING RIDER: {rider}")
+            log(f"WATCHING RIDER: {rider}", id=self.id)
             for link in list(rider.activity_links):
                 if not i >= self.start_from_index:
                     i += 1
@@ -439,8 +441,6 @@ class Get_Activities_Data:
                     msg = f'{i} / {total_links},G {link}'
 
                     log(msg, id=self.id)
-
-
 
                 except Exception as e:
                     log(f'{i} / {total_links}, BAD LINK: | {link} | {e}', 'ERROR', id=self.id)

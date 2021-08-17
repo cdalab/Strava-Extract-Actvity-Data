@@ -193,21 +193,20 @@ if __name__ == '__main__':
                 if len(team_ids) == 0:
                     teams_ids = None
                 flow_riders = flow(file_name, ip, team_ids=team_ids)
-                log(f'STARTING FLOW TEAM_IDS: {team_ids}')
+                log(f'STARTING FLOW TEAM_IDS: {team_ids}', id=ip)
                 saving_file_name = f'flow/{file_name}_team_id_{team_ids}'
             elif i == '-r':
 
                 low_index = int(sys.argv[4])
                 high_index = int(sys.argv[5])
-                log(f'STARTING FLOW INDEX: {low_index}_{high_index}')
+                log(f'STARTING FLOW INDEX: {low_index}_{high_index}', id=ip)
                 flow_riders = flow(file_name, ip, start_index=low_index, end_index=high_index)
                 saving_file_name = f'flow/{file_name}_index_{low_index}_{high_index}'
 
         except:
+            log(f'STARTING FLOW ALL', id=ip)
             flow_riders = flow(file_name, ip)
             saving_file_name = f'flow/{file_name}_all'
-            log(f'STARTING FLOW ALL')
-
 
         save_csv(saving_file_name, flow_riders)
 
