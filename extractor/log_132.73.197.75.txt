@@ -555,3 +555,11 @@ INFO 2021-08-17 13:08:29 Fetching links for extractions 1 / 1
 ERROR 2021-08-17 13:08:30 Problematic rider: Rider_link: https://www.strava.com/athletes/79259636, Rider name: random name, Rider ID: 11111111
 INFO 2021-08-17 13:08:38 https://www.strava.com/onboarding
 INFO 2021-08-17 13:08:47 LOGGED IN WITH velo.yan19@yandex.com, https://www.strava.com/onboarding
+INFO 2021-08-17 14:04:58 STARTING FLOW INDEX: 0_1
+INFO 2021-08-17 14:04:58 STARTING FLOW ALL
+INFO 2021-08-17 14:15:45 STARTING FLOW INDEX: 0_1
+INFO 2021-08-17 14:15:55 https://www.strava.com/onboarding
+INFO 2021-08-17 14:15:57 Fetching links for extractions 1 / 1
+ERROR 2021-08-17 14:15:58 Problematic rider: Rider_link: https://www.strava.com/athletes/79259636, Rider name: random name, Rider ID: 11111111
+INFO 2021-08-17 14:16:08 https://www.strava.com/onboarding
+INFO 2021-08-17 14:16:16 LOGGED IN WITH velo.yan13@yandex.com, https://www.strava.com/onboarding
