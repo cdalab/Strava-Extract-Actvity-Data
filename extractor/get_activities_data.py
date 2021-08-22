@@ -1,6 +1,8 @@
 import time as t
 import re
 import random
+import csv
+import os.path
 from datetime import datetime
 
 from bs4 import BeautifulSoup
@@ -20,10 +22,11 @@ ONBOARD_URL = 'https://www.strava.com/onboarding'
 
 class Get_Activities_Data:
 
-    def __init__(self, riders, id, start_from_index = 0,):
+    def __init__(self, riders, id, saving_file_name, start_from_index = 0):
         self.riders = riders
         self.id = id
         self.start_from_index = start_from_index
+        self.saving_file_name = saving_file_name
         self.STRAVA_URL = 'https://www.strava.com'
         self.curr_user = ''
 
@@ -108,8 +111,10 @@ class Get_Activities_Data:
         # print(self.browser.current_url)
 
         activity_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-
-        data['type'] = activity_soup.find('span', {'class': 'title'}).text.split('\n')[-2]
+        try:
+            data['type'] = activity_soup.find('span', {'class': 'title'}).text.split('\n')[-2]
+        except:
+            pass
         data['workout_strava_id'] = re.findall('.*/([0-9]+)$',url)[0]
 
         strong_data = activity_soup.find_all("strong")
@@ -323,9 +328,10 @@ class Get_Activities_Data:
                 analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
                 axis = analysis_soup.find('g', {'class':'axis xaxis'})
                 tick = axis.find_all('g', {'class': 'tick'})[1]
-                time = list(reversed(tick.find('text').text.replace('s', '').split(':')))[0]
+
 
                 try:
+                    time = list(reversed(tick.find('text').text.replace('s', '').split(':')))[0]
                     int(time)
                     loading = False
                 except:
@@ -396,6 +402,16 @@ class Get_Activities_Data:
 
         return data
 
+    def _append_row_to_csv(self, file_name, row):
+
+        file_exists = os.path.isfile(file_name+'.csv')
+        with open(file_name+'.csv', 'a') as f:
+            dict_writer = csv.DictWriter(f, fieldnames=row.keys())
+
+            if not file_exists:
+                dict_writer.writeheader()
+            dict_writer.writerow(row)
+
     def _rand_sleep(self):
         pass
 
@@ -433,6 +449,15 @@ class Get_Activities_Data:
                     data.update(zones_distribution)
 
                     workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found = divide_to_tables(data, rider.rider_id)
+                    try:
+                        self._append_row_to_csv(self.saving_file_name+'_workout', workout_row)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_hrs', workout_hrs_row)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_cadences', workout_cadences_row)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_powers', workout_powers_row)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_speeds', workout_speeds_row)
+                    except Exception as e:
+                        log(f'could not save locally {e}', 'ERROR', id=self.id)
+
                     rider.workout.append(workout_row)
                     rider.workout_hrs.append(workout_hrs_row)
                     rider.workout_cadences.append(workout_cadences_row)

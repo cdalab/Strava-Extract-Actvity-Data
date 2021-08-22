@@ -1,5 +1,5 @@
 import sys
-import pickle as pk
+import pickle5 as pk
 import requests
 import pandas as pd
 from get_activities_data import Get_Activities_Data
@@ -27,16 +27,16 @@ def link(riders, extract_from_year, extract_to_year, extract_from_month, extract
     return links_extractor.riders
 
 
-def data(riders, riders_range_low, riders_range_high, ip, start_from_index):
+def data(saving_file_name, riders, riders_range_low, riders_range_high, ip, start_from_index):
 
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Data(riders[riders_range_low:riders_range_high], ip, start_from_index)
+    data_extractor = Get_Activities_Data(riders[riders_range_low:riders_range_high], id=ip, saving_file_name=saving_file_name, start_from_index=start_from_index)
     data_extractor.run()
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
     return data_extractor.riders
 
 
-def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
+def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
 
     print("---- START CREATING LIST OF RIDERS ----")
 
@@ -78,7 +78,7 @@ def flow(csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
     print("---- FINISHED EXTRACTING ACTIVITY LINKS ----")
 
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Data(riders, ip)
+    data_extractor = Get_Activities_Data(riders, id=ip, saving_file_name=saving_file_name)
     data_extractor.run()
     riders = data_extractor.riders
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
@@ -103,9 +103,9 @@ def save_csv(file_name, riders):
     table_names = ['workout', 'workout_hrs', 'workout_cadences', 'workout_powers', 'workout_speeds']
     tables = [workout, workout_hrs, workout_cadences, workout_powers, workout_speeds]
 
-    for i in range(len(tables)):
-        new_file_name = f'{file_name}_{table_names[i]}.csv'
-        pd.DataFrame(tables[i]).to_csv(new_file_name)
+    # for i in range(len(tables)):
+    #     new_file_name = f'{file_name}_{table_names[i]}.csv'
+    #     pd.DataFrame(tables[i]).to_csv(new_file_name)
 
     try:
         init_firebase()
@@ -122,7 +122,7 @@ def save_csv(file_name, riders):
 if __name__ == '__main__':
 
 
-    ip = requests.get('http://ipinfo.io/json').json()['ip']
+    id = requests.get('http://ipinfo.io/json').json()['ip']
 
     activity_type = sys.argv[1]
     file_name = sys.argv[2]
@@ -155,7 +155,7 @@ if __name__ == '__main__':
         data_riders = None
 
         try:
-            data_riders = data(riders_load, riders_range_low, riders_range_high, ip, start_from_index)
+            data_riders = data(saving_file_name, riders_load, riders_range_low, riders_range_high, id, start_from_index)
         except Exception as e:
             print(e)
 
@@ -183,8 +183,10 @@ if __name__ == '__main__':
         # run example: main.py flow rider_csv
         # run example: main.py flow rider_csv -i 100 153 164
         # run example: main.py flow rider_csv -r 10 20
+
         saving_file_name = ""
         flow_riders = []
+        saving_folder = 'flow/'
         try:
             i = sys.argv[3]
             if i == "-i":
@@ -192,21 +194,25 @@ if __name__ == '__main__':
                 team_ids = [int(team) for team in team_ids]
                 if len(team_ids) == 0:
                     teams_ids = None
-                flow_riders = flow(file_name, ip, team_ids=team_ids)
-                log(f'STARTING FLOW TEAM_IDS: {team_ids}', id=ip)
+
                 saving_file_name = f'flow/{file_name}_team_id_{team_ids}'
+                log(f'STARTING FLOW TEAM_IDS: {team_ids}', id=id)
+                flow_riders = flow(saving_file_name, file_name, id, team_ids=team_ids)
+
             elif i == '-r':
 
                 low_index = int(sys.argv[4])
                 high_index = int(sys.argv[5])
-                log(f'STARTING FLOW INDEX: {low_index}_{high_index}', id=ip)
-                flow_riders = flow(file_name, ip, start_index=low_index, end_index=high_index)
                 saving_file_name = f'flow/{file_name}_index_{low_index}_{high_index}'
+                log(f'STARTING FLOW INDEX: {low_index}_{high_index}', id=id)
+                flow_riders = flow(saving_file_name, file_name, id, start_index=low_index, end_index=high_index)
+
 
         except:
-            log(f'STARTING FLOW ALL', id=ip)
-            flow_riders = flow(file_name, ip)
+            log(f'STARTING FLOW ALL', id=id)
             saving_file_name = f'flow/{file_name}_all'
+            flow_riders = flow(saving_file_name, file_name, id)
+
 
         save_csv(saving_file_name, flow_riders)
 
