@@ -405,7 +405,7 @@ class Get_Activities_Data:
     def _append_row_to_csv(self, file_name, row):
 
         file_exists = os.path.isfile(file_name+'.csv')
-        with open(file_name+'.csv', 'a') as f:
+        with open(file_name+'.csv', 'a', encoding='latin-1') as f:
             dict_writer = csv.DictWriter(f, fieldnames=row.keys())
 
             if not file_exists:
