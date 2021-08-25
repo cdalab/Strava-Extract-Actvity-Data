@@ -3,6 +3,7 @@ import re
 import random
 import csv
 import os.path
+import pandas as pd
 from datetime import datetime
 
 from bs4 import BeautifulSoup
@@ -402,15 +403,14 @@ class Get_Activities_Data:
 
         return data
 
-    def _append_row_to_csv(self, file_name, row):
-
-        file_exists = os.path.isfile(file_name+'.csv')
-        with open(file_name+'.csv', 'a', encoding='latin-1') as f:
-            dict_writer = csv.DictWriter(f, fieldnames=row.keys())
-
+    def _append_row_to_csv(self, file_name, row, columns):
+        df = pd.DataFrame([row])
+        file_exists = os.path.isfile(file_name + '.csv')
+        with open(file_name + '.csv', 'a', newline='\n') as f:
             if not file_exists:
-                dict_writer.writeheader()
-            dict_writer.writerow(row)
+                df.to_csv(f, header=True, columns=columns)
+            else:
+                df.to_csv(f, header=False, columns=columns)
 
     def _rand_sleep(self):
         pass
@@ -450,11 +450,11 @@ class Get_Activities_Data:
 
                     workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found = divide_to_tables(data, rider.rider_id)
                     try:
-                        self._append_row_to_csv(self.saving_file_name+'_workout', workout_row)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_hrs', workout_hrs_row)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_cadences', workout_cadences_row)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_powers', workout_powers_row)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_speeds', workout_speeds_row)
+                        self._append_row_to_csv(self.saving_file_name+'_workout', workout_row, workout_columns)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_hrs', workout_hrs_row, workout_hrs_columns)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_cadences', workout_cadences_row, workout_cadences_columns)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_powers', workout_powers_row, workout_powers_columns)
+                        self._append_row_to_csv(self.saving_file_name+'_workout_speeds', workout_speeds_row, workout_speeds_columns)
                     except Exception as e:
                         log(f'could not save locally {e}', 'ERROR', id=self.id)
 
