@@ -196,6 +196,10 @@ class Get_Activities_Data:
             except Exception as e:
                 continue
         #data['temp_avg'] = (float(re.sub('\D', '', activity_soup.find('div', {'class': 'weather-value'}).text)) - 32 ) * (5/9)
+        try:
+            data['workout_location'] = activity_soup.find('span', {'class':'location'}).text
+        except:
+            pass
 
         tr = activity_soup.find_all("tr")
         tr_datas = BeautifulSoup(str(tr), "html.parser").get_text()
@@ -244,6 +248,7 @@ class Get_Activities_Data:
 
 
         data['workout_title'] = activity_soup.find('h1').text
+
         data['athelete_name'] = activity_soup.find('a', {'class':'minimal'}).text
 
         analysis_exists = False
@@ -273,26 +278,39 @@ class Get_Activities_Data:
 
     def _extract_activity_analysis(self, url):
 
+        
         data = {}
+        
         t.sleep(0.5)
         curr_url = url + '/analysis'
         self.browser.get(curr_url)
-        t.sleep(0.5)
-        self._check_if_too_many_requests(url)
+
+        self._check_if_too_many_requests(curr_url)
+        
+        
         #     print(browser.current_url)
         try:
             analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
             chart = analysis_soup.find_all('g', {'class': "label-box"})
             svg = analysis_soup.find_all('defs')
-
-            timeout = t.time() + 3
+            before = t.time()
+            dead_line = 5
+            timeout = t.time() + dead_line
+            too_much = t.time() + 50
             while len(chart) == 0 or len(svg) == 0: # Wait for load
                 analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
                 chart = analysis_soup.find_all('g', {'class': "label-box"})
                 svg = analysis_soup.find_all('defs')
-                if t.time() > timeout:
+                if t.time() > too_much:
                     return {}
+                elif t.time() > timeout:
+                    self._switchAccount(curr_url)
+                    timeout = t.time() + dead_line
+
                 t.sleep(0.5)
+            after = t.time() - before
+            print(f'loaded: {after}')
+
 
             # Raw data (speed, est power, heart rate)
             for label_box in chart:
@@ -319,7 +337,7 @@ class Get_Activities_Data:
             button = self.browser.find_element_by_css_selector("g[data-type='time']")
 
             button.click()
-            t.sleep(0.2)
+            
 
             timeout = t.time() + 5
             loading = True
@@ -335,16 +353,19 @@ class Get_Activities_Data:
                     time = list(reversed(tick.find('text').text.replace('s', '').split(':')))[0]
                     int(time)
                     loading = False
-                except:
+                except Exception as e:
                     if t.time() > timeout:
+                        print('didnt load analysis metrics', e,url + '/analysis')
                         break
 
             if not loading:
                 analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
                 e_m_m_m = extract_mean_max_metrics(analysis_soup)
                 data.update(e_m_m_m)
+            
+                
         except Exception as e:
-            log(f'BAD LINK: | {curr_url} | {e}' 'ERROR', id=self.id)
+            log(f'BAD LINK: | {curr_url} | {e}' 'WARINING', id=self.id)
 
         return data
 
@@ -356,11 +377,11 @@ class Get_Activities_Data:
         for extension in url_extensions:
             if not (j == 0 and zones_distribution_exist or j == 1 and heart_rate_exists):
                 continue
-            t.sleep(0.5)
+
             curr_url = url + extension
             self.browser.get(curr_url)
             t.sleep(0.5)
-            self._check_if_too_many_requests(url)
+            self._check_if_too_many_requests(curr_url)
             #         print(browser.current_url)
             try:
                 zone_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -397,20 +418,13 @@ class Get_Activities_Data:
                         data[f'{prefixes[j]}_zone_{i}_min'] = None
 
             except Exception as e:
-                log(f'BAD LINK: | {curr_url} | {e}' 'ERROR', id=self.id)
+                log(f'BAD LINK: | {curr_url} | {e}' 'WARINING', id=self.id)
+
             finally:
                 j += 1
 
         return data
 
-    def _append_row_to_csv(self, file_name, row, columns):
-        df = pd.DataFrame([row])
-        file_exists = os.path.isfile(file_name + '.csv')
-        with open(file_name + '.csv', 'a', newline='\n') as f:
-            if not file_exists:
-                df.to_csv(f, header=True, columns=columns)
-            else:
-                df.to_csv(f, header=False, columns=columns)
 
     def _rand_sleep(self):
         pass
@@ -450,11 +464,11 @@ class Get_Activities_Data:
 
                     workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found = divide_to_tables(data, rider.rider_id)
                     try:
-                        self._append_row_to_csv(self.saving_file_name+'_workout', workout_row, workout_columns)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_hrs', workout_hrs_row, workout_hrs_columns)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_cadences', workout_cadences_row, workout_cadences_columns)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_powers', workout_powers_row, workout_powers_columns)
-                        self._append_row_to_csv(self.saving_file_name+'_workout_speeds', workout_speeds_row, workout_speeds_columns)
+                        append_row_to_csv(self.saving_file_name+'_workout', workout_row, workout_columns)
+                        append_row_to_csv(self.saving_file_name+'_workout_hrs', workout_hrs_row, workout_hrs_columns)
+                        append_row_to_csv(self.saving_file_name+'_workout_cadences', workout_cadences_row, workout_cadences_columns)
+                        append_row_to_csv(self.saving_file_name+'_workout_powers', workout_powers_row, workout_powers_columns)
+                        append_row_to_csv(self.saving_file_name+'_workout_speeds', workout_speeds_row, workout_speeds_columns)
                     except Exception as e:
                         log(f'could not save locally {e}', 'ERROR', id=self.id)
 
@@ -469,7 +483,8 @@ class Get_Activities_Data:
 
                 except Exception as e:
                     log(f'{i} / {total_links}, BAD LINK: | {link} | {e}', 'ERROR', id=self.id)
-                    continue
+                    if 'invalid session id' in f'{e}':
+                        self._switchAccount(link)
 
                 finally:
                     i += 1

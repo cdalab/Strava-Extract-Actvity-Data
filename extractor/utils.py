@@ -1,8 +1,11 @@
+import os
 import re
 import numpy as np
 import time as t
 import random
 from datetime import datetime
+
+import pandas as pd
 from usernames import *
 from selenium import webdriver
 
@@ -10,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # columns!
 workout_columns = ['workout_id', 'workout_tp_id', 'workout_strava_id', 'cyclist_id', 'type', 'tags', 'workout_week',
-                   'workout_month', 'workout_datetime', 'total_time', 'workout_title', 'cyclist_mass', 'elevation_gain',
+                   'workout_month', 'workout_datetime','workout_location', 'total_time', 'workout_title', 'cyclist_mass', 'elevation_gain',
                    'elevation_loss', 'elevation_average', 'elevation_maximum', 'elevation_minimum', 'temp_avg',
                    'temp_min', 'temp_max', '_1000_to_1500_m', '_1500_to_2000_m', '_2000_tp_2500_m', '_2500_to_3000_m',
                    '_3000_to_3500_m', 'relative_effort', 'training_load', 'intensity', 'distance', 'energy', 'calories',
@@ -383,6 +386,16 @@ def extract_graph_elevation_distance(soup):
     dic['elevation_average'] = mean_
 
     return dic
+
+
+def append_row_to_csv(file_name, row, columns):
+        df = pd.DataFrame([row])
+        file_exists = os.path.isfile(file_name + '.csv')
+        with open(file_name + '.csv', 'a', newline='\n', errors='ignore') as f:
+            if not file_exists:
+                df.to_csv(f, header=True, columns=columns)
+            else:
+                df.to_csv(f, header=False, columns=columns)
 
 
 def divide_to_tables(data, rider_id):

@@ -9,12 +9,10 @@ from utils import log
 
 class Get_Activities_Links():
 
-    def __init__(self, riders, id, years = tuple(range(2015,2022)), months = tuple(range(1,13))):
+    def __init__(self, riders, id):
         self.activity_links = set()
         self.id = id
         self.riders = riders
-        self.years = years
-        self.months = months
         self.STRAVA_URL = 'https://www.strava.com'
         self.curr_user = ''
 
@@ -110,20 +108,20 @@ class Get_Activities_Links():
                         interval1 = re.search("interval=.*&", link).group(0)
                         year = int(interval1[-7:-3])
 
-                        if year-1 in self.years:
+                        if year-1 in rider.years:
 
                             for month in range(7,13):
-                                if month not in self.months:
+                                if month not in rider.months:
                                     continue
 
                                 month_string = str(month) if month >= 10 else f'0{month}'
                                 interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year-1)+month_string)
                                 rider.links.append(link.replace(interval1, interval2))
 
-                        if year in self.years:
+                        if year in rider.years:
 
                             for month in range(1,8):
-                                if month not in self.months:
+                                if month not in rider.months:
                                     continue
 
                                 interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year)+f'0{month}')
@@ -152,7 +150,7 @@ class Get_Activities_Links():
 
                 try:
                     year_link = int(re.search('interval=.*&', link).group(0)[9:-3])
-                    if year_link not in self.years:
+                    if year_link not in rider.years:
                         continue
 
                     self.browser.get(link)

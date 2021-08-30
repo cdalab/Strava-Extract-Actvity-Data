@@ -54,7 +54,14 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
     for index, row in df.iterrows():
 
         if i >= start_index and i < end_index:
-            rider = Rider(row['full_name'], row['url'], row['cyclist_id'])
+            try:
+                rider_years = row['year'].split(',')
+                rider = Rider(row['full_name'], row['url'], row['cyclist_id'], years=rider_years)
+            except:
+                #print('no years...')
+                rider = Rider(row['full_name'], row['url'], row['cyclist_id'])
+
+
             try:
                 rider_teams = row['team_pcs_id'].split(',')
             except:
