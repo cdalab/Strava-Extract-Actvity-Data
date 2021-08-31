@@ -304,10 +304,11 @@ class Get_Activities_Data:
                 if t.time() > too_much:
                     return {}
                 elif t.time() > timeout:
+                    log('did not load analysis graphs. SWITCHING ACCOUNT', 'WARNING', id=self.id)
                     self._switchAccount(curr_url)
                     timeout = t.time() + dead_line
 
-                t.sleep(0.5)
+                t.sleep(0.1)
             after = t.time() - before
             print(f'loaded: {after}')
 
@@ -337,17 +338,15 @@ class Get_Activities_Data:
             button = self.browser.find_element_by_css_selector("g[data-type='time']")
 
             button.click()
-            
 
             timeout = t.time() + 5
             loading = True
             while loading:
-                t.sleep(0.5)
+                t.sleep(0.1)
 
                 analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
                 axis = analysis_soup.find('g', {'class':'axis xaxis'})
                 tick = axis.find_all('g', {'class': 'tick'})[1]
-
 
                 try:
                     time = list(reversed(tick.find('text').text.replace('s', '').split(':')))[0]
@@ -355,8 +354,10 @@ class Get_Activities_Data:
                     loading = False
                 except Exception as e:
                     if t.time() > timeout:
-                        print('didnt load analysis metrics', e,url + '/analysis')
+                        print('didnt load analysis metrics', e, url + '/analysis')
                         break
+                    button = self.browser.find_element_by_css_selector("g[data-type='time']")
+                    button.click()
 
             if not loading:
                 analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -382,6 +383,7 @@ class Get_Activities_Data:
             self.browser.get(curr_url)
             t.sleep(0.5)
             self._check_if_too_many_requests(curr_url)
+
             #         print(browser.current_url)
             try:
                 zone_soup = BeautifulSoup(self.browser.page_source, 'html.parser')

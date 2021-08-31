@@ -1,5 +1,8 @@
 
 import requests
+
+from firebase import *
+from rider import Rider
 from utils import *
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -13,7 +16,7 @@ ONBOARD_URL = 'https://www.strava.com/onboarding'
 
 class Fill_location():
 
-    def __init__(self, file_name,start, end, id):
+    def __init__(self, file_name,start, end, id, save_file_name):
         self.file_name = file_name
         self.STRAVA_URL = 'https://www.strava.com'
         self.ACTIVITY_URL = 'https://www.strava.com/activities/'
@@ -21,6 +24,7 @@ class Fill_location():
         self.curr_user = ''
         self.start = start
         self.end = end
+        self.save_file_name = save_file_name
 
     def _check_if_too_many_requests(self, url_to_refresh):
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -96,8 +100,8 @@ class Fill_location():
 
     def fill(self):
         self._open_driver()
-        df = pd.read_csv(self.file_name+'.csv')
-        for index, row in df.iterrows():
+        self.df = pd.read_csv(self.file_name+'.csv')
+        for index, row in self.df.iterrows():
             if index < self.start or index >= self.end:
                 continue
             url = self.ACTIVITY_URL + str(row['workout_strava_id'])
@@ -111,26 +115,38 @@ class Fill_location():
                 t.sleep(0.5)
                 try:
                     row['workout_location'] = activity_soup.find('span', {'class': 'location'}).text
-                    append_row_to_csv(self.file_name+'_fill_location', row, workout_columns)
-                    log(f'{index} / {len(df)} | {url} |', id=self.id)
+                    append_row_to_csv(self.save_file_name, row, workout_columns)
+                    log(f'{index} / {self.end-self.start} | {url} |', id=self.id)
                     break
-                except:
+                except Exception as e:
                     if t.time() > timeout:
                         row['workout_location'] = ''
-                        append_row_to_csv(self.file_name + '_fill_location' + f'{self.start}_{self.end}', row, workout_columns)
-                        log(f'Failed to find location | {url} |','ERROR', id=self.id)
+                        append_row_to_csv(self.save_file_name, row, workout_columns)
+                        log(f'Failed to find location | {url} | {e}','ERROR', id=self.id)
                         break
             
 
         self._close_driver()
 
 
-start = sys.argv[1]
-end = sys.argv[2]
+start = int(sys.argv[1])
+end = int(sys.argv[2])
 
+
+save_file_name = f'fill/workout_fill_location_{start}_{end}'
 id = requests.get('http://ipinfo.io/json').json()['ip'] + '_location'
-fill_location = Fill_location('data/workout',start, end, id)
+fill_location = Fill_location('data/filltered_workouts',start, end, id, save_file_name)
 fill_location.fill()
+
+try:
+    init_firebase()
+    upload_data_firebase(save_file_name, str(fill_location.df.to_csv()))
+    log(f'SAVED TO FIREEBAE', id=id)
+except Exception as e:
+    print(e)
+
+
+
 
 
 

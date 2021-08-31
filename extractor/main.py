@@ -220,7 +220,45 @@ if __name__ == '__main__':
             saving_file_name = f'flow/{file_name}_all'
             flow_riders = flow(saving_file_name, file_name, id)
 
-
         save_csv(saving_file_name, flow_riders)
+
+    elif activity_type == 'actv':
+
+        print("---- START FETCH ACTIVITIES ----")
+        # run example: main.py actv strava_ids 1 100
+        # run example: main.py actv strava_ids
+
+        riders_range_low = int(sys.argv[3])
+        riders_range_high = int(sys.argv[4])
+
+        df = pd.read_csv(f'data/{file_name}.csv')
+        print(len(df))
+        riders_dic = {}
+        i = -1
+        for index, row in df.iterrows():
+            i += 1
+            if i < riders_range_low or i >= riders_range_high:
+                continue
+
+            if row.cyclist_id not in riders_dic:
+                riders_dic[row.cyclist_id] = Rider(rider_name='', rider_url='',rider_id=row.cyclist_id)
+            url = f"https://www.strava.com/activities/{row.workout_strava_id}"
+            riders_dic[row.cyclist_id].activity_links.add(url)
+
+
+
+        saving_file_name = f'actv/{file_name}_{riders_range_low}_{riders_range_high}'
+
+        data_riders = None
+        try:
+            riders = list(riders_dic.values())
+            data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id, 0)
+        except Exception as e:
+            print(e)
+
+        save_csv(saving_file_name, data_riders)
+
+
+
 
     print("---- FINISH ----")
