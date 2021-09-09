@@ -54,18 +54,19 @@ class Get_Activities_Links():
 
         self.browser.find_element_by_id("login-button").click()
         t.sleep(1)
-        if not self.browser.current_url == 'https://www.strava.com/onboarding':
-            # BAD ACCOUNT! need
-            log(f"BAD ACCOUNT {user} - Switching to another", id=self.id)
-            self._close_driver()
-            self._open_driver()
-        elif self.browser.current_url == 'https://www.strava.com/login':
+        if self.browser.current_url == 'https://www.strava.com/login':
             # ip blocked...
-            seconds_to_wait = 300
-            log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", id=self.id)
+            seconds_to_wait = 1801
+            log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", 'WARNING',id=self.id)
             self._close_driver()
             t.sleep(seconds_to_wait)
             self._open_driver()
+        elif not self.browser.current_url == 'https://www.strava.com/onboarding':
+            # BAD ACCOUNT! need
+            log(f"BAD ACCOUNT {user} {self.browser.current_url} - Switching to another",'WARNING', id=self.id)
+            self._close_driver()
+            self._open_driver()
+
         else:
             log(self.browser.current_url, id=self.id)
 

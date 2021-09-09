@@ -71,13 +71,13 @@ class Get_Activities_Data:
         if self.browser.current_url == LOGIN_URL:
             # ip blocked...
 
-            log(f"IP BLOCKED - waiting for {LOGGED_OUT_SLEEP} seconds.", 'ERROR', id=self.id)
+            log(f"IP BLOCKED - waiting for {LOGGED_OUT_SLEEP} seconds.", 'WARNING', id=self.id)
             self._close_driver()
             t.sleep(LOGGED_OUT_SLEEP)
             self._open_driver()
         elif not self.browser.current_url == 'https://www.strava.com/onboarding':
             # BAD ACCOUNT! need
-            log(f"BAD ACCOUNT {user} {self.browser.current_url}: SWITCHING ACCOUNT", 'ERROR', id=self.id)
+            log(f"BAD ACCOUNT {user} {self.browser.current_url}: SWITCHING ACCOUNT", 'WARNING', id=self.id)
 
             self._close_driver()
             self._open_driver()
