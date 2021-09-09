@@ -226,7 +226,7 @@ if __name__ == '__main__':
 
         print("---- START FETCH ACTIVITIES ----")
         # run example: main.py actv strava_ids 1 100
-        # run example: main.py actv strava_ids
+        # run example: main.py actc strava_ids 1 100 -i 20
 
         riders_range_low = int(sys.argv[3])
         riders_range_high = int(sys.argv[4])
@@ -245,14 +245,18 @@ if __name__ == '__main__':
             url = f"https://www.strava.com/activities/{row.workout_strava_id}"
             riders_dic[row.cyclist_id].activity_links.add(url)
 
-
-
-        saving_file_name = f'actv/{file_name}_{riders_range_low}_{riders_range_high}'
-
         data_riders = None
+        riders = list(riders_dic.values())
+        saving_file_name = f'actv/{file_name}_{riders_range_low}_{riders_range_high}'
         try:
-            riders = list(riders_dic.values())
-            data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id, 0)
+
+            try:
+                i = sys.argv[5]
+                if i == '-i':
+                    start_from_index =  int(sys.argv[6])
+                    data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id, start_from_index=start_from_index)
+            except:
+                data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id, 0)
         except Exception as e:
             print(e)
 
