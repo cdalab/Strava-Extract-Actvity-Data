@@ -131,6 +131,13 @@ if __name__ == '__main__':
 
     id = requests.get('http://ipinfo.io/json').json()['ip']
 
+
+    log(f'', id=id)
+    log(f'', id=id)
+    log(f'====================================================================', id=id)
+    log(f'{sys.argv}', id=id)
+    log(f'', id=id)
+    log(f'', id=id)
     activity_type = sys.argv[1]
     file_name = sys.argv[2]
 

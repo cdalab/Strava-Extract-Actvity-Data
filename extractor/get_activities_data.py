@@ -55,6 +55,7 @@ class Get_Activities_Data:
 
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
+        options.add_argument('--no-sandbox')
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
         URL = self.STRAVA_URL + '/login'
@@ -420,7 +421,7 @@ class Get_Activities_Data:
                         data[f'{prefixes[j]}_zone_{i}_min'] = None
 
             except Exception as e:
-                log(f'BAD LINK: | {curr_url} | {e}' 'WARINING', id=self.id)
+                log(f'BAD LINK: | {curr_url} | {e}', 'WARNING', id=self.id)
 
             finally:
                 j += 1
