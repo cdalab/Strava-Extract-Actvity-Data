@@ -87,7 +87,7 @@ class Get_Activities_Data:
 
             self._close_driver()
             self._open_driver()
-            t.sleep(300)
+
 
         else:
             log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
