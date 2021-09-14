@@ -18,6 +18,7 @@ MAX_RAND_SLEEP = 20
 LOGGED_OUT_SLEEP = 1801
 LOGIN_URL = 'https://www.strava.com/login'
 ONBOARD_URL = 'https://www.strava.com/onboarding'
+DASHBOARD_URL = 'https://www.strava.com/dashboard'
 
 
 
@@ -44,6 +45,10 @@ class Get_Activities_Data:
         self._close_driver()
         self._open_driver()
         self.browser.get(url_to_refresh)
+        t.sleep(0.5)
+
+    def _restart_browser(self):
+        self._open_driver()
         t.sleep(0.5)
 
     def _get_username(self):
@@ -76,7 +81,7 @@ class Get_Activities_Data:
             self._close_driver()
             t.sleep(LOGGED_OUT_SLEEP)
             self._open_driver()
-        elif not self.browser.current_url == 'https://www.strava.com/onboarding':
+        elif not self.browser.current_url == ONBOARD_URL and not self.browser.current_url == DASHBOARD_URL:
             # BAD ACCOUNT! need
             log(f"BAD ACCOUNT {user} {self.browser.current_url}: SWITCHING ACCOUNT", 'WARNING', id=self.id)
 
@@ -367,7 +372,7 @@ class Get_Activities_Data:
             
                 
         except Exception as e:
-            log(f'BAD LINK: | {curr_url} | {e}' 'WARINING', id=self.id)
+            log(f'BAD LINK: | {curr_url} | {e}', 'WARNING', id=self.id)
 
         return data
 
@@ -446,9 +451,7 @@ class Get_Activities_Data:
                 if not i >= self.start_from_index:
                     i += 1
                     continue
-
                 data = {}
-
                 try:
                     if self.browser.current_url == LOGIN_URL:
                         self._close_driver()
@@ -486,8 +489,9 @@ class Get_Activities_Data:
 
                 except Exception as e:
                     log(f'{i} / {total_links}, BAD LINK: | {link} | {e}', 'ERROR', id=self.id)
-                    if 'invalid session id' in f'{e}':
-                        self._switchAccount(link)
+                    self._restart_browser()
+                    # if 'invalid session id' in f'{e}':
+                    #     self._switchAccount(link)
 
                 finally:
                     i += 1
