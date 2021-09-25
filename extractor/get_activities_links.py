@@ -1,3 +1,5 @@
+import csv
+import os
 import time as t
 import re
 import random
@@ -9,12 +11,13 @@ from utils import log
 
 class Get_Activities_Links():
 
-    def __init__(self, riders, id, years = tuple(range(2015,2022)), months = tuple(range(1,13))):
+    def __init__(self, riders, id, saving_file_name, years = tuple(range(2015,2022)), months = tuple(range(1,13))):
         self.activity_links = set()
         self.id = id
         self.riders = riders
         self.years = years
         self.months = months
+        self.saving_file_name = saving_file_name
         self.STRAVA_URL = 'https://www.strava.com'
         self.curr_user = ''
 
@@ -75,6 +78,17 @@ class Get_Activities_Links():
     def _close_driver(self):
         self.browser.close()
 
+    
+    def _append_row_to_csv(self, file_name, row):
+
+        file_exists = os.path.isfile(file_name+'.csv')
+        with open(file_name+'.csv', 'a') as f:
+            dict_writer = csv.DictWriter(f, fieldnames=row.keys())
+
+            if not file_exists:
+                dict_writer.writeheader()
+            dict_writer.writerow(row)
+
     def create_links_for_extractions(self):
 
         self._open_driver()
@@ -119,6 +133,9 @@ class Get_Activities_Links():
                                 month_string = str(month) if month >= 10 else f'0{month}'
                                 interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year-1)+month_string)
                                 rider.links.append(link.replace(interval1, interval2))
+                                # cyclist_id,workout_strava_id
+                                row = {"cyclist_id": rider.rider_id, "workout_strava_id": link.replace(interval1, interval2)}
+                                self._append_row_to_csv(file_name=self.saving_file_name, row = row)
 
                         if year in self.years:
 
@@ -128,6 +145,8 @@ class Get_Activities_Links():
 
                                 interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year)+f'0{month}')
                                 rider.links.append(link.replace(interval1, interval2))
+                                row = {"cyclist_id": rider.rider_id, "workout_strava_id": link.replace(interval1, interval2)}
+                                self._append_row_to_csv(file_name=self.saving_file_name, row = row)
 
                 except:
                     problematic_riders.append(rider)

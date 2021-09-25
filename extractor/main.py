@@ -12,12 +12,14 @@ from rider import Rider
 
 
 
-def link(riders, extract_from_year, extract_to_year, extract_from_month, extract_to_month):
+def link(riders, id, filename, extract_from_year, extract_to_year, extract_from_month, extract_to_month):
 
     print("---- START EXTRACTING ACTIVITY LINKS ----")
-    links_extractor = Get_Activities_Links(riders,
-                                           list(range(extract_from_year, extract_to_year)),
-                                           list(range(extract_from_month, extract_to_month)))
+    links_extractor = Get_Activities_Links(riders=riders,
+                                            id=id,
+                                            saving_file_name=filename,
+                                           years=list(range(extract_from_year, extract_to_year)),
+                                           months=list(range(extract_from_month, extract_to_month)))
 
     links_extractor.create_links_for_extractions()
     links_extractor.run()
@@ -69,7 +71,7 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
 
     print("---- START EXTRACTING ACTIVITY LINKS ----")
 
-    links_extractor = Get_Activities_Links(riders, ip)
+    links_extractor = Get_Activities_Links(riders=riders, id=ip, saving_file_name=saving_file_name)
     links_extractor.create_links_for_extractions()
 
     links_extractor.run()
@@ -172,7 +174,7 @@ if __name__ == '__main__':
         extract_from_month = int(sys.argv[5])
         extract_to_month = int(sys.argv[6]) + 1
 
-        link_riders = link(riders_load, extract_from_year, extract_to_year, extract_from_month, extract_to_month)
+        link_riders = link(riders_load, id,file_name, extract_from_year, extract_to_year, extract_from_month, extract_to_month)
         saving_file_name = f'data/{file_name}_years_{extract_from_year}_{extract_to_year - 1}_months_{extract_from_month}_{extract_to_month - 1}.pickle'
 
         with open(saving_file_name, 'wb') as handle:
