@@ -1,5 +1,3 @@
-import csv
-import os
 import time as t
 import re
 import random
@@ -7,19 +5,17 @@ from usernames import *
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from utils import log
+from utils import append_row_to_csv, log
 
 class Get_Activities_Links():
 
-    def __init__(self, riders, id, saving_file_name, years = tuple(range(2015,2022)), months = tuple(range(1,13))):
+    def __init__(self, riders, id, saving_file_name):
         self.activity_links = set()
         self.id = id
         self.riders = riders
-        self.years = years
-        self.months = months
-        self.saving_file_name = saving_file_name
         self.STRAVA_URL = 'https://www.strava.com'
         self.curr_user = ''
+        self.saving_file_name = saving_file_name
 
     def _switchAccount(self, url_to_refresh):
         self._close_driver()
@@ -59,35 +55,25 @@ class Get_Activities_Links():
 
         self.browser.find_element_by_id("login-button").click()
         t.sleep(1)
-        if not self.browser.current_url == 'https://www.strava.com/onboarding':
-            # BAD ACCOUNT! need
-            log(f"BAD ACCOUNT {user} - Switching to another", id=self.id)
-            self._close_driver()
-            self._open_driver()
-        elif self.browser.current_url == 'https://www.strava.com/login':
+        if self.browser.current_url == 'https://www.strava.com/login':
             # ip blocked...
-            seconds_to_wait = 300
-            log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", id=self.id)
+            seconds_to_wait = 1801
+            log(f"IP BLOCKED - waiting for {seconds_to_wait} seconds...", 'WARNING',id=self.id)
             self._close_driver()
             t.sleep(seconds_to_wait)
             self._open_driver()
+        elif not self.browser.current_url == 'https://www.strava.com/onboarding':
+            # BAD ACCOUNT! need
+            log(f"BAD ACCOUNT {user} {self.browser.current_url} - Switching to another",'WARNING', id=self.id)
+            self._close_driver()
+            self._open_driver()
+
         else:
             log(self.browser.current_url, id=self.id)
 
 
     def _close_driver(self):
         self.browser.close()
-
-    
-    def _append_row_to_csv(self, file_name, row):
-
-        file_exists = os.path.isfile(file_name+'.csv')
-        with open(file_name+'.csv', 'a') as f:
-            dict_writer = csv.DictWriter(f, fieldnames=row.keys())
-
-            if not file_exists:
-                dict_writer.writeheader()
-            dict_writer.writerow(row)
 
     def create_links_for_extractions(self):
 
@@ -124,29 +110,24 @@ class Get_Activities_Links():
                         interval1 = re.search("interval=.*&", link).group(0)
                         year = int(interval1[-7:-3])
 
-                        if year-1 in self.years:
+                        if year-1 in rider.years:
 
                             for month in range(7,13):
-                                if month not in self.months:
+                                if month not in rider.months:
                                     continue
 
                                 month_string = str(month) if month >= 10 else f'0{month}'
                                 interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year-1)+month_string)
                                 rider.links.append(link.replace(interval1, interval2))
-                                # cyclist_id,workout_strava_id
-                                row = {"cyclist_id": rider.rider_id, "workout_strava_id": link.replace(interval1, interval2)}
-                                self._append_row_to_csv(file_name=self.saving_file_name, row = row)
 
-                        if year in self.years:
+                        if year in rider.years:
 
                             for month in range(1,8):
-                                if month not in self.months:
+                                if month not in rider.months:
                                     continue
 
                                 interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year)+f'0{month}')
                                 rider.links.append(link.replace(interval1, interval2))
-                                row = {"cyclist_id": rider.rider_id, "workout_strava_id": link.replace(interval1, interval2)}
-                                self._append_row_to_csv(file_name=self.saving_file_name, row = row)
 
                 except:
                     problematic_riders.append(rider)
@@ -171,7 +152,7 @@ class Get_Activities_Links():
 
                 try:
                     year_link = int(re.search('interval=.*&', link).group(0)[9:-3])
-                    if year_link not in self.years:
+                    if year_link not in rider.years:
                         continue
 
                     self.browser.get(link)
@@ -198,8 +179,10 @@ class Get_Activities_Links():
                             # loop through all group activities
                             group_feed_entry_body = group_feed_activity.find('div', {'class': 'entry-body'})
                             group_feed_link = group_feed_entry_body.find('a')
+                            
                             try:
                                 new_curr.add(self.STRAVA_URL + group_feed_link.get('href'))
+                                
                             except:
 
                                 continue
@@ -208,16 +191,20 @@ class Get_Activities_Links():
                             # loop through all normal activities
                             normal_activity_entry_body = normal_activity.find('div', {'class': 'entry-body'})
                             normal_activity_link = normal_activity_entry_body.find('a')
+                            
                             try:
                                 new_curr.add(self.STRAVA_URL + normal_activity_link.get('href'))
+                                
                             except:
 
                                 continue
 
                         for photo_and_map in group_photo_and_map_activities:
                             photo_map_activity_link = photo_and_map.find('a')
+                            
                             try:
                                 new_curr.add(self.STRAVA_URL + photo_map_activity_link.get('href'))
+                                
                             except:
                                 continue
                         curr = new_curr
@@ -227,6 +214,14 @@ class Get_Activities_Links():
 
                     prev = curr
                     rider.activity_links = rider.activity_links.union(curr)
+
+                    for l in curr:
+                        row = {
+                            'cyclist_id': rider.rider_id,
+                            'workout_strava_id': l,
+                        }
+                        append_row_to_csv(self.saving_file_name, row, columns=['cyclist_id', 'workout_strava_id'])
+
                     if len(prev) > 0:
                         log(f'Found activities: {len(prev)}, year: {link[-20:-16]} month: {link[-16:-14]}', id=self.id)
                     else:

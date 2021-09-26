@@ -1,0 +1,278 @@
+INFO 2021-09-26 10:50:41 
+INFO 2021-09-26 10:50:41 
+INFO 2021-09-26 10:50:41 ====================================================================
+INFO 2021-09-26 10:50:41 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:50:41 
+INFO 2021-09-26 10:50:41 
+INFO 2021-09-26 10:50:41 STARTING FLOW ALL
+INFO 2021-09-26 10:51:38 
+INFO 2021-09-26 10:51:38 
+INFO 2021-09-26 10:51:38 ====================================================================
+INFO 2021-09-26 10:51:38 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:51:38 
+INFO 2021-09-26 10:51:38 
+INFO 2021-09-26 10:51:38 STARTING FLOW ALL
+INFO 2021-09-26 10:51:46 
+INFO 2021-09-26 10:51:46 
+INFO 2021-09-26 10:51:46 ====================================================================
+INFO 2021-09-26 10:51:46 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:51:46 
+INFO 2021-09-26 10:51:46 
+INFO 2021-09-26 10:51:46 STARTING FLOW ALL
+INFO 2021-09-26 10:52:52 
+INFO 2021-09-26 10:52:52 
+INFO 2021-09-26 10:52:52 ====================================================================
+INFO 2021-09-26 10:52:52 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:52:52 
+INFO 2021-09-26 10:52:52 
+INFO 2021-09-26 10:52:52 STARTING FLOW ALL
+INFO 2021-09-26 10:53:59 
+INFO 2021-09-26 10:53:59 
+INFO 2021-09-26 10:53:59 ====================================================================
+INFO 2021-09-26 10:53:59 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:53:59 
+INFO 2021-09-26 10:53:59 
+INFO 2021-09-26 10:53:59 STARTING FLOW ALL
+INFO 2021-09-26 10:54:14 
+INFO 2021-09-26 10:54:14 
+INFO 2021-09-26 10:54:14 ====================================================================
+INFO 2021-09-26 10:54:14 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:54:14 
+INFO 2021-09-26 10:54:14 
+INFO 2021-09-26 10:54:14 STARTING FLOW ALL
+INFO 2021-09-26 10:54:29 
+INFO 2021-09-26 10:54:29 
+INFO 2021-09-26 10:54:29 ====================================================================
+INFO 2021-09-26 10:54:29 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:54:29 
+INFO 2021-09-26 10:54:29 
+INFO 2021-09-26 10:54:29 STARTING FLOW ALL
+INFO 2021-09-26 10:55:09 
+INFO 2021-09-26 10:55:09 
+INFO 2021-09-26 10:55:09 ====================================================================
+INFO 2021-09-26 10:55:09 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:55:09 
+INFO 2021-09-26 10:55:09 
+INFO 2021-09-26 10:55:09 STARTING FLOW ALL
+INFO 2021-09-26 10:55:19 
+INFO 2021-09-26 10:55:19 
+INFO 2021-09-26 10:55:19 ====================================================================
+INFO 2021-09-26 10:55:19 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:55:19 
+INFO 2021-09-26 10:55:19 
+INFO 2021-09-26 10:55:19 STARTING FLOW ALL
+INFO 2021-09-26 10:55:34 
+INFO 2021-09-26 10:55:34 
+INFO 2021-09-26 10:55:34 ====================================================================
+INFO 2021-09-26 10:55:34 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:55:34 
+INFO 2021-09-26 10:55:34 
+INFO 2021-09-26 10:55:34 STARTING FLOW ALL
+INFO 2021-09-26 10:57:25 
+INFO 2021-09-26 10:57:25 
+INFO 2021-09-26 10:57:25 ====================================================================
+INFO 2021-09-26 10:57:25 ['main.py', 'flow', 'not_in_db_till_2009_full']
+INFO 2021-09-26 10:57:25 
+INFO 2021-09-26 10:57:25 
+INFO 2021-09-26 10:57:25 STARTING FLOW ALL
+INFO 2021-09-26 10:57:42 https://www.strava.com/onboarding
+INFO 2021-09-26 10:57:48 Fetching links for extractions 1 / 437
+INFO 2021-09-26 10:57:52 Fetching links for extractions 2 / 437
+ERROR 2021-09-26 10:57:56 Unexpected error...
+INFO 2021-09-26 10:58:08 
+INFO 2021-09-26 10:58:08 
+INFO 2021-09-26 10:58:08 ====================================================================
+INFO 2021-09-26 10:58:08 ['main.py', 'flow', 'not_in_db_till_2009_full', '1', '3']
+INFO 2021-09-26 10:58:08 
+INFO 2021-09-26 10:58:08 
+INFO 2021-09-26 10:58:18 
+INFO 2021-09-26 10:58:18 
+INFO 2021-09-26 10:58:18 ====================================================================
+INFO 2021-09-26 10:58:18 ['main.py', 'flow', 'not_in_db_till_2009_full', '1', '5']
+INFO 2021-09-26 10:58:18 
+INFO 2021-09-26 10:58:18 
+INFO 2021-09-26 10:58:28 
+INFO 2021-09-26 10:58:28 
+INFO 2021-09-26 10:58:28 ====================================================================
+INFO 2021-09-26 10:58:28 ['main.py', 'flow', 'not_in_db_till_2009_full', '10', '15']
+INFO 2021-09-26 10:58:28 
+INFO 2021-09-26 10:58:28 
+INFO 2021-09-26 10:58:48 
+INFO 2021-09-26 10:58:48 
+INFO 2021-09-26 10:58:48 ====================================================================
+INFO 2021-09-26 10:58:48 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '10', '15']
+INFO 2021-09-26 10:58:48 
+INFO 2021-09-26 10:58:48 
+INFO 2021-09-26 10:58:48 STARTING FLOW INDEX: 10_15
+INFO 2021-09-26 10:59:00 https://www.strava.com/onboarding
+INFO 2021-09-26 10:59:02 Fetching links for extractions 1 / 5
+INFO 2021-09-26 10:59:10 Fetching links for extractions 2 / 5
+INFO 2021-09-26 10:59:13 Fetching links for extractions 3 / 5
+INFO 2021-09-26 10:59:20 Fetching links for extractions 4 / 5
+INFO 2021-09-26 10:59:28 Fetching links for extractions 5 / 5
+ERROR 2021-09-26 10:59:29 Problematic rider: Rider_link: https://www.strava.com/athletes/47045750, Rider name: desal ceriel, Rider ID: 1167
+ERROR 2021-09-26 10:59:29 Problematic rider: Rider_link: https://www.strava.com/athletes/23174762, Rider name: piganzoli davide, Rider ID: 1178
+INFO 2021-09-26 10:59:41 https://www.strava.com/onboarding
+INFO 2021-09-26 10:59:41 Fetching activity links for: Rider_link: https://www.strava.com/athletes/722757, Rider name: moreno adrià, Rider ID: 1169
+INFO 2021-09-26 10:59:48 Found activities: 5, year: ctiv month: it
+INFO 2021-09-26 10:59:54 Found activities: 34, year: ctiv month: it
+INFO 2021-09-26 10:59:59 Found activities: 29, year: ctiv month: it
+INFO 2021-09-26 11:00:07 Found activities: 51, year: ctiv month: it
+INFO 2021-09-26 11:00:15 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:00:18 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:00:24 Found activities: 56, year: ctiv month: it
+INFO 2021-09-26 11:00:27 STARTING FLOW ALL
+INFO 2021-09-26 11:04:19 
+INFO 2021-09-26 11:04:19 
+INFO 2021-09-26 11:04:19 ====================================================================
+INFO 2021-09-26 11:04:19 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '10', '15']
+INFO 2021-09-26 11:04:19 
+INFO 2021-09-26 11:04:19 
+INFO 2021-09-26 11:04:19 STARTING FLOW INDEX: 10_15
+INFO 2021-09-26 11:04:31 https://www.strava.com/onboarding
+INFO 2021-09-26 11:04:33 Fetching links for extractions 1 / 5
+INFO 2021-09-26 11:04:38 Fetching links for extractions 2 / 5
+INFO 2021-09-26 11:04:42 Fetching links for extractions 3 / 5
+INFO 2021-09-26 11:04:48 Fetching links for extractions 4 / 5
+INFO 2021-09-26 11:04:54 Fetching links for extractions 5 / 5
+ERROR 2021-09-26 11:04:55 Problematic rider: Rider_link: https://www.strava.com/athletes/47045750, Rider name: desal ceriel, Rider ID: 1167
+ERROR 2021-09-26 11:04:55 Problematic rider: Rider_link: https://www.strava.com/athletes/23174762, Rider name: piganzoli davide, Rider ID: 1178
+INFO 2021-09-26 11:05:08 https://www.strava.com/onboarding
+INFO 2021-09-26 11:05:08 Fetching activity links for: Rider_link: https://www.strava.com/athletes/722757, Rider name: moreno adrià, Rider ID: 1169
+ERROR 2021-09-26 11:05:20 Problem fetching activities from: https://www.strava.com/activities/3796580108, [Errno 2] No such file or directory: 'link/not_in_db_till_2009_full_index_10_15.csv'
+ERROR 2021-09-26 11:05:34 Problem fetching activities from: https://www.strava.com/activities/3898331488, [Errno 2] No such file or directory: 'link/not_in_db_till_2009_full_index_10_15.csv'
+INFO 2021-09-26 11:05:41 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:05:47 Found activities: 34, year: ctiv month: it
+INFO 2021-09-26 11:05:51 Found activities: 22, year: ctiv month: it
+INFO 2021-09-26 11:05:55 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:06:02 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:06:07 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:06:11 STARTING FLOW ALL
+INFO 2021-09-26 11:06:39 
+INFO 2021-09-26 11:06:39 
+INFO 2021-09-26 11:06:39 ====================================================================
+INFO 2021-09-26 11:06:39 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '0', '3']
+INFO 2021-09-26 11:06:39 
+INFO 2021-09-26 11:06:39 
+INFO 2021-09-26 11:06:39 STARTING FLOW INDEX: 0_3
+INFO 2021-09-26 11:06:50 https://www.strava.com/onboarding
+INFO 2021-09-26 11:06:58 Fetching links for extractions 1 / 3
+INFO 2021-09-26 11:07:03 Fetching links for extractions 2 / 3
+INFO 2021-09-26 11:07:09 Fetching links for extractions 3 / 3
+INFO 2021-09-26 11:07:22 https://www.strava.com/onboarding
+INFO 2021-09-26 11:07:22 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:07:32 Found activities: 5, year: ctiv month: it
+INFO 2021-09-26 11:07:37 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:07:54 Found activities: 54, year: ctiv month: it
+INFO 2021-09-26 11:08:04 Found activities: 35, year: ctiv month: it
+INFO 2021-09-26 11:08:11 Found activities: 17, year: ctiv month: it
+INFO 2021-09-26 11:08:18 Found activities: 50, year: ctiv month: it
+INFO 2021-09-26 11:08:21 Found activities: 33, year: ctiv month: it
+INFO 2021-09-26 11:08:34 Found activities: 67, year: ctiv month: it
+INFO 2021-09-26 11:08:37 STARTING FLOW ALL
+INFO 2021-09-26 11:08:42 
+INFO 2021-09-26 11:08:42 
+INFO 2021-09-26 11:08:42 ====================================================================
+INFO 2021-09-26 11:08:42 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '0', '3']
+INFO 2021-09-26 11:08:42 
+INFO 2021-09-26 11:08:42 
+INFO 2021-09-26 11:08:42 STARTING FLOW INDEX: 0_3
+INFO 2021-09-26 11:08:54 https://www.strava.com/onboarding
+INFO 2021-09-26 11:09:00 Fetching links for extractions 1 / 3
+INFO 2021-09-26 11:09:04 Fetching links for extractions 2 / 3
+INFO 2021-09-26 11:09:10 Fetching links for extractions 3 / 3
+INFO 2021-09-26 11:09:24 https://www.strava.com/onboarding
+INFO 2021-09-26 11:09:24 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:09:33 Found activities: 5, year: ctiv month: it
+INFO 2021-09-26 11:09:38 Found activities: 28, year: ctiv month: it
+INFO 2021-09-26 11:09:41 STARTING FLOW ALL
+INFO 2021-09-26 11:09:46 
+INFO 2021-09-26 11:09:46 
+INFO 2021-09-26 11:09:46 ====================================================================
+INFO 2021-09-26 11:09:46 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '0', '3']
+INFO 2021-09-26 11:09:46 
+INFO 2021-09-26 11:09:46 
+INFO 2021-09-26 11:09:46 STARTING FLOW INDEX: 0_3
+INFO 2021-09-26 11:09:58 https://www.strava.com/onboarding
+INFO 2021-09-26 11:10:04 Fetching links for extractions 1 / 3
+INFO 2021-09-26 11:10:08 Fetching links for extractions 2 / 3
+INFO 2021-09-26 11:10:14 Fetching links for extractions 3 / 3
+INFO 2021-09-26 11:10:27 https://www.strava.com/onboarding
+INFO 2021-09-26 11:10:27 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:10:36 Found activities: 5, year: ctiv month: it https://www.strava.com/activities/6016136792
+INFO 2021-09-26 11:10:39 Found activities: 28, year: ctiv month: it https://www.strava.com/activities/3780215358
+INFO 2021-09-26 11:10:56 STARTING FLOW ALL
+INFO 2021-09-26 11:11:01 
+INFO 2021-09-26 11:11:01 
+INFO 2021-09-26 11:11:01 ====================================================================
+INFO 2021-09-26 11:11:01 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '0', '3']
+INFO 2021-09-26 11:11:01 
+INFO 2021-09-26 11:11:01 
+INFO 2021-09-26 11:11:01 STARTING FLOW INDEX: 0_3
+INFO 2021-09-26 11:11:12 https://www.strava.com/onboarding
+INFO 2021-09-26 11:11:19 Fetching links for extractions 1 / 3
+INFO 2021-09-26 11:11:23 Fetching links for extractions 2 / 3
+INFO 2021-09-26 11:11:28 Fetching links for extractions 3 / 3
+INFO 2021-09-26 11:11:41 https://www.strava.com/onboarding
+INFO 2021-09-26 11:11:41 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:11:52 Found activities: 28, year: ctiv month: it https://www.strava.com/activities/3815825318
+INFO 2021-09-26 11:12:06 Found activities: 54, year: ctiv month: it https://www.strava.com/activities/3815825318
+INFO 2021-09-26 11:12:14 STARTING FLOW ALL
+INFO 2021-09-26 11:12:20 
+INFO 2021-09-26 11:12:20 
+INFO 2021-09-26 11:12:20 ====================================================================
+INFO 2021-09-26 11:12:20 ['main.py', 'flow', 'not_in_db_till_2009_full', '-r', '0', '3']
+INFO 2021-09-26 11:12:20 
+INFO 2021-09-26 11:12:20 
+INFO 2021-09-26 11:12:20 STARTING FLOW INDEX: 0_3
+INFO 2021-09-26 11:12:32 https://www.strava.com/onboarding
+INFO 2021-09-26 11:12:38 Fetching links for extractions 1 / 3
+INFO 2021-09-26 11:12:43 Fetching links for extractions 2 / 3
+INFO 2021-09-26 11:12:48 Fetching links for extractions 3 / 3
+INFO 2021-09-26 11:13:00 https://www.strava.com/onboarding
+INFO 2021-09-26 11:13:00 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:13:09 Found activities: 5, year: 2020 month: 07 https://www.strava.com/athletes/32821086#graph_date_range?chart_type=miles&interval_type=month&interval=202007&year_offset=0
+INFO 2021-09-26 11:13:12 Found activities: 28, year: 2020 month: 08 https://www.strava.com/athletes/32821086#graph_date_range?chart_type=miles&interval_type=month&interval=202008&year_offset=0
+INFO 2021-09-26 11:13:24 STARTING FLOW ALL
+INFO 2021-09-26 11:31:04 
+INFO 2021-09-26 11:31:04 
+INFO 2021-09-26 11:31:04 ====================================================================
+INFO 2021-09-26 11:31:04 ['main.py', 'link', 'not_in_db_till_2009_full', '-i', '0', '3']
+INFO 2021-09-26 11:31:04 
+INFO 2021-09-26 11:31:04 
+INFO 2021-09-26 11:31:04 STARTING LINK INDEX: 0_3
+INFO 2021-09-26 11:31:04 STARTING LINK ALL
+INFO 2021-09-26 11:32:51 
+INFO 2021-09-26 11:32:51 
+INFO 2021-09-26 11:32:51 ====================================================================
+INFO 2021-09-26 11:32:51 ['main.py', 'link', 'not_in_db_till_2009_full', '-i', '0', '3']
+INFO 2021-09-26 11:32:51 
+INFO 2021-09-26 11:32:51 
+INFO 2021-09-26 11:32:51 STARTING LINK INDEX: 0_3
+INFO 2021-09-26 11:33:04 https://www.strava.com/onboarding
+INFO 2021-09-26 11:33:09 Fetching links for extractions 1 / 3
+INFO 2021-09-26 11:33:12 Fetching links for extractions 2 / 3
+INFO 2021-09-26 11:33:18 Fetching links for extractions 3 / 3
+INFO 2021-09-26 11:33:31 https://www.strava.com/onboarding
+INFO 2021-09-26 11:33:31 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:33:39 Found activities: 5, year: 2020 month: 07
+INFO 2021-09-26 11:33:42 Found activities: 28, year: 2020 month: 08
+INFO 2021-09-26 11:34:03 Found activities: 54, year: 2020 month: 09
+INFO 2021-09-26 11:34:11 Found activities: 35, year: 2020 month: 10
+INFO 2021-09-26 11:34:17 Found activities: 17, year: 2020 month: 11
+INFO 2021-09-26 11:34:19 STARTING LINK ALL
+INFO 2021-09-26 11:40:38 
+INFO 2021-09-26 11:40:38 
+INFO 2021-09-26 11:40:38 ====================================================================
+INFO 2021-09-26 11:40:38 ['main.py', 'link', 'not_in_db_till_2009_full', '-i', '0', '1']
+INFO 2021-09-26 11:40:38 
+INFO 2021-09-26 11:40:38 
+INFO 2021-09-26 11:40:38 STARTING LINK INDEX: 0_1
+INFO 2021-09-26 11:40:50 https://www.strava.com/onboarding
+INFO 2021-09-26 11:40:56 Fetching links for extractions 1 / 1
+INFO 2021-09-26 11:41:08 https://www.strava.com/onboarding
+INFO 2021-09-26 11:41:08 Fetching activity links for: Rider_link: https://www.strava.com/athletes/32821086, Rider name: lebreton jacques, Rider ID: 1138
+INFO 2021-09-26 11:41:15 Found activities: 5, year: 2020 month: 07
+INFO 2021-09-26 11:41:21 Found activities: 33, year: 2020 month: 08
+INFO 2021-09-26 11:41:26 Found activities: 28, year: 2020 month: 09
+INFO 2021-09-26 11:41:34 STARTING LINK ALL
