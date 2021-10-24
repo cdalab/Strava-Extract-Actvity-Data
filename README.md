@@ -49,7 +49,7 @@ for conda:
            pickle.dump(riders, handle, protocol=pk.HIGHEST_PROTOCOL)
 
 
-## Get Activity Links
+## Get Activity Links (command - 'link')
 
 1. open the `extractor` folder in terminal.
 2. run
@@ -62,7 +62,7 @@ for conda:
     >
     > Will run the get activity links from the ISN_riders.pickle file with username[2] from 2015 to 2021 (including) and from January to December (including)
 
-## Get Activity Data
+## Get Activity Data (command - 'data')
 
 After fetching the activity links, we can extract data from these links.
 
@@ -81,7 +81,7 @@ After fetching the activity links, we can extract data from these links.
     > `main.py data ISN_riders 2 200 500 -i 20`
     > - will run only for all links after the index 20
 
-## Get data with one command
+## Get data with one command (command - 'flow')
 
 1. open the `extractor` folder in terminal.
 2. run
@@ -98,4 +98,29 @@ After fetching the activity links, we can extract data from these links.
     >
     > will run only for riders that belong to the teams 100, 153 and 164 
 
+
+## Get data from activity links csv (command - 'actv')
+
+If for some reason the command flow did not go well and somehow stopped in the middle. the script creates a csv file inside the 'link' folder with the following columns:
+
+    > cyclist_id, workout_strava_id
+    
+Now, inorder to resume the flow script we need to use the actv command now.
+Move the csv file from 'link' folder to 'data' folder
+Than:
+
+1. open the 'extractor' folder in terminal
+2. run
+
+        main.py actv <csv_file> <start_index> <end_index>
+        
+   or:
+   
+        main.py actv <csv_file> <start_index> <end_index> -i <continue_from_index>
+        
+   > Example:
+   >
+   > main.py actv not_in_db_till_2009_full_all 30000 50000 -i 2005
+   >
+   > Will run all links from index 30000 till 50000 and it will skip all the first 2004 links
 
