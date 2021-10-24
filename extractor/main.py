@@ -286,7 +286,11 @@ if __name__ == '__main__':
 
             if row.cyclist_id not in riders_dic:
                 riders_dic[row.cyclist_id] = Rider(rider_name='', rider_url='',rider_id=row.cyclist_id)
-            url = f"https://www.strava.com/activities/{row.workout_strava_id}"
+                
+            if row.workout_strava_id.isdecimal():
+                url = f"https://www.strava.com/activities/{row.workout_strava_id}"
+            else:
+                url = row.workout_strava_id
             riders_dic[row.cyclist_id].activity_links.add(url)
 
         data_riders = None
