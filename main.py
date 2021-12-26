@@ -2,7 +2,7 @@ import sys
 import pickle as pk
 import requests
 import pandas as pd
-from get_activities_data import Get_Activities_Data
+from get_activities_info import Get_Activities_Info
 from get_activities_links import Get_Activities_Links
 from get_activities_html import Get_Activities_HTML
 from usernames import *
@@ -66,7 +66,7 @@ def link(csv_file, id, saving_file_name, start_index=0, end_index= float('inf'),
 def data(saving_file_name, riders, riders_range_low, riders_range_high, ip, start_from_index):
 
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Data(riders[riders_range_low:riders_range_high], id=ip, saving_file_name=saving_file_name, start_from_index=start_from_index)
+    data_extractor = Get_Activities_Info(riders[riders_range_low:riders_range_high], id=ip, saving_file_name=saving_file_name, start_from_index=start_from_index)
     data_extractor.run()
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
     return data_extractor.riders
@@ -121,7 +121,7 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
     print("---- FINISHED EXTRACTING ACTIVITY LINKS ----")
 
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Data(riders, id=ip, saving_file_name=f"flow/{saving_file_name}")
+    data_extractor = Get_Activities_Info(riders, id=ip, saving_file_name=f"flow/{saving_file_name}")
     data_extractor.run()
     riders = data_extractor.riders
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
@@ -243,7 +243,6 @@ if __name__ == '__main__':
             saving_file_name = f'{file_name}_all'
             flow_riders = flow(saving_file_name, file_name, id)
 
-        save_csv(saving_file_name, flow_riders)
 
     elif activity_type == 'actv':
 
@@ -287,7 +286,6 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-        save_csv(saving_file_name, data_riders)
         
     
     elif activity_type == 'html':
