@@ -72,23 +72,24 @@ class Get_Activities_HTML(Browser):
             print(f'loaded: {after}')
             analysis_distance_soup = analysis_soup
         
-            # try:
-            #     time_button = self.browser.find_element_by_css_selector('g[data-type="time"]')
-            #     print(time_button)
-            # #     # attrs=[]
-            # #     # for attr in time_button.get_property('attributes'):
-            # #     #     attrs.append([attr['name'], attr['value']])
-            # #     # print(attrs)
+            try:
+                time_button = self.browser.find_elements_by_tag_name('svg')[3].find_elements_by_tag_name('g')[25].find_elements_by_tag_name('image')[1]
+                time_button.click()
+                # print(time_button)
+            #     # attrs=[]
+            #     # for attr in time_button.get_property('attributes'):
+            #     #     attrs.append([attr['name'], attr['value']])
+            #     # print(attrs)
             #     webdriver.ActionChains(self.browser).move_to_element(time_button).send_keys(Keys.RETURN)
             #     t.sleep(1)
-            # #     # WebDriverWait(self.browser, 20).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'g[data-type="time"]'))).send_keys(Keys.RETURN)
+            #     # WebDriverWait(self.browser, 20).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'g[data-type="time"]'))).send_keys(Keys.RETURN)
 
-            # #     # self.browser.execute_script("arguments[4].click();", time_button)
+            #     # self.browser.execute_script("arguments[4].click();", time_button)
                
-            #     analysis_time_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-            # except Exception as e:
-            #     print(e)
-            #     analysis_time_soup = None
+                # analysis_time_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+            except Exception as e:
+                print(e)
+                analysis_time_soup = None
                 
             
             analysis_time_soup = None
@@ -205,7 +206,5 @@ class Get_Activities_HTML(Browser):
             i += 1
             
         
-        
-
-fetch = FetchHTML("test", {1:6418596161})
+fetch = Get_Activities_HTML("test", [(1,6418596161)])
 fetch.start()
