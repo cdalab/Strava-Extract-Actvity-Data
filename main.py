@@ -63,7 +63,7 @@ def link(csv_file, id, saving_file_name, start_index=0, end_index= float('inf'),
     return riders
 
 
-def data(saving_file_name, riders, riders_range_low, riders_range_high, ip, start_from_index):
+def info(saving_file_name, riders, riders_range_low, riders_range_high, ip, start_from_index):
 
     print("---- START EXTRACTING ACTIVITY DATA ----")
     data_extractor = Get_Activities_Info(riders[riders_range_low:riders_range_high], id=ip, saving_file_name=saving_file_name, start_from_index=start_from_index)
@@ -155,8 +155,8 @@ if __name__ == '__main__':
 
     if activity_type == 'info':
 
-        # run example : main.py info ISN_riders 200 500
-        # run example : main.py info ISN_riders 200 500 -i 4
+        # run example : main.py info ISN_pickle_riders 200 500
+        # run example : main.py info ISN_pickle_riders 200 500 -i 4
 
         riders_pickle = open(f'info/{file_name}.pickle', 'rb')
         riders_load = pk.load(riders_pickle)
@@ -178,7 +178,7 @@ if __name__ == '__main__':
         data_riders = None
 
         try:
-            data_riders = data(saving_file_name, riders_load, riders_range_low, riders_range_high, id, start_from_index)
+            data_riders = info(saving_file_name, riders_load, riders_range_low, riders_range_high, id, start_from_index)
         except Exception as e:
             print(e)
 

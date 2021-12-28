@@ -7,23 +7,50 @@ import threading
 from browser import Browser
 
 class Get_Activities_Links(threading.Thread, Browser):
+    
 
-    def __init__(self, riders, id, saving_file_name, folder_name):
+
+    def __init__(self, riders, id, saving_file_name):
+        '''
+        Params:
+        -------
+        riders - list of Rider objects
+        id - some id to write in the log file (usually it is the ip address)
+        saving_file_name - where to save all the links
+        
+        
+        
+        Extracts links from riders and saves it in the "saving_file_name" file
+        Flow of action:
+        1. run the "_create_links_for_extractions" to fetch all the dates where there are links
+        2. run the "_fetch_links" to fetch all activity links for the links created in the "_create_links_for_extractions"
+        
+        To start the flow of action start the run() method.
+        
+        '''
+        
+        
+        
         Browser.__init__(id)
         self.activity_links = set()
         self.riders = riders
         self.saving_file_name = saving_file_name
-        self.folder_name = folder_name
         threading.Thread.__init__(self)
 
 
     def _create_links_for_extractions(self):
+        
+        '''
+        In each rider there are time gaps in where links of activities are stored.
+        This method fetches all the links where activity links are stored.
+        
+        '''
 
-        self._open_driver()
-        problematic_riders = []
+        self._open_driver() # Start driver
+        problematic_riders = [] # save all riders whom cannot process links
         i = 1
         try:
-            for rider in self.riders:
+            for rider in self.riders: # Fetch links for each rider
                 self.browser.get(rider.rider_url)
                 log(f'Fetching links for extractions {i} / {len(self.riders)}', id=self.id)
                 t.sleep(1)
@@ -84,6 +111,11 @@ class Get_Activities_Links(threading.Thread, Browser):
         self._close_driver()
 
     def _fetch_links(self):
+        
+        '''
+        Fetches links from each rider.links fetched from the previous method
+        
+        '''
 
         self._open_driver()
         for rider in self.riders:
@@ -113,10 +145,15 @@ class Get_Activities_Links(threading.Thread, Browser):
                     while curr == prev:
                         t.sleep(1)
                         graph_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+                        
+                        # Feed Entry is class is changing from time time! 
+                        # need to make sure we have the right class name.
+                        
                         group_feed_activities = graph_soup.find_all('div', {'class': 'feed-entry group-activity'})
-                        normal_activities = graph_soup.find_all('d-iv', {'class': 'activity feed-entry entity-details'})
+                        normal_activities = graph_soup.find_all('div', {'class': 'activity feed-entry entity-details'})
+                        normal_activities_2 = graph_soup.find_all('div', {'class': 'Activity--entry-media--3icBB'})
                         group_photo_and_map_activities = graph_soup.find_all('div', {'class': 'PhotosAndMapImage--entry-image-wrapper--ZHw4O'})
-                        group_photo_and_map_activities = graph_soup.find_all('div', {'class': 'PhotosAndMapImage--entry-image-wrapper--ZHw4O'})
+                        
 
                         for group_feed_activity in group_feed_activities:
                             # loop through all group activities
@@ -141,6 +178,16 @@ class Get_Activities_Links(threading.Thread, Browser):
                             except:
 
                                 continue
+                        for normal_activity_2 in normal_activities_2:
+                            # loop through all normal activities
+                            normal_activity_entry_body_2 = normal_activity_2.find('div', {'class': 'entry-body'})
+                            normal_activity_link_2 = normal_activity_entry_body_2.find('a')
+                            
+                            try:
+                                new_curr.add(self.STRAVA_URL + normal_activity_link_2.get('href'))
+                                
+                            except:
+                                continue
 
                         for photo_and_map in group_photo_and_map_activities:
                             photo_map_activity_link = photo_and_map.find('a')
@@ -154,8 +201,16 @@ class Get_Activities_Links(threading.Thread, Browser):
                         curr = new_curr
 
                         if t.time() > timeout:
+                            log(f'TIMEOUT: Problematic timestamp link: {link}, rider_id: {rider.rider_id}',"ERROR", id=self.id)
                             break
-
+                    try:
+                        feed_activities = graph_soup.find("div", {"class":"feed"}).contents
+                        # all_links = [for item in feed_activities.get_all("a")]
+                        assert len(curr) == len(feed_activities)
+                    except Exception as e:
+                        # TODO: Check which links fetched.
+                        absolute = len(curr) - len(graph_soup.find("div", {"class":"feed"}).contents)
+                        log(f"MISSING {absolute} ACTIVITIES , Problematic timestamp {link}, rider_id: {rider.rider_id}", "ERROR", id=self.id)
                     prev = curr
                     rider.activity_links = rider.activity_links.union(curr)
 
@@ -169,7 +224,9 @@ class Get_Activities_Links(threading.Thread, Browser):
                     if len(prev) > 0:
                         log(f'Found activities: {len(prev)}, year: {link[-20:-16]} month: {link[-16:-14]}', id=self.id)
                     else:
-                        log(f'No activities, year: {link[-20:-16]} month: {link[-16:-14]}', 'ERROR', id=self.id)
+                        log(f'No activities, year: {link[-20:-16]} month: {link[-16:-14]}', 'INFO', id=self.id)
+                        
+                    
                 except Exception as e:
                     log(f'Problem fetching activities from: {link}, {e}', 'ERROR', id=self.id)
                     continue
@@ -178,5 +235,12 @@ class Get_Activities_Links(threading.Thread, Browser):
         self._close_driver()
 
     def run(self):
+        '''
+        Starts the flow of actions
+        '''
         self._create_links_for_extractions()
         self._fetch_links()
+        
+ 
+# rider = Rider()
+# lin = Get_Activities_Links().
