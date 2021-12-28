@@ -75,8 +75,14 @@ class Get_Activities_HTML(Browser):
             after = t.time() - before
             
             analysis_distance_soup = analysis_soup
-        
-            # try:
+
+
+
+
+            try:
+                time_button = self.browser.find_elements_by_tag_name('svg')[3].find_elements_by_tag_name('g')[
+                    25].find_elements_by_tag_name('image')[1]
+                time_button.click()
             #     time_button = self.browser.find_element_by_css_selector('g[data-type="time"]')
             #     print(time_button)
             # #     # attrs=[]
@@ -90,9 +96,9 @@ class Get_Activities_HTML(Browser):
             # #     # self.browser.execute_script("arguments[4].click();", time_button)
                
             #     analysis_time_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-            # except Exception as e:
-            #     print(e)
-            #     analysis_time_soup = None
+            except Exception as e:
+                print(e)
+                analysis_time_soup = None
                 
             
             analysis_time_soup = None
