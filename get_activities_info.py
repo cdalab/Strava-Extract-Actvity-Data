@@ -15,16 +15,34 @@ LOGIN_URL = 'https://www.strava.com/login'
 class Get_Activities_Info(Browser):
 
     def __init__(self, riders, id, saving_file_name, start_from_index = 0):
-        super().__init__(id)
+        '''
+        Fetches the information from each activity in each rider.
         
+        params:
+        --------
+        riders: List<Rider>
+        id: string. The id for saving log files
+        saving_file_name: string. The name of the file that will be saved. Usually starts with 'info/'
+        start_from_index: integer. The index to fetch from the activities.
+            For example: if there are 1300 activities, start_from_index=133 with fetch all the links
+            between 133-1300 and will skip the links before 133
+        
+        '''
+        
+        super().__init__(id)
         self.riders = riders
         self.start_from_index = start_from_index
         self.saving_file_name = saving_file_name
-        self.folder_name = 'info'
         
 
     def _extract_activity_home(self, url):
-        data = {}
+        '''
+        Fetches data from activity home screen
+        url: The complete activity url in the format: https://www.strava.com/activities/ACTIVITY_ID
+        '''
+        
+        
+        data = {} # all data from html page are stored here
         t.sleep(0.5)
         self.browser.get(url)
         t.sleep(0.5)
@@ -105,7 +123,7 @@ class Get_Activities_Info(Browser):
 
 
         date = activity_soup.find('time').text.replace('\n', '')
-        date_formats = ['%A, %d %B %Y', '%A, %d %B, %Y', '%A, %B %d %Y', '%A, %B %d, %Y']
+        date_formats = ['%A, %d %B %Y', '%A, %d %B, %Y', '%A, %B %d %Y', '%A, %B %d, %Y'] # try different time formats
         for date_format in date_formats:
             try:
                 date = datetime.strptime(date, date_format)
@@ -176,30 +194,36 @@ class Get_Activities_Info(Browser):
         heart_rate_exists = False
         try:
             site_menu = activity_soup.find('ul', {'class': 'pagenav'}).find_all('a')
+            for a in site_menu:
+                if a['data-menu'] == 'analysis':
+                    analysis_exists = True
+                    break
         except:
             site_menu = []
 
-        for a in site_menu:
-            if a['data-menu'] == 'analysis':
-                analysis_exists = True
+        
 
         try:
             premium_views = activity_soup.find('li', {'id': 'premium-views'}).find_all('a')
+            for a in premium_views:
+                if a['data-menu'] == 'heartrate':
+                    heart_rate_exists = True
+
+                if a['data-menu'] == 'zone-distribution':
+                    zone_distribution_exists = True
         except:
             premium_views = []
-        for a in premium_views:
-            if a['data-menu'] == 'heartrate':
-                heart_rate_exists = True
 
-            if a['data-menu'] == 'zone-distribution':
-                zone_distribution_exists = True
 
         return data, analysis_exists, zone_distribution_exists, heart_rate_exists
 
     def _extract_activity_analysis(self, url):
-
+        '''
+        Fetches data from activity ANALYSIS screen
+        url: The complete activity url in the format: https://www.strava.com/activities/ACTIVITY_ID
+        '''
         
-        data = {}
+        data = {} # All data is stored here
         
         t.sleep(0.5)
         curr_url = url + '/analysis'
@@ -208,7 +232,7 @@ class Get_Activities_Info(Browser):
         self._check_if_too_many_requests(curr_url)
         
         
-        #     print(browser.current_url)
+        
         try:
             analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
             chart = analysis_soup.find_all('g', {'class': "label-box"})
@@ -217,7 +241,8 @@ class Get_Activities_Info(Browser):
             dead_line = 5
             timeout = t.time() + dead_line
             too_much = t.time() + 50
-            while len(chart) == 0 or len(svg) == 0: # Wait for load
+            # Wait for the analysis graphs to be visible and loaded
+            while len(chart) == 0 or len(svg) == 0: 
                 analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
                 chart = analysis_soup.find_all('g', {'class': "label-box"})
                 svg = analysis_soup.find_all('defs')
@@ -234,6 +259,7 @@ class Get_Activities_Info(Browser):
 
 
             # Raw data (speed, est power, heart rate)
+            # Extracting data from graphs
             for label_box in chart:
                 text_data = []
                 for text in label_box.find_all('text'):
@@ -256,9 +282,7 @@ class Get_Activities_Info(Browser):
             data.update(e_g_e_d)
 
             button = self.browser.find_element_by_css_selector("g[data-type='time']")
-
             button.click()
-
             timeout = t.time() + 5
             loading = True
             while loading:
