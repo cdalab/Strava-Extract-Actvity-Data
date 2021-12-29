@@ -46,14 +46,19 @@ workout_speeds_columns = ['workout_id', 'workout_strava_id', 'speed_maximum', 's
                           'speed_zone_6_min', 'speed_zone_7_min']
 
 
-def log(msg,level='INFO', id = ''):
+def log(msg,level='INFO', id = '', dire=None):
     Path(f"log").mkdir(parents=True, exist_ok=True)
     try:
+        if dire is None:
+            file_name = f'log/log_{id}.txt'
+        else:
+            Path(f"log/{dire}").mkdir(parents=True, exist_ok=True)
+            file_name = f'log/{dire}/log_{id}.txt'
         msg=f'{level} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
         print(f'{msg}')
-        with open(f"log/log_{id}.txt",'a+') as f:
+        with open(file_name,'a+') as f:
             f.write(msg)
-        with open(f"S:/log_{id}.txt",'a+') as f:
+        with open(f"S:/{file_name}",'a+') as f:
             f.write(msg)
     except Exception as err:
         pass
@@ -83,6 +88,11 @@ def to_seconds(time_string):
 
 
 def extract_points_from_graph(soup):
+    '''
+    Extract the raw points from graph and convert from pixels to original point values
+    '''
+    
+    
     svg = soup.find_all('defs')
     y_offset = float(svg[0].find('rect')['y'])
     height = float(svg[0].find('rect')['height']) + y_offset
@@ -93,27 +103,32 @@ def extract_points_from_graph(soup):
     ticks = list(map(lambda x: [x[0].split(','), x[1]], ticks))
 
     x_ticks = [x for x in ticks if 'mi' in x[1]][:7]
-    x_single_tick_size = float(x_ticks[1][0][0])
-    miles_single_tick_size = float(x_ticks[1][1][:-3])
-    ratio_x = miles_single_tick_size / x_single_tick_size
+    x_single_tick_size = float(x_ticks[1][0][0]) # the width between two ticks
+    miles_single_tick_size = float(x_ticks[1][1][:-3]) # the value between two ticks
+    ratio_x = miles_single_tick_size / x_single_tick_size # ratio between width and value
 
     y_ticks = [x for x in ticks if 'ft' in x[1]]
-    y_single_tick_size = float(y_ticks[0][0][1]) - float(y_ticks[1][0][1])
-    feet_single_tick_size = float(y_ticks[1][1][:-3].replace(",", "")) - float(y_ticks[0][1][:-3].replace(",", ""))
+    y_single_tick_size = float(y_ticks[0][0][1]) - float(y_ticks[1][0][1]) # the height between two ticks
+    feet_single_tick_size = float(y_ticks[1][1][:-3].replace(",", "")) - float(y_ticks[0][1][:-3].replace(",", "")) # the value between two ticks
 
-    minimum_feet_tick = float(y_ticks[0][1][:-3].replace(",", ""))
+    minimum_feet_tick = float(y_ticks[0][1][:-3].replace(",", "")) # the minimum value of y coordinates to find the starting point
 
-    ratio_y = feet_single_tick_size / y_single_tick_size
+    ratio_y = feet_single_tick_size / y_single_tick_size # ratio between height and value
 
     all_points = soup.find('path', {'id' : 'line'})['d'].split(',')[1:-1]
     all_points = [x.split('L') for x in all_points]
     all_points = [[height - float(x[0]), float(x[1])] for x in all_points]
-    all_points = [[(x[0]*ratio_y) + minimum_feet_tick, x[1]*ratio_x] for x in all_points]
+    all_points = [[(x[0]*ratio_y) + minimum_feet_tick, x[1]*ratio_x] for x in all_points] # map pixels into original values according to ratios
     return all_points
 
 
 def extract_mean_max_metrics(soup):
-
+    '''
+    To calculate the mean, max metrics we need to fill missing points.
+    for example if there are points in x coordinates [1,3,12, 19]
+    we need to have [1, 2, 3, 4, ... , 19]
+    The method uses a a simple linear filler: y=mx+b. find the m and b between two points and fill the rest missing points    
+    '''
     # hr_5_seconds, hr_10_seconds, hr_12_seconds, hr_20_seconds, hr_30_seconds, hr_1_minute, hr_5_minutes, hr_6_minutes, hr_10_minutes
     #all_points = extract_points_from_graph(soup)
     axis = soup.find('g', {'class':'axis xaxis'})
@@ -234,11 +249,12 @@ def extract_mean_max_metrics(soup):
 
     try:
         temp, mean_temp, max_temp = create_points('Temperature' ,'temp')
+        dic['temp_min'] = min(temp, key = lambda x: x[0])[0]
+        dic['temp_max'] = max(temp, key = lambda x: x[0])[0]
     except:
-        temp = [(0, 0)]
+        temp = [(None, None)]
 
-    dic['temp_min'] = min(temp, key = lambda x: x[0])[0]
-    dic['temp_max'] = max(temp, key = lambda x: x[0])[0]
+    
 
     try:
         speed, mean_speed, max_speed = create_points('Speed' ,'velocity_smooth', normalize = 0.44704)
@@ -306,13 +322,14 @@ def extract_mean_max_metrics(soup):
 
 def extract_graph_elevation_distance(soup):
     # Graph data (height...)
-    all_points = extract_points_from_graph(soup)
+    all_points = extract_points_from_graph(soup) # Returns all points from graph after calculating the original value
 
+    
     def calculate_distance_for_height(points, min_dis, max_dis):
+        # Calculate the total distance traveled for specific height range (1000_to_1500 for example)
         in_range = False
         relevent_points = []
         for x, y in points:
-
             if x >= min_dis and x < max_dis:
                 if not in_range:
                     relevent_points.append([])
@@ -325,32 +342,32 @@ def extract_graph_elevation_distance(soup):
             first_point = section[0]
             end_point = section[-1]
             total_distance += end_point[1] - first_point[1]
-
         return total_distance
 
     def calculate_elevation_gain_loss(points):
-
+        # Calcualte the elevation gain and loss of graph
+        # by comparing the previous point with current.
         elevation_gain = 0
         elevation_loss = 0
         max_ = float('-inf')
         min_ = float('inf')
         elevating_now = 0
-        up = True
+        up = True # Flag to see if the direction of previous points was an elevation to find the minimum and maximum elevations
         for i in range(1, len(points)):
             prev = points[i-1][0] * 0.3048 # ft to meter
             curr = points[i][0] * 0.3048 # ft to meter
 
-            if prev > curr:
+            if prev > curr: # Case where there is a decline - elevation loss
                 if up:
                     min_ = min(elevating_now, min_)
-                    elevating_now = 0
+                    elevating_now = 0 # reset the current elevation
                 up = False
                 elevation_loss += (prev - curr)
                 elevating_now += (prev - curr)
-            elif prev < curr:
+            elif prev < curr: # Case where there is an increase - elevation gain
                 if not up:
                     max_ = max(elevating_now, max_)
-                    elevating_now = 0
+                    elevating_now = 0 # reset the current elevation
                 up = True
                 elevation_gain += (curr - prev)
                 elevating_now += (curr - prev)
