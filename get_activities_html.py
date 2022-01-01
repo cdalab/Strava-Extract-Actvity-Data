@@ -125,7 +125,8 @@ class Get_Activities_HTML(Browser):
             log(f'BAD LINK: | {curr_url} | {e}', 'WARNING', id=self.id)
 
     def fetch_activity(self, activity_id, rider_id):
-
+        #TODO: add a condition checking the firewall off, elsewise - turn it off.
+        #TODO: add a condition checking the metrics are in Kg,Km and Celsius, elsewise - change settings (call predefined task)
         home_url = ACTIVITY_URL + str(activity_id)
 
         t.sleep(0.5)
