@@ -63,6 +63,7 @@ class Change_Metric_Preferences(Browser):
                 t.sleep(LOGGED_OUT_SLEEP)
                 self.start_user = user
                 self.start()
+                return
 
             elif not self.browser.current_url == ONBOARD_URL and not self.browser.current_url == DASHBOARD_URL:
                 # BAD ACCOUNT! need
@@ -71,6 +72,7 @@ class Change_Metric_Preferences(Browser):
                 t.sleep(LOGGED_OUT_SLEEP/5)
                 self.start_user = user
                 self.start()
+                return
 
             else:
                 # Success! we are logged in
