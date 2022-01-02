@@ -147,6 +147,13 @@ class Get_Activities_HTML(Browser):
         then, check the current url of our browser:
         if the current url is the initial home url of the activity - then the page doesn't exist
         
+        AFTER THE KNOWN AND COMMON HTML PAGES:
+        there are other pages in the menu for part of the activities for example - 
+        '/power-distribution'
+        instead of just appending all the known pages we would like to iterate over the menu
+        and download each page. 
+        
+        
         later - for each page check if loaded by details on page - looking for al the data needed. 
         if all props exist - download it.
         either way, wait until all load (set TIMOUT limit threshold, if get to the time limit - raise TimeoutError(),

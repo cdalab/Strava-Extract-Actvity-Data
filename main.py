@@ -339,6 +339,7 @@ if __name__ == '__main__':
         metrics_changer.start()
 
     elif activity_type == 'metric_valid':
+        id = 'metric'
         start_user=None
         try:
             i = sys.argv[2]
