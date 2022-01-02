@@ -105,8 +105,10 @@ class Get_Activities_Links(threading.Thread, Browser):
         except:
             log(f'Unexpected error...', 'ERROR', id=self.id)
         if len(problematic_riders) > 0:
+            
             for rider in problematic_riders:
-                log(f'Problematic rider: {rider}', 'ERROR', id=self.id)
+                
+                log(f'Problematic rider: {rider}', 'ERROR', id=self.id, dire='problematic_riders')
         self.riders = [rider for rider in self.riders if rider not in problematic_riders]
         self._close_driver()
 
@@ -209,6 +211,7 @@ class Get_Activities_Links(threading.Thread, Browser):
                         assert len(curr) == len(feed_activities)
                     except Exception as e:
                         # TODO: Check which links fetched.
+                        
                         absolute = len(curr) - len(graph_soup.find("div", {"class":"feed"}).contents)
                         log(f"MISSING {absolute} ACTIVITIES , Problematic timestamp {link}, rider_id: {rider.rider_id}", "ERROR", id=self.id)
                     prev = curr

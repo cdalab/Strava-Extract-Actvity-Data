@@ -50,12 +50,11 @@ class Get_Activities_HTML(Browser):
         self.browser.get(analysis_url)
         t.sleep(0.5)
         self._check_if_too_many_requests(analysis_url)
-        
+        analysis_distance_soup, analysis_time_soup = None, None 
         try:
             analysis_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
             chart = analysis_soup.find_all('g', {'class': "label-box"})
             svg = analysis_soup.find_all('defs')
-            before = t.time()
             dead_line = 6
             timeout = t.time() + dead_line
             too_much = t.time() + 60
@@ -64,7 +63,7 @@ class Get_Activities_HTML(Browser):
                 chart = analysis_soup.find_all('g', {'class': "label-box"})
                 svg = analysis_soup.find_all('defs')
                 if t.time() > too_much:
-                    return {}
+                    raise TimeoutError()
                 elif t.time() > timeout:
                     log(f'Cant Load Analysis Graphs: {self.curr_user} SWITCHING ACCOUNT', 'WARNING', id=self.id)
                     t.sleep(1)
@@ -72,43 +71,35 @@ class Get_Activities_HTML(Browser):
                     timeout = t.time() + dead_line
 
                 t.sleep(0.1)
-            after = t.time() - before
+            
             
             analysis_distance_soup = analysis_soup
-        
-            # try:
-            #     time_button = self.browser.find_element_by_css_selector('g[data-type="time"]')
-            #     print(time_button)
-            # #     # attrs=[]
-            # #     # for attr in time_button.get_property('attributes'):
-            # #     #     attrs.append([attr['name'], attr['value']])
-            # #     # print(attrs)
-            #     webdriver.ActionChains(self.browser).move_to_element(time_button).send_keys(Keys.RETURN)
-            #     t.sleep(1)
-            # #     # WebDriverWait(self.browser, 20).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'g[data-type="time"]'))).send_keys(Keys.RETURN)
-
-            # #     # self.browser.execute_script("arguments[4].click();", time_button)
-               
-            #     analysis_time_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-            # except Exception as e:
-            #     print(e)
-            #     analysis_time_soup = None
+            try:
+                time_button = self.browser.find_element_by_css_selector("#stacked-chart > div > svg > g.xaxis-container > g.chart-controls > g:nth-child(2) > image")
+                time_button.click()
+                t.sleep(0.5)
+                analysis_time_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+            except:
+                log(f'BAD LINK: | {analysis_url} | Failed to click on time button', 'ERROR', id=self.id)
                 
             
-            analysis_time_soup = None
-            
-            return analysis_distance_soup, analysis_time_soup
-            
         except Exception as e:
-            log(f'BAD LINK: | {analysis_url} | {e}', 'WARNING', id=self.id)
-        return None, None
+            log(f'BAD LINK: | {analysis_url} | {e}', 'ERROR', id=self.id)
+            
+        return analysis_distance_soup, analysis_time_soup
             
     def get_generic_soup(self, home_url, extension, object_to_find, object_string, object_attributes={}):
             curr_url = home_url + extension
             
+            t.sleep(0.5)
             self.browser.get(curr_url)
             t.sleep(0.5)
             self._check_if_too_many_requests(curr_url)
+            
+            
+            if self.browser.current_url == home_url:
+                # Page does not exists
+                return None
 
             
             try:
@@ -119,12 +110,15 @@ class Get_Activities_HTML(Browser):
                     gen_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
                     gen = gen_soup.find_all(object_to_find, string=object_string, attrs=object_attributes)
                     t.sleep(0.1)
+                    
+                if t.time() > timeout:
+                    raise TimeoutError()
                 if len(gen) == 0:
                     return None
                 else:
                     return gen_soup
             except Exception as e:
-                log(f'BAD LINK: | {curr_url} | {e}', 'WARNING', id=self.id)
+                log(f'BAD LINK: | {curr_url} | {e}', 'ERROR', id=self.id)
         
         
     def fetch_activity(self, activity_id, rider_id):
@@ -136,89 +130,15 @@ class Get_Activities_HTML(Browser):
         self.browser.get(home_url)
         t.sleep(0.5)
         self._check_if_too_many_requests(home_url)
+        
         home_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-        
-        
-        # ============ CHECK IS MENU ITEMS EXIST ============
-        analysis_exists = False
-        zone_distribution_exists = False
-        heart_rate_exists = False
-        power_curve_exists = False
-        est_power_curve_exists = False
-        GPX_link = ''
-        
-        try:
-            site_menu = home_soup.find('ul', {'class': 'pagenav'}).find_all('a')
-            for a in site_menu:
-                if a['data-menu'] == 'analysis':
-                    analysis_exists = True
-                    break
-        except: pass
-
-        try:
-            premium_views = home_soup.find('li', {'id': 'premium-views'}).find_all('a')
-            for a in premium_views:
-                data_menu = a['data-menu']
-                if data_menu == 'heartrate':
-                    heart_rate_exists = True
-                if data_menu == 'zone-distribution':
-                    zone_distribution_exists = True
-                
-                if data_menu == 'power-curve':
-                    power_curve_exists = True
-                    
-                if data_menu == 'est-power-curve':
-                    est_power_curve_exists = True
-        except: pass
-        
-        try:
-
-            open_menu_items = home_soup.find('div', class_=['slide-menu','drop-down-menu', 'enabled','align-bottom']).find_all('a')
-            for menu in open_menu_items:
-                if  menu.text == 'Export GPX':
-                    GPX_link = STRAVA_URL + menu['href']
-                    break
+        analysis_distance_soup, analysis_time_soup = self.get_analysis_soup(home_url=home_url)
+        zone_distribution_soup = self.get_generic_soup(home_url=home_url, extension='/zone-distribution', object_to_find='h2', object_string='Zone Distribution')
+        heart_rate_soup = self.get_generic_soup(home_url=home_url, extension='/heartrate', object_to_find='h2', object_string='Heart Rate Analysis')
+        power_curve_soup = self.get_generic_soup(home_url=home_url, extension='/power-curve', object_to_find='h2', object_string='Power Curve')
+        est_power_curve_soup = self.get_generic_soup(home_url=home_url, extension='/est-power-curve', object_to_find='h2', object_string='Estimated Power Curve', object_attributes={'class':'float-left'})
+    
             
-        except: pass
-        
-        # ==============================================
-
-        
-        
-        analysis_distance_soup = None
-        analysis_time_soup = None
-        zone_distribution_soup = None
-        heart_rate_soup = None
-        power_curve_soup = None
-        est_power_curve_soup = None
-        
-        
-        # Analysis soup
-        if analysis_exists:
-            
-            analysis_distance_soup, analysis_time_soup = self.get_analysis_soup(home_url=home_url)
-        
-        if zone_distribution_exists:
-            print("zone!")
-            zone_distribution_soup = self.get_generic_soup(home_url=home_url, extension='/zone-distribution', object_to_find='h2', object_string='Zone Distribution')
-            
-        if heart_rate_exists:
-            print('heartrate!')
-            heart_rate_soup = self.get_generic_soup(home_url=home_url, extension='/heartrate', object_to_find='h2', object_string='Heart Rate Analysis')
-            
-        if power_curve_exists:
-            print('power_curve!')
-            power_curve_soup = self.get_generic_soup(home_url=home_url, extension='/power-curve', object_to_find='h2', object_string='Power Curve')
-            if power_curve_soup is None:
-                print('power is none...')
-        if est_power_curve_exists:
-            print('est_prower_curve!')
-            est_power_curve_soup = self.get_generic_soup(home_url=home_url, extension='/est-power-curve', object_to_find='h2', object_string='Estimated Power Curve', object_attributes={'class':'float-left'})
-            if est_power_curve_soup is None:
-                print('est is None!!!')
-            
-     
-
         self.save_html(file_name="home", activity_id=activity_id, soup=home_soup)
         self.save_html(file_name="analysis_distance", activity_id=activity_id, soup=analysis_distance_soup)
         self.save_html(file_name="analysis_time", activity_id=activity_id, soup=analysis_time_soup)
@@ -228,6 +148,15 @@ class Get_Activities_HTML(Browser):
         self.save_html(file_name="est_power_curve", activity_id=activity_id, soup=est_power_curve_soup)
         self.save_rider_id(activity_id=activity_id, rider_id=rider_id)
         
+        
+        
+        # ============= download GPX FILE =============
+        GPX_link = ''
+        open_menu_items = home_soup.find('div', class_=['slide-menu','drop-down-menu', 'enabled','align-bottom']).find_all('a')
+        for menu in open_menu_items:
+            if  menu.text == 'Export GPX':
+                GPX_link = STRAVA_URL + menu['href']
+                break
         
         def delete_gpx_files():
             gpx_files = glob.glob('downloads/*.gpx')
@@ -248,6 +177,7 @@ class Get_Activities_HTML(Browser):
                     gpx_file = glob.glob('downloads/*.gpx')[0]
                     os.rename(gpx_file, f'html/{activity_id}/gpx_file.gpx')
                     delete_gpx_files()
+        # =============================================
                 
         except Exception as e:
             log(f'Problem downlading GPX file {home_url}', 'ERROR', id=self.id)
@@ -265,11 +195,11 @@ class Get_Activities_HTML(Browser):
             end = t.time()
             
             msg = f'Progress: | {i} / {total} | Duration: | {round(end-start, 3)} |'
-            log(msg, id=self.id)
+            log(msg, 'INFO',id=self.id)
             i += 1
             
         
         
 
-fetch = Get_Activities_HTML("test", [(1,6418596161), (2,6432917402)])
+fetch = Get_Activities_HTML("test", [(2,6432917402), (1,6418596161) ])
 fetch.start()

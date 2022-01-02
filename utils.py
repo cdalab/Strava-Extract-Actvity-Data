@@ -46,22 +46,44 @@ workout_speeds_columns = ['workout_id', 'workout_strava_id', 'speed_maximum', 's
                           'speed_zone_6_min', 'speed_zone_7_min']
 
 
-def log(msg,level='INFO', id = '', dire=None):
-    Path(f"log").mkdir(parents=True, exist_ok=True)
-    try:
-        if dire is None:
-            file_name = f'log/log_{id}.txt'
-        else:
-            Path(f"log/{dire}").mkdir(parents=True, exist_ok=True)
-            file_name = f'log/{dire}/log_{id}.txt'
-        msg=f'{level} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
-        print(f'{msg}')
-        with open(file_name,'a+') as f:
+
+
+def log(msg,type = None,log_level='info', id=''):
+
+    
+    log_level = log_level.lower()
+    if type is None:
+        type = log_level
+    else:
+        type = type.lower()
+    log_dict = {'error': 0, 'warning': 1, 'info': 2}
+    
+    if log_dict[type] <= log_dict[log_level]:
+        
+        Path(f"log/{log_level}").mkdir(parents=True, exist_ok=True)
+        with open(f'./log/{log_level}/{id}.log', 'a+') as f:
+            msg=f'{type} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
             f.write(msg)
-        with open(f"S:/{file_name}",'a+') as f:
-            f.write(msg)
-    except Exception as err:
-        pass
+            print(f'{msg}'.replace("\n", ""))
+
+
+
+# def log(msg,level='INFO', id = '', dire=None):
+#     Path(f"log").mkdir(parents=True, exist_ok=True)
+#     try:
+#         if dire is None:
+#             file_name = f'log/log_{id}.txt'
+#         else:
+#             Path(f"log/{dire}").mkdir(parents=True, exist_ok=True)
+#             file_name = f'log/{dire}/log_{id}.txt'
+#         msg=f'{level} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
+#         print(f'{msg}')
+#         with open(file_name,'a+') as f:
+#             f.write(msg)
+#         with open(f"S:/{file_name}",'a+') as f:
+#             f.write(msg)
+#     except Exception as err:
+#         pass
 
 def valid_rider_url(url):
     pattern = re.compile("https://www.strava.com/[a-zA-Z]+/[0-9]+$")
