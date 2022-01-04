@@ -88,7 +88,7 @@ class Get_Activities_HTML(Browser):
             
         return analysis_distance_soup, analysis_time_soup
             
-    def get_generic_soup(self, home_url, extension, object_to_find, object_string, object_attributes={}):
+    def get_generic_soup(self, home_url, extension, object_to_find, object_string, object_attributes={}, find_object=True):
             curr_url = home_url + extension
             
             t.sleep(0.5)
@@ -101,6 +101,9 @@ class Get_Activities_HTML(Browser):
                 # Page does not exists
                 return None
 
+            if not find_object:
+                return BeautifulSoup(self.browser.page_source, 'html.parser')
+            
             
             try:
                 gen_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
@@ -137,8 +140,10 @@ class Get_Activities_HTML(Browser):
         heart_rate_soup = self.get_generic_soup(home_url=home_url, extension='/heartrate', object_to_find='h2', object_string='Heart Rate Analysis')
         power_curve_soup = self.get_generic_soup(home_url=home_url, extension='/power-curve', object_to_find='h2', object_string='Power Curve')
         est_power_curve_soup = self.get_generic_soup(home_url=home_url, extension='/est-power-curve', object_to_find='h2', object_string='Estimated Power Curve', object_attributes={'class':'float-left'})
+        power_distribution_soup = self.get_generic_soup(home_url=home_url, extension='/power-distribution', object_to_find='div', object_string=None, object_attributes={'id':'power-dist-chart'})
+        laps_soup = self.get_generic_soup(home_url=home_url, extension='/laps', object_to_find='section', object_string=None, object_attributes={'id':'efforts-table'})
     
-            
+        
         self.save_html(file_name="home", activity_id=activity_id, soup=home_soup)
         self.save_html(file_name="analysis_distance", activity_id=activity_id, soup=analysis_distance_soup)
         self.save_html(file_name="analysis_time", activity_id=activity_id, soup=analysis_time_soup)
@@ -146,8 +151,31 @@ class Get_Activities_HTML(Browser):
         self.save_html(file_name="heart_rate", activity_id=activity_id, soup=heart_rate_soup)
         self.save_html(file_name="power_curve", activity_id=activity_id, soup=power_curve_soup)
         self.save_html(file_name="est_power_curve", activity_id=activity_id, soup=est_power_curve_soup)
+        self.save_html(file_name="power_distribution", activity_id=activity_id, soup=power_distribution_soup)
+        self.save_html(file_name="laps", activity_id=activity_id, soup=laps_soup)
         self.save_rider_id(activity_id=activity_id, rider_id=rider_id)
         
+        
+        # ===== links that we didn't think about ======
+        
+        premium_sections = home_soup.find("li", {"id": "premium-views"})
+        if premium_sections is not None:
+            premium_sections = premium_sections.find_all("li")
+        
+            not_to_download = ['zone-distribution', 'heartrate', 'power-curve', 'est-power-curve', 'power-distribution']
+            for section in premium_sections:
+                link_a = section.find("a")
+                if link_a is None:
+                    continue
+                
+                link_name = link_a["href"].split("/")[-1]
+                if link_name in not_to_download:
+                    continue
+                
+                unknown_soup = self.get_generic_soup(home_url=home_url, extension=f'/{link_name}', object_to_find=None, object_string=None, object_attributes=None, find_object=False)
+                self.save_html(file_name=f"{link_name}", activity_id=activity_id, soup=unknown_soup)
+
+        # ==============================================
         
         
         # ============= download GPX FILE =============
@@ -180,7 +208,7 @@ class Get_Activities_HTML(Browser):
         # =============================================
                 
         except Exception as e:
-            log(f'Problem downlading GPX file {home_url}', 'ERROR', id=self.id)
+            log(f'Problem downlading GPX file {home_url}, {e}', 'ERROR', id=self.id)
         
         
         
@@ -201,5 +229,5 @@ class Get_Activities_HTML(Browser):
         
         
 
-fetch = Get_Activities_HTML("test", [(2,6432917402), (1,6418596161) ])
+fetch = Get_Activities_HTML("test", [(2,6432917402), (1,6418596161), (3, 6469654111)])
 fetch.start()
