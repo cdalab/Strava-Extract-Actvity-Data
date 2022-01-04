@@ -430,6 +430,7 @@ def extract_graph_elevation_distance(soup):
 def append_row_to_csv(file_name, row, columns):
         df = pd.DataFrame([row])
         file_exists = os.path.isfile(file_name + '.csv')
+        
         with open(file_name + '.csv', 'a', newline='\n', errors='ignore') as f:
             if not file_exists:
                 df.to_csv(f, header=True, columns=columns, index=False)
