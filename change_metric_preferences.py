@@ -156,7 +156,6 @@ class Validate_Metric_Preferences(Browser):
         for user in usernames:
             try:
                 if (self.start_user is not None) and self.start_user != user:
-                    log(f"TEST1 {user}", 'WARNING', id='test')
                     continue
                 self.start_user = None
 
@@ -186,7 +185,7 @@ class Validate_Metric_Preferences(Browser):
 
                 if self.browser.current_url == LOGIN_URL:
                     # ip blocked... wait until block is removed
-                    log(f"IP BLOCKED", 'WARNING', id=self.id)
+                    log(f"IP BLOCKED", 'WARNING', id='metric_valid')
                     self.browser.close()
                     t.sleep(LOGGED_OUT_SLEEP)
                     self.start_user = user
@@ -213,12 +212,12 @@ class Validate_Metric_Preferences(Browser):
                     preferences = preferences_soup.find_all('div',attrs={'class':"setting-value"})
                     # confirm metrics: KGs & KMs
                     if 'Kilometers and Kilograms' not in preferences[0].get_text():
-                        log(f"WRONG METRICS (KGs & KMs) - {user}", 'WARNING', id=self.id)
+                        log(f"WRONG METRICS (KGs & KMs) - {user}", 'WARNING', id='metric')
                         continue
 
                     # confirm metrics: Celsius
                     if 'Celsius' not in preferences[1].get_text():
-                        log(f"WRONG METRICS (Celsius) - {user}", 'WARNING', id=self.id)
+                        log(f"WRONG METRICS (Celsius) - {user}", 'WARNING', id='metric')
                         continue
 
                     log(f'{user}','Info',id='verification')
