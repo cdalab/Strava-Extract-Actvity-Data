@@ -198,6 +198,9 @@ class Get_Activities_HTML(Browser):
                 timeout = t.time() + 10 # Wait 10 seconds to download file
                 while len(glob.glob('downloads/*.gpx')) == 0 and t.time() < timeout:
                     t.sleep(1)
+                    
+                if t.time() >= timeout:
+                    raise TimeoutError()
                 
                 if len(glob.glob('downloads/*.gpx')) == 1:
                     # downloaded file
@@ -205,6 +208,7 @@ class Get_Activities_HTML(Browser):
                     gpx_file = glob.glob('downloads/*.gpx')[0]
                     os.rename(gpx_file, f'html/{activity_id}/gpx_file.gpx')
                     delete_gpx_files()
+                
         # =============================================
                 
         except Exception as e:
