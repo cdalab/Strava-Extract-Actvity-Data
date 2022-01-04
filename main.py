@@ -12,68 +12,76 @@ from rider import Rider
 from pathlib import Path
 
 
-
-
-
-def link(csv_file, id, saving_file_name, start_index=0, end_index= float('inf'), parallelism=1):
-
+def link(csv_file, id, saving_file_name, start_index=0, end_index=float('inf'), parallelism=1):
     print("---- START EXTRACTING ACTIVITY LINKS ----")
 
     df = pd.read_csv(f"data/{csv_file}.csv")
-    df = df[df['url'].notna()]
+    df = df[df['strava_link'].notna()]
     riders = []
+    num_of_riders = 3
+    years = tuple(range(2021, 2022))
+    months = tuple(range(1, 5))
 
-    i = 0
     for index, row in df.iterrows():
-
-        if i >= start_index and i < end_index:
-            try:
+        if index == num_of_riders:
+            break
+        elif start_index <= index < end_index:
+            if 'year' in df.columns:
                 rider_years = row['year'].split(',')
-                rider = Rider(row['url'], row['cyclist_id'], years=rider_years)
-            except:
-                #print('no years...')
-                rider = Rider(row['url'], row['cyclist_id'])
+                rider = Rider(row['strava_link'], row['cyclist_id'], years=rider_years)
+            else:
+                # print('no years...')
+                rider = Rider(row['strava_link'], row['cyclist_id'], years=years, months=months)
 
-            if valid_rider_url(rider.rider_url) :
+            if valid_rider_url(rider.rider_url):
                 riders.append(rider)
-        i += 1
 
+    import time as t
+    start_time = t.time()
+    links_extractor = Get_Activities_Links(riders=riders,
+                                           id=id,
+                                           saving_file_name=f'{saving_file_name}_{curr}_{curr + step}')
+    links_extractor.start()
+    end_time = t.time()
+    print(
+        f'One thread running total time={end_time - start_time}, time per rider={(end_time - start_time) / num_of_riders}')
 
-    step = len(riders)//parallelism
+    start_time = t.time()
+    step = len(riders) // parallelism
     extractors = []
-    for i in range(parallelism+1):
-        curr = i*step
+    for i in range(parallelism + 1):
+        curr = i * step
         if not len(riders) <= curr:
-            links_extractor = Get_Activities_Links(riders=riders[curr:curr+step],
-                                                id=id,
-                                                saving_file_name = f'{saving_file_name}_{curr}_{curr+step}')
+            links_extractor = Get_Activities_Links(riders=riders[curr:curr + step],
+                                                   id=id,
+                                                   saving_file_name=f'{saving_file_name}_{curr}_{curr + step}')
 
             extractors.append(links_extractor)
             links_extractor.start()
     for extractor in extractors:
         extractor.join()
-        
+    end_time = t.time()
+    print(
+        f'Multithreading running total time={end_time - start_time}, time per rider={(end_time - start_time) / num_of_riders}')
 
     print("---- FINISHED EXTRACTING ACTIVITY LINKS ----")
     riders = []
     for extractor in extractors:
         riders += extractor.riders
 
-
     return riders
 
 
 def info(saving_file_name, riders, riders_range_low, riders_range_high, ip, start_from_index):
-
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Info(riders[riders_range_low:riders_range_high], id=ip, saving_file_name=saving_file_name, start_from_index=start_from_index)
+    data_extractor = Get_Activities_Info(riders[riders_range_low:riders_range_high], id=ip,
+                                         saving_file_name=saving_file_name, start_from_index=start_from_index)
     data_extractor.run()
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
     return data_extractor.riders
 
 
-def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index= float('inf')):
-
+def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index=float('inf')):
     print("---- START CREATING LIST OF RIDERS ----")
 
     riders_pickle = open(f'data/ISN_riders.pickle', 'rb')
@@ -94,17 +102,15 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
                 rider_years = row['year'].split(',')
                 rider = Rider(row['url'], row['cyclist_id'], years=rider_years)
             except:
-                #print('no years...')
+                # print('no years...')
                 rider = Rider(row['url'], row['cyclist_id'])
-
 
             try:
                 rider_teams = row['team_pcs_id'].split(',')
             except:
                 rider_teams = []
-            if valid_rider_url(rider.rider_url) :
-                if (team_ids is not None and len(list(set(rider_teams) & set(team_ids))) > 0) or team_ids is None :
-
+            if valid_rider_url(rider.rider_url):
+                if (team_ids is not None and len(list(set(rider_teams) & set(team_ids))) > 0) or team_ids is None:
                     riders.append(rider)
         i += 1
 
@@ -112,7 +118,7 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
 
     print("---- START EXTRACTING ACTIVITY LINKS ----")
 
-    links_extractor = Get_Activities_Links(riders=riders, id=ip,saving_file_name=f"link/{saving_file_name}")
+    links_extractor = Get_Activities_Links(riders=riders, id=ip, saving_file_name=f"link/{saving_file_name}")
     links_extractor.create_links_for_extractions()
 
     links_extractor.fetch_links()
@@ -128,18 +134,9 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
     return riders
 
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
 
-
     id = requests.get('http://ipinfo.io/json').json()['ip']
-
 
     log(f'', id=id)
     log(f'', id=id)
@@ -149,9 +146,6 @@ if __name__ == '__main__':
     log(f'', id=id)
     activity_type = sys.argv[1]
     file_name = sys.argv[2]
-
-
-
 
     if activity_type == 'info':
 
@@ -182,7 +176,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-        
+
 
     elif activity_type == 'link':
         # run example : main.py link ISN_riders 1
@@ -197,7 +191,8 @@ if __name__ == '__main__':
                 high_index = int(sys.argv[6])
                 saving_file_name = f'link/{file_name}_index_{low_index}_{high_index}'
                 log(f'STARTING LINK INDEX: {low_index}_{high_index}', id=id)
-                link(file_name, id, saving_file_name=saving_file_name, start_index=low_index, end_index=high_index, parallelism=parallelism)
+                link(file_name, id, saving_file_name=saving_file_name, start_index=low_index, end_index=high_index,
+                     parallelism=parallelism)
 
 
         except:
@@ -205,7 +200,7 @@ if __name__ == '__main__':
             saving_file_name = f'link/{file_name}_all'
             link(file_name, id, saving_file_name=saving_file_name, parallelism=parallelism)
 
-        
+
 
 
     elif activity_type == 'flow':
@@ -263,8 +258,8 @@ if __name__ == '__main__':
                 continue
 
             if row.cyclist_id not in riders_dic:
-                riders_dic[row.cyclist_id] = Rider(rider_name='', rider_url='',rider_id=row.cyclist_id)
-                
+                riders_dic[row.cyclist_id] = Rider(rider_name='', rider_url='', rider_id=row.cyclist_id)
+
             if row.workout_strava_id.isdecimal():
                 url = f"https://www.strava.com/activities/{row.workout_strava_id}"
             else:
@@ -279,29 +274,29 @@ if __name__ == '__main__':
             try:
                 i = sys.argv[5]
                 if i == '-i':
-                    start_from_index =  int(sys.argv[6])
-                    data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id, start_from_index=start_from_index)
+                    start_from_index = int(sys.argv[6])
+                    data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id,
+                                       start_from_index=start_from_index)
             except:
                 data_riders = data(saving_file_name, list(riders_dic.values()), 0, len(riders), id, 0)
         except Exception as e:
             print(e)
 
-        
-    
+
+
     elif activity_type == 'html':
         # run example: main.py html strava_ids 1 100
         # run example: main.py html strava_ids 1 100 -i 20
-        
-        
+
         links_range_low = int(sys.argv[3])
         links_range_low = int(sys.argv[4])
         start_from_index = 0
-        try: 
+        try:
             i = sys.argv[5]
             if i == '-i':
                 start_from_index = int(sys.argv[6])
-        except: pass
-            
+        except:
+            pass
 
         df = pd.read_csv(f'data/{file_name}.csv')
         data = []
@@ -312,18 +307,10 @@ if __name__ == '__main__':
                 continue
             rider_id = row["rider_id"]
             activity_id = row["activity_id"]
-            data.append((rider_id,activity_id))
-            
+            data.append((rider_id, activity_id))
+
         data = data[start_from_index:]
-            
+
         Get_Activities_HTML(id, data)
-
-        
-        
-        
-        
-
-
-
 
     print("---- FINISH ----")

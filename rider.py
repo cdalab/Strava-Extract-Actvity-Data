@@ -1,6 +1,6 @@
 import pandas as pd
 class Rider:
-    def __init__(self, rider_url, rider_id, years = tuple(range(2015, 2022)), months=tuple(range(1, 13))):
+    def __init__(self, rider_url, rider_id, years = tuple(range(2015, 2023)), months=tuple(range(1, 13))):
         self.rider_url = rider_url
         self.rider_id = rider_id
         self.activity_links = set()
