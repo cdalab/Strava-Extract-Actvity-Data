@@ -12,62 +12,36 @@ from rider import Rider
 from pathlib import Path
 
 
-def link(csv_file, id, saving_file_name, start_index=0, end_index=float('inf'), parallelism=1):
+def link(csv_file, id, saving_file_name, start_index=0, end_index=float('inf')):
     print("---- START EXTRACTING ACTIVITY LINKS ----")
 
     df = pd.read_csv(f"data/{csv_file}.csv")
     df = df[df['strava_link'].notna()]
     riders = []
-    num_of_riders = 3
-    years = tuple(range(2021, 2022))
-    months = tuple(range(1, 5))
+
 
     for index, row in df.iterrows():
-        if index == num_of_riders:
-            break
-        elif start_index <= index < end_index:
+        
+        if start_index <= index < end_index:
             if 'year' in df.columns:
                 rider_years = row['year'].split(',')
                 rider = Rider(row['strava_link'], row['cyclist_id'], years=rider_years)
             else:
-                # print('no years...')
-                rider = Rider(row['strava_link'], row['cyclist_id'], years=years, months=months)
+                # No years
+                rider = Rider(row['strava_link'], row['cyclist_id'])
 
             if valid_rider_url(rider.rider_url):
                 riders.append(rider)
 
-    import time as t
-    start_time = t.time()
     links_extractor = Get_Activities_Links(riders=riders,
                                            id=id,
-                                           saving_file_name=f'{saving_file_name}_{curr}_{curr + step}')
+                                           saving_file_name=saving_file_name)
     links_extractor.start()
-    end_time = t.time()
-    print(
-        f'One thread running total time={end_time - start_time}, time per rider={(end_time - start_time) / num_of_riders}')
-
-    start_time = t.time()
-    step = len(riders) // parallelism
-    extractors = []
-    for i in range(parallelism + 1):
-        curr = i * step
-        if not len(riders) <= curr:
-            links_extractor = Get_Activities_Links(riders=riders[curr:curr + step],
-                                                   id=id,
-                                                   saving_file_name=f'{saving_file_name}_{curr}_{curr + step}')
-
-            extractors.append(links_extractor)
-            links_extractor.start()
-    for extractor in extractors:
-        extractor.join()
-    end_time = t.time()
-    print(
-        f'Multithreading running total time={end_time - start_time}, time per rider={(end_time - start_time) / num_of_riders}')
-
+    links_extractor.join()
+    
     print("---- FINISHED EXTRACTING ACTIVITY LINKS ----")
-    riders = []
-    for extractor in extractors:
-        riders += extractor.riders
+    riders += links_extractor.riders
+    
 
     return riders
 
