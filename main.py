@@ -195,15 +195,15 @@ if __name__ == '__main__':
             if i == "-i":
                 low_index = int(sys.argv[5])
                 high_index = int(sys.argv[6])
-                saving_file_name = f'link/links_{file_name}_index_{low_index}_{high_index}'
+                saving_file_name = f'link/{file_name}_index_{low_index}_{high_index}'
                 log(f'STARTING LINK INDEX: {low_index}_{high_index}', id=id)
                 link(file_name, id, saving_file_name=saving_file_name, start_index=low_index, end_index=high_index, parallelism=parallelism)
 
 
         except:
             log(f'STARTING LINK ALL', id=id)
-            saving_file_name = f'link/links_{file_name}_all'
-            link(file_name, id, saving_file_name=file_name, parallelism=parallelism)
+            saving_file_name = f'link/{file_name}_all'
+            link(file_name, id, saving_file_name=saving_file_name, parallelism=parallelism)
 
         
 
