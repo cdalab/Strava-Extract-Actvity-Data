@@ -4,7 +4,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from browser import Browser
 from utils import *
-from usernames import *
+from consts import *
 
 
 
@@ -14,15 +14,15 @@ LOGIN_URL = 'https://www.strava.com/login'
 
 class Get_Activities_Info(Browser):
 
-    def __init__(self, riders, id, saving_file_name, start_from_index = 0):
+    def __init__(self, riders, id, start_from_index = 0):
         '''
         Fetches the information from each activity in each rider.
         
         params:
         --------
         riders: List<Rider>
-        id: string. The id for saving log files
-        saving_file_name: string. The name of the file that will be saved. Usually starts with 'info/'
+        id: string. The id for log files
+        file_path: string. The name of the file that will be saved. Usually starts with 'info/'
         start_from_index: integer. The index to fetch from the activities.
             For example: if there are 1300 activities, start_from_index=133 with fetch all the links
             between 133-1300 and will skip the links before 133
@@ -32,7 +32,7 @@ class Get_Activities_Info(Browser):
         super().__init__(id)
         self.riders = riders
         self.start_from_index = start_from_index
-        self.saving_file_name = saving_file_name
+        self.file_path = file_path
         
 
     def _extract_activity_home(self, url):
@@ -408,11 +408,11 @@ class Get_Activities_Info(Browser):
 
                     workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found = divide_to_tables(data, rider.rider_id)
                     try:
-                        append_row_to_csv(self.saving_file_name+'_workout', workout_row, workout_columns)
-                        append_row_to_csv(self.saving_file_name+'_workout_hrs', workout_hrs_row, workout_hrs_columns)
-                        append_row_to_csv(self.saving_file_name+'_workout_cadences', workout_cadences_row, workout_cadences_columns)
-                        append_row_to_csv(self.saving_file_name+'_workout_powers', workout_powers_row, workout_powers_columns)
-                        append_row_to_csv(self.saving_file_name+'_workout_speeds', workout_speeds_row, workout_speeds_columns)
+                        append_row_to_csv(self.file_path + '_workout', workout_row, WORKOUTS_COLS)
+                        append_row_to_csv(self.file_path + '_workout_hrs', workout_hrs_row, WORKOUTS_HRS_COLS)
+                        append_row_to_csv(self.file_path + '_workout_cadences', workout_cadences_row, WORKOUTS_CADENCES_COLS)
+                        append_row_to_csv(self.file_path + '_workout_powers', workout_powers_row, WORKOUTS_POWERS_COLS)
+                        append_row_to_csv(self.file_path + '_workout_speeds', workout_speeds_row, WORKOUTS_SPEEDS_COLS)
                     except Exception as e:
                         log(f'could not save locally {e}', 'ERROR', id=self.id)
 

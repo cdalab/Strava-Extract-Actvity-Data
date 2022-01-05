@@ -1,55 +1,37 @@
 import sys
 import pickle as pk
-import requests
+from pathlib import Path
+
 import pandas as pd
 from get_activities_info import Get_Activities_Info
 from get_activities_links import Get_Activities_Links
 from get_activities_html import Get_Activities_HTML
-from usernames import *
-from utils import valid_rider_url, log
-from firebase import upload_data_firebase, init_firebase
-from rider import Rider
-from pathlib import Path
+from utils import valid_rider_url, log, setting_up
 
+def link(urls_file_path, id,csv_file_path='link\links', low_limit_index=0, high_limit_index=None):
+    log("---- START EXTRACTING ACTIVITY LINKS ----",id=id)
 
-def link(csv_file, id, saving_file_name, start_index=0, end_index=float('inf')):
-    print("---- START EXTRACTING ACTIVITY LINKS ----")
-
-    df = pd.read_csv(f"data/{csv_file}.csv")
-    df = df[df['strava_link'].notna()]
-    riders = []
-
-
-    for index, row in df.iterrows():
-        
-        if start_index <= index < end_index:
-            if 'year' in df.columns:
-                rider_years = row['year'].split(',')
-                rider = Rider(row['strava_link'], row['cyclist_id'], years=rider_years)
-            else:
-                # No years
-                rider = Rider(row['strava_link'], row['cyclist_id'])
-
-            if valid_rider_url(rider.rider_url):
-                riders.append(rider)
-
-    links_extractor = Get_Activities_Links(riders=riders,
+    riders_df = pd.read_csv(f"data/{urls_file_path}")
+    riders_df = riders_df[riders_df['strava_link'].notna()]
+    if high_limit_index:
+        riders_df = riders_df.loc[low_limit_index:high_limit_index-1]
+    else:
+        riders_df = riders_df.loc[low_limit_index:]
+    links_extractor = Get_Activities_Links(riders=riders_df,
                                            id=id,
-                                           saving_file_name=saving_file_name)
+                                           csv_file_path=csv_file_path)
     links_extractor.start()
-    links_extractor.join()
-    
-    print("---- FINISHED EXTRACTING ACTIVITY LINKS ----")
-    riders += links_extractor.riders
-    
-
-    return riders
 
 
-def info(saving_file_name, riders, riders_range_low, riders_range_high, ip, start_from_index):
+    log("---- FINISHED EXTRACTING ACTIVITY LINKS ----",id=id)
+
+
+
+
+def info(file_path, riders, id, start_from_index):
     print("---- START EXTRACTING ACTIVITY DATA ----")
-    data_extractor = Get_Activities_Info(riders[riders_range_low:riders_range_high], id=ip,
-                                         saving_file_name=saving_file_name, start_from_index=start_from_index)
+    data_extractor = Get_Activities_Info(riders, id=id,
+                                         file_path=file_path, start_from_index=start_from_index)
     data_extractor.run()
     print("---- FINISHED EXTRACTING ACTIVITY DATA ----")
     return data_extractor.riders
@@ -92,7 +74,7 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
 
     print("---- START EXTRACTING ACTIVITY LINKS ----")
 
-    links_extractor = Get_Activities_Links(riders=riders, id=ip, saving_file_name=f"link/{saving_file_name}")
+    links_extractor = Get_Activities_Links(riders=riders, id=ip, saving_file_name=f"link{saving_file_name}")
     links_extractor.create_links_for_extractions()
 
     links_extractor.fetch_links()
@@ -110,74 +92,66 @@ def flow(saving_file_name, csv_file, ip, team_ids=None, start_index=0, end_index
 
 if __name__ == '__main__':
 
-    id = requests.get('http://ipinfo.io/json').json()['ip']
+    args = setting_up()
+    command = args['command']
+    id = args['id']
 
-    log(f'', id=id)
-    log(f'', id=id)
-    log(f'====================================================================', id=id)
-    log(f'{sys.argv}', id=id)
-    log(f'', id=id)
-    log(f'', id=id)
-    activity_type = sys.argv[1]
-    file_name = sys.argv[2]
+    if command == 'info':
 
-    if activity_type == 'info':
+        # run example : main.py -c info -f ISN_pickle_riders.pickle -li 200 -hi 500
+        # run example : main.py -c info -f ISN_pickle_riders.pickle -li 200 -hi 500 -l 4
 
-        # run example : main.py info ISN_pickle_riders 200 500
-        # run example : main.py info ISN_pickle_riders 200 500 -i 4
+        file_path = args['file_path']
+        riders = pk.load(open(f'info/{file_path}', 'rb'))
 
-        riders_pickle = open(f'info/{file_name}.pickle', 'rb')
-        riders_load = pk.load(riders_pickle)
+        riders_low_index = args['riders_low_index']
+        riders_high_index = args['riders_high_index']
 
-        riders_range_low = int(sys.argv[3])
-        riders_range_high = int(sys.argv[4])
-
-        saving_file_name = f'info/{file_name}_{riders_range_low}_{riders_range_high}'
-        index = False
-        start_from_index = 0
-        try:
-            i = sys.argv[5]
-            if (i == "-i"):
-                start_from_index = int(sys.argv[6])
-                saving_file_name += f'_started from: {start_from_index}'
-        except Exception as e:
-            print(e)
+        csv_file_path = f'{command}_{riders_low_index}_{riders_high_index}'
+        start_from_index = args['low_limit_index']
 
         data_riders = None
 
         try:
-            data_riders = info(saving_file_name, riders_load, riders_range_low, riders_range_high, id, start_from_index)
-        except Exception as e:
-            print(e)
+            data_riders = info(csv_file_path, riders[riders_low_index:riders_high_index], id, start_from_index)
+        except:
+            log(f'Problem in info function, '
+                f'args: {csv_file_path, riders[riders_low_index:riders_high_index], id, start_from_index}',
+                'ERROR', id=id)
 
 
 
-    elif activity_type == 'link':
-        # run example : main.py link ISN_riders 1
-        # run example : main.py link ISN_riders 1 -i 10 100
+    elif command == 'link':
+        # run example : main.py -c link -f ISN_riders.csv -t 2
+        # run example : main.py -c link -f ISN_riders.csv -li 10 -hi 100
 
-        parallelism = int(sys.argv[3])
-
+        num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
+        urls_file_path = args['file_path']
+        low_limit_index = args['low_limit_index']
+        high_limit_index = args['high_limit_index']
+        csv_file_path = f'link/links'
+        if low_limit_index:
+            csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
+        if high_limit_index:
+            csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
+        csv_file_path = f'{csv_file_path}.csv'
+        Path("link/links").mkdir(parents=True, exist_ok=True)
         try:
-            i = sys.argv[4]
-            if i == "-i":
-                low_index = int(sys.argv[5])
-                high_index = int(sys.argv[6])
-                saving_file_name = f'link/{file_name}_index_{low_index}_{high_index}'
-                log(f'STARTING LINK INDEX: {low_index}_{high_index}', id=id)
-                link(file_name, id, saving_file_name=saving_file_name, start_index=low_index, end_index=high_index,
-                     parallelism=parallelism)
-
+            if low_limit_index:
+                log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
+                link(urls_file_path, id, csv_file_path=csv_file_path, low_limit_index=low_limit_index, high_limit_index=high_limit_index)
+            else:
+                link(urls_file_path, id, csv_file_path=csv_file_path)
 
         except:
-            log(f'STARTING LINK ALL', id=id)
-            saving_file_name = f'link/{file_name}_all'
-            link(file_name, id, saving_file_name=saving_file_name, parallelism=parallelism)
+            log(f'Problem in link function, '
+                f'args: {urls_file_path, id, csv_file_path, low_limit_index, high_limit_index}',
+                'ERROR', id=id)
 
 
 
 
-    elif activity_type == 'flow':
+    elif command == 'flow':
         print("---- START FLOW ----")
         # run example: main.py flow rider_csv
         # run example: main.py flow rider_csv -i 100 153 164
@@ -213,7 +187,7 @@ if __name__ == '__main__':
             flow_riders = flow(saving_file_name, file_name, id)
 
 
-    elif activity_type == 'actv':
+    elif command == 'actv':
 
         print("---- START FETCH ACTIVITIES ----")
         # run example: main.py actv strava_ids 1 100
@@ -258,7 +232,7 @@ if __name__ == '__main__':
 
 
 
-    elif activity_type == 'html':
+    elif command == 'html':
         # run example: main.py html strava_ids 1 100
         # run example: main.py html strava_ids 1 100 -i 20
 
@@ -287,4 +261,4 @@ if __name__ == '__main__':
 
         Get_Activities_HTML(id, data)
 
-    print("---- FINISH ----")
+    log("---- FINISH ----", id=id)

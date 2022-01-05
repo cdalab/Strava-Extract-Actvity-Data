@@ -231,7 +231,7 @@ class Get_Activities_HTML(Browser):
             i += 1
             
         
-        
 
-fetch = Get_Activities_HTML("test", [(2,6432917402), (1,6418596161), (3, 6469654111)])
-fetch.start()
+#
+# fetch = Get_Activities_HTML("test", [(2,6432917402), (1,6418596161), (3, 6469654111)])
+# fetch.start()

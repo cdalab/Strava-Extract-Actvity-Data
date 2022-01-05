@@ -1,94 +1,99 @@
+import argparse
 import os
 import re
+import traceback
+
 import numpy as np
 import time as t
 import random
 from datetime import datetime
 from pathlib import Path
 import pandas as pd
-from usernames import *
-from selenium import webdriver
+import requests
 
+from consts import *
+from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-# columns!
-workout_columns = ['workout_id', 'workout_tp_id', 'workout_strava_id', 'cyclist_id', 'type', 'tags', 'workout_week',
-                   'workout_month', 'workout_datetime','workout_location', 'total_time', 'workout_title', 'cyclist_mass', 'elevation_gain',
-                   'elevation_loss', 'elevation_average', 'elevation_maximum', 'elevation_minimum', 'temp_avg',
-                   'temp_min', 'temp_max', '_1000_to_1500_m', '_1500_to_2000_m', '_2000_to_2500_m', '_2500_to_3000_m',
-                   '_3000_to_3500_m', 'relative_effort', 'training_load', 'intensity', 'distance', 'energy', 'calories',
-                   'if', 'tss_actual', 'tss_calculation_method', 'hidden', 'locked']
-workout_hrs_columns = ['workout_id', 'workout_strava_id', 'hr_maximum', 'hr_average', 'hr_5_seconds', 'hr_10_seconds',
-                       'hr_12_seconds', 'hr_20_seconds', 'hr_30_seconds', 'hr_1_minute', 'hr_2_minutes', 'hr_5_minutes',
-                       'hr_6_minutes', 'hr_10_minutes', 'hr_12_minutes', 'hr_20_minutes', 'hr_30_minutes', 'hr_1_hour',
-                       'hr_90_minutes', 'hr_3_hours', 'hr_zone_1', 'hr_zone_2', 'hr_zone_3', 'hr_zone_4', 'hr_zone_5',
-                       'hr_zone_1_min', 'hr_zone_2_min', 'hr_zone_3_min', 'hr_zone_4_min', 'hr_zone_5_min']
-workout_cadences_columns = ['workout_id', 'workout_strava_id', 'cadence_5_seconds', 'cadence_10_seconds',
-                            'cadence_12_seconds', 'cadence_20_seconds', 'cadence_30_seconds', 'cadence_1_minute',
-                            'cadence_2_minutes', 'cadence_5_minutes', 'cadence_6_minutes', 'cadence_10_minutes',
-                            'cadence_12_minutes', 'cadence_20_minutes', 'cadence_30_minutes', 'cadence_1_hour',
-                            'cadence_90_minutes', 'cadence_3_hours', 'cadence_maximum', 'cadence_average']
-workout_powers_columns = ['workout_id', 'workout_strava_id', 'power_maximum', 'power_average', 'normalized_power',
-                          'power_5_seconds', 'power_10_seconds', 'power_12_seconds', 'power_20_seconds',
-                          'power_30_seconds', 'power_1_minute', 'power_2_minutes', 'power_5_minutes', 'power_6_minutes',
-                          'power_10_minutes', 'power_12_minutes', 'power_20_minutes', 'power_30_minutes',
-                          'power_1_hour', 'power_90_minutes', 'power_3_hours', 'power_zone_1', 'power_zone_2',
-                          'power_zone_3', 'power_zone_4', 'power_zone_5', 'power_zone_6', 'power_zone_7',
-                          'power_zone_1_min', 'power_zone_2_min', 'power_zone_3_min', 'power_zone_4_min',
-                          'power_zone_5_min', 'power_zone_6_min', 'power_zone_7_min']
-workout_speeds_columns = ['workout_id', 'workout_strava_id', 'speed_maximum', 'speed_average', 'speed_5_seconds',
-                          'speed_10_seconds', 'speed_12_seconds', 'speed_20_seconds', 'speed_30_seconds',
-                          'speed_1_minute', 'speed_2_minutes', 'speed_5_minutes', 'speed_6_minutes', 'speed_10_minutes',
-                          'speed_12_minutes', 'speed_20_minutes', 'speed_30_minutes', 'speed_1_hour',
-                          'speed_90_minutes', 'speed_3_hours', 'speed_zone_1', 'speed_zone_2', 'speed_zone_3',
-                          'speed_zone_4', 'speed_zone_5', 'speed_zone_6', 'speed_zone_7', 'speed_zone_1_min',
-                          'speed_zone_2_min', 'speed_zone_3_min', 'speed_zone_4_min', 'speed_zone_5_min',
-                          'speed_zone_6_min', 'speed_zone_7_min']
+
+def setting_up():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--command', type=str)
+    parser.add_argument('-f', '--file-path', type=str)
+    parser.add_argument('-li', '--low-limit-index', type=int)
+    parser.add_argument('-hi', '--high-limit-index', type=int)
+    parser.add_argument('-rl', '--riders-low-index', type=int)
+    parser.add_argument('-rh', '--riders-high-index', type=int)
+    parser.add_argument('-t', '--num-of-threads', type=int)
+    args = parser.parse_args()
+    args_dict = dict(
+        command=args.command,
+        file_path=args.file_path,
+        low_limit_index=args.low_limit_index,
+        high_limit_index=args.high_limit_index,
+        riders_low_index=args.riders_low_index,
+        riders_high_index=args.riders_high_index,
+        num_of_threads=args.num_of_threads
+    )
+    if args.command == None:
+        raise ValueError('Cannot run the job without a command')
+    ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
+    id = f"{ip_addrs}_{args.command}"
+    args_dict['id'] = id
+    log(f'', id=id)
+    log(f'', id=id)
+    log(f'====================================================================', id=id)
+    log(f'{args_dict}', id=id)
+    log(f'', id=id)
+    log(f'', id=id)
+
+    return args_dict
 
 
-
-
-def log(msg,type = None,log_level='info', id=''):
-
-    
-    log_level = log_level.lower()
+def log(msg, type=None, id=''):
     if type is None:
-        type = log_level
+        type = LOG_LEVEL
     else:
-        type = type.lower()
-    log_dict = {'error': 0, 'warning': 1, 'info': 2}
-    
-    if log_dict[type] <= log_dict[log_level]:
-        
-        Path(f"log/{log_level}").mkdir(parents=True, exist_ok=True)
-        with open(f'./log/{log_level}/{id}.log', 'a+') as f:
-            msg=f'{type} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
+        type = type
+    if LOG_LEVEL_DICT[type] <= LOG_LEVEL_DICT[LOG_LEVEL]:
+        if type == 'ERROR':
+            msg += f' ERROR DETAILS: {traceback.format_exc()}'
+        msg = f'{type}\t{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\t{msg}\n'
+        with open(f'./log/{type}_{id}.log', 'a+') as f:
             f.write(msg)
+        if DEBUG:
             print(f'{msg}'.replace("\n", ""))
 
 
+def error_handler(function, params):
+    error_df_path = f'./log/error_df.csv'
+    if not os.path.exists(error_df_path):
+        pd.DataFrame(columns=['function', 'params']).to_csv(error_df_path, index=False, header=True)
+    pd.DataFrame([function, params]).to_csv(error_df_path, mode='a', index=False, header=False)
 
-# def log(msg,level='INFO', id = '', dire=None):
-#     Path(f"log").mkdir(parents=True, exist_ok=True)
-#     try:
-#         if dire is None:
-#             file_name = f'log/log_{id}.txt'
-#         else:
-#             Path(f"log/{dire}").mkdir(parents=True, exist_ok=True)
-#             file_name = f'log/{dire}/log_{id}.txt'
-#         msg=f'{level} {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} {msg}\n'
-#         print(f'{msg}')
-#         with open(file_name,'a+') as f:
-#             f.write(msg)
-#         with open(f"S:/{file_name}",'a+') as f:
-#             f.write(msg)
-#     except Exception as err:
-#         pass
+
+def timeout_wrapper(func):
+    def wrap(self, msg, *args, **kwargs):
+        trials = 0
+        while trials < TIMEOUT:
+            try:
+                result = func(self, *args, **kwargs)
+                return result
+            except:
+                trials += 1
+                if trials == TIMEOUT:
+                    log('Error', msg)
+                    error_handler(func.__name__, kwargs)
+
+    return wrap
+
 
 def valid_rider_url(url):
     pattern = re.compile("https://www.strava.com/[a-zA-Z]+/[0-9]+$")
     found = pattern.search(url)
     if not found:
+        return False
+    if ('pros' and 'athletes') not in url:
         return False
     return True
 
@@ -97,7 +102,7 @@ def to_hours(time_string):
     time = time_string.split(':')
     total = 0
     for i in range(len(time)):
-        total += int(re.sub('\D', '', time[i]))/(60**i)
+        total += int(re.sub('\D', '', time[i])) / (60 ** i)
     return total
 
 
@@ -105,7 +110,7 @@ def to_seconds(time_string):
     time = time_string.split(':')
     total = 0
     for i in range(len(time)):
-        total += int(re.sub('\D', '', time[i]))*(60**(len(time) - i - 1))
+        total += int(re.sub('\D', '', time[i])) * (60 ** (len(time) - i - 1))
     return total
 
 
@@ -113,8 +118,7 @@ def extract_points_from_graph(soup):
     '''
     Extract the raw points from graph and convert from pixels to original point values
     '''
-    
-    
+
     svg = soup.find_all('defs')
     y_offset = float(svg[0].find('rect')['y'])
     height = float(svg[0].find('rect')['height']) + y_offset
@@ -125,22 +129,25 @@ def extract_points_from_graph(soup):
     ticks = list(map(lambda x: [x[0].split(','), x[1]], ticks))
 
     x_ticks = [x for x in ticks if 'mi' in x[1]][:7]
-    x_single_tick_size = float(x_ticks[1][0][0]) # the width between two ticks
-    miles_single_tick_size = float(x_ticks[1][1][:-3]) # the value between two ticks
-    ratio_x = miles_single_tick_size / x_single_tick_size # ratio between width and value
+    x_single_tick_size = float(x_ticks[1][0][0])  # the width between two ticks
+    miles_single_tick_size = float(x_ticks[1][1][:-3])  # the value between two ticks
+    ratio_x = miles_single_tick_size / x_single_tick_size  # ratio between width and value
 
     y_ticks = [x for x in ticks if 'ft' in x[1]]
-    y_single_tick_size = float(y_ticks[0][0][1]) - float(y_ticks[1][0][1]) # the height between two ticks
-    feet_single_tick_size = float(y_ticks[1][1][:-3].replace(",", "")) - float(y_ticks[0][1][:-3].replace(",", "")) # the value between two ticks
+    y_single_tick_size = float(y_ticks[0][0][1]) - float(y_ticks[1][0][1])  # the height between two ticks
+    feet_single_tick_size = float(y_ticks[1][1][:-3].replace(",", "")) - float(
+        y_ticks[0][1][:-3].replace(",", ""))  # the value between two ticks
 
-    minimum_feet_tick = float(y_ticks[0][1][:-3].replace(",", "")) # the minimum value of y coordinates to find the starting point
+    minimum_feet_tick = float(
+        y_ticks[0][1][:-3].replace(",", ""))  # the minimum value of y coordinates to find the starting point
 
-    ratio_y = feet_single_tick_size / y_single_tick_size # ratio between height and value
+    ratio_y = feet_single_tick_size / y_single_tick_size  # ratio between height and value
 
-    all_points = soup.find('path', {'id' : 'line'})['d'].split(',')[1:-1]
+    all_points = soup.find('path', {'id': 'line'})['d'].split(',')[1:-1]
     all_points = [x.split('L') for x in all_points]
     all_points = [[height - float(x[0]), float(x[1])] for x in all_points]
-    all_points = [[(x[0]*ratio_y) + minimum_feet_tick, x[1]*ratio_x] for x in all_points] # map pixels into original values according to ratios
+    all_points = [[(x[0] * ratio_y) + minimum_feet_tick, x[1] * ratio_x] for x in
+                  all_points]  # map pixels into original values according to ratios
     return all_points
 
 
@@ -152,8 +159,8 @@ def extract_mean_max_metrics(soup):
     The method uses a a simple linear filler: y=mx+b. find the m and b between two points and fill the rest missing points    
     '''
     # hr_5_seconds, hr_10_seconds, hr_12_seconds, hr_20_seconds, hr_30_seconds, hr_1_minute, hr_5_minutes, hr_6_minutes, hr_10_minutes
-    #all_points = extract_points_from_graph(soup)
-    axis = soup.find('g', {'class':'axis xaxis'})
+    # all_points = extract_points_from_graph(soup)
+    axis = soup.find('g', {'class': 'axis xaxis'})
     ticks = axis.find_all('g', {'class': 'tick'})
     seconds_translation = []
     for tick in ticks:
@@ -162,9 +169,10 @@ def extract_mean_max_metrics(soup):
         seconds = 0
         # calculate seconds
         for i in range(0, len(time)):
-            seconds += int(time[i]) * 60**i
+            seconds += int(time[i]) * 60 ** i
         seconds_translation.append((seconds, translation))
-    single_sec_interval = (seconds_translation[1][0] - seconds_translation[0][0]), (seconds_translation[1][1] - seconds_translation[0][1])
+    single_sec_interval = (seconds_translation[1][0] - seconds_translation[0][0]), (
+            seconds_translation[1][1] - seconds_translation[0][1])
 
     total_seconds = 0
     width_figure = 696
@@ -183,15 +191,16 @@ def extract_mean_max_metrics(soup):
                 current_interval.append(point[0])
         return np.max(max_)
 
-    def create_points(box_name, graph_name, normalize = 1):
+    def create_points(box_name, graph_name, normalize=1):
         chart = soup.find('div', {'class': 'base-chart'})
         chart_height = float(chart.svg['height'])
         boxes = soup.find_all('g', {'class': 'label-box'})
         translations = []
 
         for box in boxes:
-
-            translation = float(box['transform'].replace('translate', '').replace('(', '').replace(')', '').replace(' ', '').split(',')[-1])
+            translation = float(
+                box['transform'].replace('translate', '').replace('(', '').replace(')', '').replace(' ', '').split(',')[
+                    -1])
             translations.append(translation)
 
         point_box = []
@@ -205,8 +214,8 @@ def extract_mean_max_metrics(soup):
             low_v = float(box.find('text', {'class': 'static-label-box bottom'}).text.replace(',', ''))
             begin_translation = boxes[i]
 
-            if i+1 < len(boxes):
-                end_translation = translations[i+1] - 1
+            if i + 1 < len(boxes):
+                end_translation = translations[i + 1] - 1
             else:
                 end_translation = translations[i] + height_figure - 1
 
@@ -216,7 +225,7 @@ def extract_mean_max_metrics(soup):
             point_box.append(max_v)
             break
 
-        points = soup.find('g', {'id':graph_name}).find('path')['d'].split(',')[2:-1]
+        points = soup.find('g', {'id': graph_name}).find('path')['d'].split(',')[2:-1]
         points = [x.split('L') for x in points]
         points = [[float(x[0]), float(x[1])] for x in points]
         begin_translation = point_box[0]
@@ -227,16 +236,16 @@ def extract_mean_max_metrics(soup):
         original_points = []
 
         for point in points:
-            calculated_point_y = ((end_translation - point[0])/height_figure * value_range) + lowest_value
-            calculated_point_x = round((point[1]/width_figure)*total_seconds)
+            calculated_point_y = ((end_translation - point[0]) / height_figure * value_range) + lowest_value
+            calculated_point_x = round((point[1] / width_figure) * total_seconds)
             original_points.append((calculated_point_y, calculated_point_x))
-        original_points = [(point[0]*normalize, point[1]) for point in original_points]
+        original_points = [(point[0] * normalize, point[1]) for point in original_points]
         points = []
         values = []
-        for i in range(0, len(original_points)-1):
+        for i in range(0, len(original_points) - 1):
 
             point1 = original_points[i]
-            point2 = original_points[i+1]
+            point2 = original_points[i + 1]
 
             points.append(point1)
 
@@ -244,8 +253,8 @@ def extract_mean_max_metrics(soup):
             point_interval = point2[0] - point1[0]
             increment = point_interval / seconds
             for j in range(1, seconds):
-                new_point = (point1[0] + increment*j)
-                points.append((new_point, point1[1]+j))
+                new_point = (point1[0] + increment * j)
+                points.append((new_point, point1[1] + j))
                 values.append(new_point)
 
         return points, np.mean(values), np.max(values)
@@ -270,16 +279,14 @@ def extract_mean_max_metrics(soup):
               }
 
     try:
-        temp, mean_temp, max_temp = create_points('Temperature' ,'temp')
-        dic['temp_min'] = min(temp, key = lambda x: x[0])[0]
-        dic['temp_max'] = max(temp, key = lambda x: x[0])[0]
+        temp, mean_temp, max_temp = create_points('Temperature', 'temp')
+        dic['temp_min'] = min(temp, key=lambda x: x[0])[0]
+        dic['temp_max'] = max(temp, key=lambda x: x[0])[0]
     except:
         temp = [(None, None)]
 
-    
-
     try:
-        speed, mean_speed, max_speed = create_points('Speed' ,'velocity_smooth', normalize = 0.44704)
+        speed, mean_speed, max_speed = create_points('Speed', 'velocity_smooth', normalize=0.44704)
     except:
         speed, mean_speed, max_speed = [], None, None
 
@@ -297,7 +304,7 @@ def extract_mean_max_metrics(soup):
     dic[f'power_maximum'] = max_watts
 
     try:
-        heart_rate, mean_heart_rate, max_heart_rate = create_points('Heart Rate','heartrate')
+        heart_rate, mean_heart_rate, max_heart_rate = create_points('Heart Rate', 'heartrate')
     except:
         heart_rate, mean_heart_rate, max_heart_rate = [], None, None
     dic[f'hr_average'] = mean_heart_rate
@@ -331,7 +338,6 @@ def extract_mean_max_metrics(soup):
             metric = None
         dic[f'hr_{key}'] = metric
 
-
     for key, value in titles.items():
         try:
             metric = mean_metrics(cadence, value)
@@ -344,9 +350,8 @@ def extract_mean_max_metrics(soup):
 
 def extract_graph_elevation_distance(soup):
     # Graph data (height...)
-    all_points = extract_points_from_graph(soup) # Returns all points from graph after calculating the original value
+    all_points = extract_points_from_graph(soup)  # Returns all points from graph after calculating the original value
 
-    
     def calculate_distance_for_height(points, min_dis, max_dis):
         # Calculate the total distance traveled for specific height range (1000_to_1500 for example)
         in_range = False
@@ -356,7 +361,7 @@ def extract_graph_elevation_distance(soup):
                 if not in_range:
                     relevent_points.append([])
                     in_range = True
-                relevent_points[-1].append((x,y))
+                relevent_points[-1].append((x, y))
             else:
                 in_range = False
         total_distance = 0
@@ -374,26 +379,25 @@ def extract_graph_elevation_distance(soup):
         max_ = float('-inf')
         min_ = float('inf')
         elevating_now = 0
-        up = True # Flag to see if the direction of previous points was an elevation to find the minimum and maximum elevations
+        up = True  # Flag to see if the direction of previous points was an elevation to find the minimum and maximum elevations
         for i in range(1, len(points)):
-            prev = points[i-1][0] * 0.3048 # ft to meter
-            curr = points[i][0] * 0.3048 # ft to meter
+            prev = points[i - 1][0] * 0.3048  # ft to meter
+            curr = points[i][0] * 0.3048  # ft to meter
 
-            if prev > curr: # Case where there is a decline - elevation loss
+            if prev > curr:  # Case where there is a decline - elevation loss
                 if up:
                     min_ = min(elevating_now, min_)
-                    elevating_now = 0 # reset the current elevation
+                    elevating_now = 0  # reset the current elevation
                 up = False
                 elevation_loss += (prev - curr)
                 elevating_now += (prev - curr)
-            elif prev < curr: # Case where there is an increase - elevation gain
+            elif prev < curr:  # Case where there is an increase - elevation gain
                 if not up:
                     max_ = max(elevating_now, max_)
-                    elevating_now = 0 # reset the current elevation
+                    elevating_now = 0  # reset the current elevation
                 up = True
                 elevation_gain += (curr - prev)
                 elevating_now += (curr - prev)
-
 
         return elevation_gain, elevation_loss, min_, max_
 
@@ -402,7 +406,6 @@ def extract_graph_elevation_distance(soup):
         for point in points:
             Y.append(point[0])
         return np.min(Y), np.max(Y), np.mean(Y)
-
 
     # Calculate the props
     # workouts table
@@ -427,24 +430,23 @@ def extract_graph_elevation_distance(soup):
     return dic
 
 
-def append_row_to_csv(file_name, row, columns):
-        df = pd.DataFrame([row])
-        file_exists = os.path.isfile(file_name + '.csv')
-        
-        with open(file_name + '.csv', 'a', newline='\n', errors='ignore') as f:
-            if not file_exists:
-                df.to_csv(f, header=True, columns=columns, index=False)
-            else:
-                df.to_csv(f, header=False, columns=columns, index=False)
+def append_row_to_csv(file_path, row, columns=None):
+    if columns == None:
+        columns = list(row.keys())
+    df = pd.DataFrame([row],columns=columns)
+    file_exists = os.path.exists(file_path)
+    if not file_exists:
+        df.to_csv(file_path, header=True, index=False)
+    else:
+        df.to_csv(file_path, mode='a', header=False, index=False)
 
 
 def divide_to_tables(data, rider_id):
-    
     '''
     Divide data dictionary into relevent tables
     '''
 
-    #workout
+    # workout
     workout_row = {}
     workout_hrs_row = {}
     workout_cadences_row = {}
@@ -457,41 +459,41 @@ def divide_to_tables(data, rider_id):
     for key, value in data.items():
         key = key.lower()
         found = False
-        if key in workout_columns:
+        if key in WORKOUTS_COLS:
             workout_row[key] = value
             found = True
-        if key in workout_hrs_columns:
+        if key in WORKOUTS_HRS_COLS:
             workout_hrs_row[key] = value
             found = True
-        if key in workout_cadences_columns:
+        if key in WORKOUTS_CADENCES_COLS:
             workout_cadences_row[key] = value
             found = True
-        if key in workout_powers_columns:
+        if key in WORKOUTS_POWERS_COLS:
             workout_powers_row[key] = value
             found = True
-        if key in workout_speeds_columns:
+        if key in WORKOUTS_SPEEDS_COLS:
             workout_speeds_row[key] = value
             found = True
         if not found:
             key_not_found.append(key)
 
-    for key in workout_columns:
+    for key in WORKOUTS_COLS:
         if key not in workout_row:
             workout_row[key] = None
 
-    for key in workout_hrs_columns:
+    for key in WORKOUTS_HRS_COLS:
         if key not in workout_hrs_row:
             workout_hrs_row[key] = None
 
-    for key in workout_cadences_columns:
+    for key in WORKOUTS_CADENCES_COLS:
         if key not in workout_cadences_row:
             workout_cadences_row[key] = None
 
-    for key in workout_powers_columns:
+    for key in WORKOUTS_POWERS_COLS:
         if key not in workout_powers_row:
             workout_powers_row[key] = None
 
-    for key in workout_speeds_columns:
+    for key in WORKOUTS_SPEEDS_COLS:
         if key not in workout_speeds_row:
             workout_speeds_row[key] = None
 

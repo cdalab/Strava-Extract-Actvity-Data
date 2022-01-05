@@ -1,26 +1,36 @@
+import json
+import os
 import time as t
 import re
-from usernames import *
+import random
+
+import pandas as pd
+
+from consts import *
 from bs4 import BeautifulSoup
-from utils import append_row_to_csv, log
+from utils import append_row_to_csv, log,timeout_wrapper
 import threading
 from browser import Browser
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 
-class Get_Activities_Links(threading.Thread, Browser):
-    
+class Get_Activities_Links(Browser):
 
 
-    def __init__(self, riders, id, saving_file_name):
+
+    def __init__(self, riders, id, csv_file_path):
         '''
         Params:
         -------
-        riders - list of Rider objects
+        riders - dataframe of riders STRAVA URLs
         id - some id to write in the log file (usually it is the ip address)
-        saving_file_name - where to save all the links
+        csv_file_path - where to save all the links
         
         
         
-        Extracts links from riders and saves it in the "saving_file_name" file
+        Extracts links from riders and saves it in the "csv_file_path" file
         Flow of action:
         1. run the "_create_links_for_extractions" to fetch all the dates where there are links
         2. run the "_fetch_links" to fetch all activity links for the links created in the "_create_links_for_extractions"
@@ -28,91 +38,103 @@ class Get_Activities_Links(threading.Thread, Browser):
         To start the flow of action start the run() method.
         
         '''
-        
-        
-        
+
+
+
         Browser.__init__(self, id)
-        self.activity_links = set()
         self.riders = riders
-        self.saving_file_name = saving_file_name
-        threading.Thread.__init__(self)
+        self.csv_file_path = csv_file_path
 
 
-    def _create_links_for_extractions(self):
-        
+    @timeout_wrapper
+    def _get_link_options(self,rider):
+        self.browser.get(rider['strava_link'])
+        soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+        options_soup = soup.find('div',attrs={'class':'drop-down-menu drop-down-sm enabled'})
+        first_link = soup.find(lambda tag: tag.name == "a" and "Monthly" in tag.text)
+        t.sleep(random.random() + random.randint(0,1))
+        if options_soup and first_link:
+            if (not os.path.exists(f"link/links/{rider['strava_id']}.html")):
+                with open(f"link/links/{rider['strava_id']}.html","a+") as f:
+                    f.write(self.browser.page_source)
+            if (not os.path.exists(self.csv_file_path)) or (os.path.exists(self.csv_file_path) and (rider['strava_id'] not in pd.read_csv(self.csv_file_path))):
+                row = {'strava_id':rider['strava_id'],
+                       'strava_link':rider['strava_link'],
+                       'first_link': f"{BASE_STRAVA_URL}{first_link.attrs['href']}",
+                       'options':str(options_soup).replace('\n','')}
+                append_row_to_csv(self.csv_file_path,row)
+        else:
+            raise TimeoutError(f'Elements have not located in page: options = {options_soup}, first link = {first_link}')
+
+    def _get_links(self):
         '''
-        In each rider there are time gaps in where links of activities are stored.
-        This method fetches all the links where activity links are stored.
-        
+        Fetch links of time intervals - for each time interval there is page full of activities. This method fetch those
+        links and download the main html page of the riders.
         '''
-
-        problematic_riders = [] # save all riders whom cannot process links
-        i = 1
         try:
-            for rider in self.riders: # Fetch links for each rider
-                self.browser.get(rider.rider_url)
-                log(f'Fetching links for extractions {i} / {len(self.riders)}', id=self.id)
-                t.sleep(1)
+            rider = None
+            for i,rider in self.riders.iterrows(): # Fetch links for each rider
+                extract_rider_perd = os.path.exists(self.csv_file_path) and (rider['strava_id'] not in pd.read_csv(self.csv_file_path))
+                extract_rider_perd = extract_rider_perd or (not os.path.exists(f"link/links/{rider['strava_id']}.html"))
+                if extract_rider_perd:
+                    log(f'Fetching links for cyclist {rider["full_name"]}, {i} / {len(self.riders)}', id=self.id)
+                    t.sleep(random.random())
+                    link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["strava_id"]}'
+                    self._get_link_options(link_fetch_error_msg,**dict(rider=rider))
 
-                try:
+                # soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+                # date_intervals = soup.find('div', {'class': 'drop-down-menu drop-down-sm enabled'})
+                # temp_links = date_intervals.find_all('a')
+                #
+                # date_links = []
+                # for temp_link in temp_links:
+                #     link = self.STRAVA_URL + temp_link['href']
+                #     link = link.replace('week', 'month')
+                #     date_links.append(link)
+                #
+                # current_link_year = soup.find('h2', {'class': 'text-callout left'}).text[-5:-1]
+                # current_link = date_links[0]
+                # interval_exmaple = re.search("interval=.*&", current_link).group(0)
+                # current_link = current_link.replace(interval_exmaple[-7:-3], current_link_year)
+                # current_link = current_link[:-1] + '0'
+                # date_links.insert(0, current_link)
+                #
+                # for link in date_links:
+                #
+                #     interval1 = re.search("interval=.*&", link).group(0)
+                #     year = int(interval1[-7:-3])
+                #
+                #     if year-1 in rider.years:
+                #
+                #         for month in range(7,13):
+                #             if month not in rider.months:
+                #                 continue
+                #
+                #             month_string = str(month) if month >= 10 else f'0{month}'
+                #             interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year-1)+month_string)
+                #             rider.links.append(link.replace(interval1, interval2))
+                #
+                #     if year in rider.years:
+                #
+                #         for month in range(1,8):
+                #             if month not in rider.months:
+                #                 continue
+                #
+                #             interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year)+f'0{month}')
+                #             rider.links.append(link.replace(interval1, interval2))
 
-                    soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-                    date_intervals = soup.find('div', {'class': 'drop-down-menu drop-down-sm enabled'})
-                    temp_links = date_intervals.find_all('a')
-
-                    date_links = []
-                    for temp_link in temp_links:
-                        link = self.STRAVA_URL + temp_link['href']
-                        link = link.replace('week', 'month')
-                        date_links.append(link)
-
-                    current_link_year = soup.find('h2', {'class': 'text-callout left'}).text[-5:-1]
-                    current_link = date_links[0]
-                    interval_exmaple = re.search("interval=.*&", current_link).group(0)
-                    current_link = current_link.replace(interval_exmaple[-7:-3], current_link_year)
-                    current_link = current_link[:-1] + '0'
-                    date_links.insert(0, current_link)
-
-                    for link in date_links:
-
-                        interval1 = re.search("interval=.*&", link).group(0)
-                        year = int(interval1[-7:-3])
-
-                        if year-1 in rider.years:
-
-                            for month in range(7,13):
-                                if month not in rider.months:
-                                    continue
-
-                                month_string = str(month) if month >= 10 else f'0{month}'
-                                interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year-1)+month_string)
-                                rider.links.append(link.replace(interval1, interval2))
-
-                        if year in rider.years:
-
-                            for month in range(1,8):
-                                if month not in rider.months:
-                                    continue
-
-                                interval2 = interval1.replace(str(year)+interval1[-3:-1], str(year)+f'0{month}')
-                                rider.links.append(link.replace(interval1, interval2))
-
-                except:
-                    problematic_riders.append(rider)
-                finally:
-                    i += 1
         except:
-            log(f'Unexpected error...', 'ERROR', id=self.id)
-        if len(problematic_riders) > 0:
-            
-            for rider in problematic_riders:
-                
-                log(f'Problematic rider: {rider}', 'ERROR', id=self.id, dire='problematic_riders')
-        self.riders = [rider for rider in self.riders if rider not in problematic_riders]
-        
+            log(f'Failed fetching riders links, current rider fetched {rider}', 'ERROR', id=self.id)
+        # if len(problematic_riders) > 0:
+        #
+        #     for rider in problematic_riders:
+        #
+        #         log(f'Problematic rider: {rider}', 'ERROR', id=self.id, dire='problematic_riders')
+        # self.riders = [rider for rider in self.riders if rider not in problematic_riders]
+
 
     def _fetch_links(self):
-        
+
         '''
         Fetches links from each rider.links fetched from the previous method
         
@@ -146,7 +168,7 @@ class Get_Activities_Links(threading.Thread, Browser):
                     while curr == prev:
                         t.sleep(1)
                         graph_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-                       
+
                         feed_activities = graph_soup.find_all('div', class_='react-card-container')
                         for activity in feed_activities:
                             links_a = activity.find_all('a')
@@ -159,24 +181,24 @@ class Get_Activities_Links(threading.Thread, Browser):
 
                         if t.time() > timeout:
                             raise TimeoutError()
-                            
-                        
+
+
                     prev = curr
                     rider.activity_links = rider.activity_links.union(curr)
 
                     for l in curr:
                         row = {
-                            'cyclist_id': rider.rider_id,
+                            'strava_id': rider.rider_id,
                             'workout_strava_id': l,
                         }
-                        append_row_to_csv(self.saving_file_name, row, columns=['cyclist_id', 'workout_strava_id'])
+                        append_row_to_csv(self.csv_file_path, row, columns=['cyclist_id', 'workout_strava_id'])
 
                     if len(prev) > 0:
                         log(f'Found activities: {len(prev)}, year: {link[-20:-16]} month: {link[-16:-14]}', id=self.id)
                     else:
                         log(f'No activities, year: {link[-20:-16]} month: {link[-16:-14]}', 'INFO', id=self.id)
-                        
-                    
+
+
                 except Exception as e:
                     log(f'Problem fetching activities from: {link}, {e}', 'ERROR', id=self.id)
                     continue
@@ -184,14 +206,14 @@ class Get_Activities_Links(threading.Thread, Browser):
 
         self._close_driver()
 
-    def run(self):
+    def start(self):
         '''
         Starts the flow of actions
         '''
         self._open_driver()
-        self._create_links_for_extractions()
-        self._fetch_links()
-        
- 
+        self._get_links()
+        # self._fetch_links()
+
+
 # rider = Rider()
 # lin = Get_Activities_Links()

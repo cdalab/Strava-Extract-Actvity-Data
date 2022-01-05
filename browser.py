@@ -1,5 +1,5 @@
 
-from usernames import *
+from consts import *
 import random
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -77,9 +77,9 @@ class Browser:
         '''
         Get a random username from the usernames pool
         '''
-        rand_index = random.randint(0, len(usernames)-1)
-        self.curr_user = usernames[rand_index]
-        return usernames[rand_index]
+        rand_index = random.randint(0, len(USERS) - 1)
+        self.curr_user = USERS[rand_index]
+        return USERS[rand_index]
 
     def _open_driver(self):
         '''
@@ -100,7 +100,7 @@ class Browser:
         password = self.browser.find_element_by_id("password") # Get password element
         user = self._get_username()
         email.send_keys(user) # send email with our username
-        password.send_keys('12345678') # send our default password 12345678
+        password.send_keys(PASSWORD) # send our default password 12345678
 
         self.browser.find_element_by_id("login-button").click() # press the login button
         t.sleep(1)
