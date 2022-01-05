@@ -36,14 +36,14 @@ class Change_Metric_Preferences(Browser):
             if self.start_user is not None:
                 self.start_user = None
                 continue
-            preferences = {"download.default_directory": 'downloads/', "directory_upgrade": True,
-                           "safebrowsing.enabled": True}
-            options = webdriver.ChromeOptions()
-            options.add_argument('headless')
-            options.add_argument('--no-sandbox')
-            options.add_argument("download.default_directory=Downloads/")
-            options.add_experimental_option("prefs", preferences)
-            self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+            # preferences = {"download.default_directory": 'downloads/', "directory_upgrade": True,
+            #                "safebrowsing.enabled": True}
+            # options = webdriver.ChromeOptions()
+            # options.add_argument('headless')
+            # options.add_argument('--no-sandbox')
+            # options.add_argument("download.default_directory=Downloads/")
+            # options.add_experimental_option("prefs", preferences)
+            self.browser = webdriver.Chrome(ChromeDriverManager().install())#, options=options)
 
             URL = self.STRAVA_URL + '/login'
             self.browser.get(URL)
@@ -163,14 +163,14 @@ class Validate_Metric_Preferences(Browser):
                 Main method. Opens a new driver. Then tries to login to strava
                 '''
 
-                preferences = {"download.default_directory": 'downloads/', "directory_upgrade": True,
-                               "safebrowsing.enabled": True}
+                # preferences = {"download.default_directory": 'downloads/', "directory_upgrade": True,
+                #                "safebrowsing.enabled": True}
                 options = webdriver.ChromeOptions()
                 options.add_argument('headless')
                 options.add_argument('--no-sandbox')
-                options.add_argument("download.default_directory=Downloads/")
-                options.add_experimental_option("prefs", preferences)
-                self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+                # options.add_argument("download.default_directory=Downloads/")
+                # options.add_experimental_option("prefs", preferences)
+                self.browser = webdriver.Chrome(ChromeDriverManager().install())#, options=options)
 
                 URL = self.STRAVA_URL + '/login'
                 self.browser.get(URL)
