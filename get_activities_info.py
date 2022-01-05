@@ -24,8 +24,8 @@ class Get_Activities_Info(Browser):
         id: string. The id for log files
         file_path: string. The name of the file that will be saved. Usually starts with 'info/'
         start_from_index: integer. The index to fetch from the activities.
-            For example: if there are 1300 activities, start_from_index=133 with fetch all the links
-            between 133-1300 and will skip the links before 133
+            For example: if there are 1300 activities, start_from_index=133 with fetch all the riders_pages
+            between 133-1300 and will skip the riders_pages before 133
         
         '''
         

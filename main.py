@@ -8,10 +8,10 @@ from get_activities_links import Get_Activities_Links
 from get_activities_html import Get_Activities_HTML
 from utils import valid_rider_url, log, setting_up
 
-def link(urls_file_path, id,csv_file_path='link\links', low_limit_index=0, high_limit_index=None):
-    log("---- START EXTRACTING ACTIVITY LINKS ----",id=id)
+def extract_rider_links(urls_file_path, id,csv_file_path='link/rider_links_results.csv', low_limit_index=0, high_limit_index=None):
+    log("---- START EXTRACTING RIDER LINKS ----",id=id)
 
-    riders_df = pd.read_csv(f"data/{urls_file_path}")
+    riders_df = pd.read_csv(f"{urls_file_path}")
     riders_df = riders_df[riders_df['strava_link'].notna()]
     if high_limit_index:
         riders_df = riders_df.loc[low_limit_index:high_limit_index-1]
@@ -20,12 +20,28 @@ def link(urls_file_path, id,csv_file_path='link\links', low_limit_index=0, high_
     links_extractor = Get_Activities_Links(riders=riders_df,
                                            id=id,
                                            csv_file_path=csv_file_path)
-    links_extractor.start()
+    links_extractor.fetch_rider_links()
 
 
-    log("---- FINISHED EXTRACTING ACTIVITY LINKS ----",id=id)
+    log("---- FINISHED EXTRACTING RIDER LINKS ----",id=id)
+
+def extract_rider_activities_links(links_file_path, id, csv_file_path='link/riders_time_interval_pages', low_limit_index=0, high_limit_index=None):
+    log("---- START EXTRACTING TIME INTERVAL LINKS ----",id=id)
+
+    riders_links_df = pd.read_csv(f"{links_file_path}")
+    non_nan_pred = ~((riders_links_df['first_link'].isna()) & (riders_links_df['options'].isna()))
+    riders_links_df = riders_links_df.loc[non_nan_pred]
+    if high_limit_index:
+        riders_links_df = riders_links_df.loc[low_limit_index:high_limit_index-1]
+    else:
+        riders_links_df = riders_links_df.loc[low_limit_index:]
+    links_extractor = Get_Activities_Links(riders=riders_links_df,
+                                           id=id,
+                                           csv_file_path=csv_file_path)
+    links_extractor.fetch_rider_time_interval_links()
 
 
+    log("---- FINISHED EXTRACTING TIME INTERVAL LINKS ----",id=id)
 
 
 def info(file_path, riders, id, start_from_index):
@@ -121,15 +137,15 @@ if __name__ == '__main__':
 
 
 
-    elif command == 'link':
-        # run example : main.py -c link -f ISN_riders.csv -t 2
-        # run example : main.py -c link -f ISN_riders.csv -li 10 -hi 100
+    elif command == 'extract_rider_links':
+        # run example : main.py -c extract_rider_links -f data/ISN_riders.csv -t 2
+        # run example : main.py -c extract_rider_links -f data/ISN_riders.csv -li 10 -hi 100
 
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         urls_file_path = args['file_path']
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
-        csv_file_path = f'link/links'
+        csv_file_path = f'link/rider_page_links'
         if low_limit_index:
             csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         if high_limit_index:
@@ -139,16 +155,41 @@ if __name__ == '__main__':
         try:
             if low_limit_index:
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                link(urls_file_path, id, csv_file_path=csv_file_path, low_limit_index=low_limit_index, high_limit_index=high_limit_index)
+                extract_rider_links(urls_file_path, id, csv_file_path=csv_file_path, low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                link(urls_file_path, id, csv_file_path=csv_file_path)
+                extract_rider_links(urls_file_path, id, csv_file_path=csv_file_path)
 
         except:
-            log(f'Problem in link function, '
+            log(f'Problem in extract_rider_links function, '
                 f'args: {urls_file_path, id, csv_file_path, low_limit_index, high_limit_index}',
                 'ERROR', id=id)
 
+    elif command == 'extract_rider_time_interval_links':
+        # run example : main.py -c extract_rider_time_interval_links -f link/rider_page_links.csv -t 2
+        # run example : main.py -c extract_rider_time_interval_links -f link/rider_page_links.csv -li 10 -hi 100
 
+        num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
+        links_file_path = args['file_path']
+        low_limit_index = args['low_limit_index']
+        high_limit_index = args['high_limit_index']
+        csv_file_path = f'link/riders_time_interval_links'
+        if low_limit_index:
+            csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
+        if high_limit_index:
+            csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
+        csv_file_path = f'{csv_file_path}.csv'
+        Path("link/riders_time_interval_pages").mkdir(parents=True, exist_ok=True)
+        try:
+            if low_limit_index:
+                log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
+                extract_rider_activities_links(links_file_path, id, csv_file_path=csv_file_path, low_limit_index=low_limit_index, high_limit_index=high_limit_index)
+            else:
+                extract_rider_activities_links(links_file_path, id, csv_file_path=csv_file_path)
+
+        except:
+            log(f'Problem in extract_rider_links function, '
+                f'args: {links_file_path, id, csv_file_path, low_limit_index, high_limit_index}',
+                'ERROR', id=id)
 
 
     elif command == 'flow':

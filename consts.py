@@ -304,7 +304,6 @@ USERS = [
     r'cyc154@proton.com',
     r'cyc155@proton.com',
     r'cyc156@proton.com',
-    r'cyc157@proton.com',
     r'cyc158@proton.com',
     r'cyc159@proton.com',
     r'cyc160@proton.com',

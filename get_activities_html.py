@@ -156,7 +156,7 @@ class Get_Activities_HTML(Browser):
         self.save_rider_id(activity_id=activity_id, rider_id=rider_id)
         
         
-        # ===== links that we didn't think about ======
+        # ===== riders_pages that we didn't think about ======
         
         premium_sections = home_soup.find("li", {"id": "premium-views"})
         if premium_sections is not None:
