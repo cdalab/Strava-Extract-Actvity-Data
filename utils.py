@@ -19,7 +19,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 def setting_up():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--command', type=str)
-    parser.add_argument('-f', '--file-path', type=str)
+    parser.add_argument('-if', '--input-file', type=str)
+    parser.add_argument('-of', '--output-file', type=str)
     parser.add_argument('-li', '--low-limit-index', type=int)
     parser.add_argument('-hi', '--high-limit-index', type=int)
     parser.add_argument('-rl', '--riders-low-index', type=int)
@@ -28,7 +29,8 @@ def setting_up():
     args = parser.parse_args()
     args_dict = dict(
         command=args.command,
-        file_path=args.file_path,
+        input_file=args.input_file,
+        output_file=args.output_file,
         low_limit_index=args.low_limit_index,
         high_limit_index=args.high_limit_index,
         riders_low_index=args.riders_low_index,
@@ -49,27 +51,48 @@ def setting_up():
 
     return args_dict
 
+# https://stackoverflow.com/questions/3173320/text-progress-bar-in-terminal-with-block-characters
+def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
 
-def log(msg, type=None, id=''):
+def log(msg, type=None, id='',debug=DEBUG):
     if type is None:
         type = LOG_LEVEL
     else:
-        type = type
+        type = type.upper()
     if LOG_LEVEL_DICT[type] <= LOG_LEVEL_DICT[LOG_LEVEL]:
         if type == 'ERROR':
             msg += f' ERROR DETAILS: {traceback.format_exc()}'
         msg = f'{type}\t{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\t{msg}\n'
         with open(f'./log/{type}_{id}.log', 'a+') as f:
             f.write(msg)
-        if DEBUG:
+        if debug:
             print(f'{msg}'.replace("\n", ""))
 
 
-def error_handler(function, params):
-    error_df_path = f'./log/error_df.csv'
+def error_handler(function, params,id=''):
+    error_df_path = f'./log/ERROR_DF_{id}.csv'
     if not os.path.exists(error_df_path):
         pd.DataFrame(columns=['function', 'params']).to_csv(error_df_path, index=False, header=True)
-    pd.DataFrame([function, params]).to_csv(error_df_path, mode='a', index=False, header=False)
+    pd.DataFrame([[function, str(params).replace('\n','')]]).to_csv(error_df_path, mode='a', index=False, header=False)
 
 
 def timeout_wrapper(func):
@@ -82,9 +105,17 @@ def timeout_wrapper(func):
             except:
                 trials += 1
                 if trials == TIMEOUT:
-                    log('Error', msg)
-                    error_handler(func.__name__, kwargs)
+                    log(msg, 'ERROR', id=self.id)
+                    error_handler(func.__name__, kwargs,id=self.id)
 
+    return wrap
+
+def driver_wrapper(func):
+    def wrap(self, *args, **kwargs):
+        self._open_driver()
+        result = func(self, *args, **kwargs)
+        self._close_driver()
+        return result
     return wrap
 
 
@@ -97,6 +128,8 @@ def valid_rider_url(url):
         return False
     return True
 
+def check_int(sting):
+    return re.match(r"[-+]?\d+(\.0*)?$", sting) is not None
 
 def to_hours(time_string):
     time = time_string.split(':')
