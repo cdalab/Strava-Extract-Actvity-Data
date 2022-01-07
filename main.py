@@ -265,7 +265,7 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_rider_activity_links':
-        # run example : main.py -c extract_rider_activity_links -if link/riders_time_interval_pages -of link/riders_activity_links -t 2
+        # run example : main.py -c extract_rider_activity_links -if link/riders_time_interval_pages -of link/riders_activity_links.csv -t 2
         # run example : main.py -c extract_rider_activity_links -li 10 -hi 100
 
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
@@ -279,7 +279,7 @@ if __name__ == '__main__':
             csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         if high_limit_index is not None:
             csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
-        csv_file_path = f'{csv_file_path}.csv'
+        csv_file_path = f'{csv_file_path.replace(".csv","")}.csv'
         try:
             if low_limit_index is not None:
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)

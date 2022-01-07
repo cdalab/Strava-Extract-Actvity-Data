@@ -1,9 +1,7 @@
-requests
-pickle-mixin
-selenium
-chromedriver
-bs4
-numpy
 pandas
-firebase_admin
-webdriver_manager
+numpy
+requests
+DateTime
+selenium
+bs4
+beautifulsoup4

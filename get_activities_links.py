@@ -97,26 +97,36 @@ class Links_Extractor(Browser):
     def _fetch_rider_activity_links(self, rider_id, csv_file_path):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
-            rider_html_file = os.listdir(rider_dir_path)[0]
-            with open(f"{rider_dir_path}/{rider_html_file}") as f:
-                rider_soup = BeautifulSoup(f.read(), 'html.parser')
-                activities_soup = rider_soup.find('div', attrs={'class': 'feed'})
-                activities_list = activities_soup.find_all('div', attrs={
-                    'class': 'react-card-container'})
-                for activity_card in activities_list:
-                    activity_a = activity_card.find(lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
-                    if activity_a is not None:
-                        activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
-                        activity_id = activity_link.split('/activities/')[1]
-                        row = {'strava_id': rider_id,
-                               'activity_link': activity_link,
-                               'activity_id': activity_id}
-                        append_row_to_csv(csv_file_path, row)
-                    else:
-                        challenge = activity_card.find(
-                            lambda tag: tag.name == "a" and "/challenges/" in tag.attrs['href'])
-                        if challenge is None:
-                            raise ValueError('Activity card type is not recognized')
+            rider_week_interval_files = os.listdir(rider_dir_path)
+            i = 0
+            for week_interval_link in rider_week_interval_files:
+                log(f'Fetching week interval links from file {week_interval_link}, {i} / {len(rider_week_interval_files) - 1}',
+                    id=self.id,debug=False)
+                with open(f"{rider_dir_path}/{week_interval_link}") as f:
+                    rider_soup = BeautifulSoup(f.read(), 'html.parser')
+                    activities_soup = rider_soup.find('div', attrs={'class': 'feed'})
+                    activities_list = activities_soup.find_all('div', attrs={
+                        'class': 'react-card-container'})
+                    for activity_card in activities_list:
+                        activity_a = activity_card.find(
+                            lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
+                        if activity_a is not None:
+                            activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
+                            activity_id = activity_link.split('/activities/')[1]
+                            row = {'strava_id': rider_id,
+                                   'activity_link': activity_link,
+                                   'activity_id': activity_id}
+                            append_row_to_csv(csv_file_path, row)
+                        else:
+                            challenge = activity_card.find(
+                                lambda tag: tag.name == "a" and "/challenges/" in tag.attrs['href'])
+                            if challenge is None:
+                                raise ValueError('Activity card type is not recognized')
+                    print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',length=50)
+                    i += 1
+
+
+
         except:
             log(f'Could not fetch time interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
@@ -163,7 +173,7 @@ class Links_Downloader(Browser):
                                                                                  url_param_dict)
             Path(html_file_dir).mkdir(parents=True, exist_ok=True)
             if (not os.path.exists(f"{html_file_dir}/{html_file_name}.html")):
-                with open(f"{html_file_dir}/{html_file_name}.html", "w+") as f:
+                with open(f"{html_file_dir}/{html_file_name}.html", "w+",encoding='utf-8') as f:
                     f.write(self.browser.page_source)
         else:
             raise TimeoutError(
@@ -209,9 +219,8 @@ class Links_Downloader(Browser):
             html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['strava_id'],
                                                                                  url_param_dict)
             Path(html_file_dir).mkdir(parents=True, exist_ok=True)
-            # TODO: remove true or
-            if True or (not os.path.exists(f"{html_file_dir}/{html_file_name}.html")):
-                with open(f"{html_file_dir}/{html_file_name}.html", "w+") as f:
+            if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
+                with open(f"{html_file_dir}/{html_file_name}.html", "w+",encoding='utf-8') as f:
                     f.write(self.browser.page_source)
             # TODO: to remove, it is a test to see if the first page (year) identical to week interval calc later
             else:
@@ -255,8 +264,7 @@ class Links_Downloader(Browser):
                 url_param_dict = dict(parse_qsl(r_week_interval['time_interval_link']))
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_week_interval['strava_id'],
                                                                                      url_param_dict)
-                #TODO: remove true or
-                if True or (not os.path.exists(f"{html_file_dir}/{html_file_name}.html")):
+                if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
                     log(f'Fetching page for cyclist {r_week_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders)-1}',
                         id=self.id)
                     t.sleep(random.random())
@@ -290,7 +298,7 @@ class Links_Downloader(Browser):
         Path(html_file_dir).mkdir(parents=True, exist_ok=True)
         activity_file_path = f"{html_file_dir}/{rider_activity['activity_id']}.html"
         if (not os.path.exists(activity_file_path)):
-            with open(activity_file_path, "w+") as f:
+            with open(activity_file_path, "w+",encoding='utf-8') as f:
                 f.write(self.browser.page_source)
         return current_activity_title
 

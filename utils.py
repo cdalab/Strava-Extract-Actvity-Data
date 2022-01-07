@@ -51,8 +51,9 @@ def setting_up():
 
     return args_dict
 
+
 # https://stackoverflow.com/questions/3173320/text-progress-bar-in-terminal-with-block-characters
-def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -68,12 +69,13 @@ def print_progress_bar (iteration, total, prefix = '', suffix = '', decimals = 1
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end=printEnd)
     # Print New Line on Complete
     if iteration == total:
         print()
 
-def log(msg, type=None, id='',debug=DEBUG):
+
+def log(msg, type=None, id='', debug=DEBUG):
     if type is None:
         type = LOG_LEVEL
     else:
@@ -88,11 +90,15 @@ def log(msg, type=None, id='',debug=DEBUG):
             print(f'{msg}'.replace("\n", ""))
 
 
-def error_handler(function, params,id=''):
+def error_handler(function, params, id=''):
     error_df_path = f'./log/ERROR_DF_{id}.csv'
+    for p in params.keys():
+        params[p] = str(p).replace('\n', '')
+    df = pd.DataFrame([params])
+    df['function'] = function
     if not os.path.exists(error_df_path):
-        pd.DataFrame(columns=['function', 'params']).to_csv(error_df_path, index=False, header=True)
-    pd.DataFrame([[function, str(params).replace('\n','')]]).to_csv(error_df_path, mode='a', index=False, header=False)
+        df.to_csv(error_df_path, index=False, header=True)
+    df.to_csv(error_df_path, mode='a', index=False, header=False)
 
 
 def timeout_wrapper(func):
@@ -106,9 +112,10 @@ def timeout_wrapper(func):
                 trials += 1
                 if trials == TIMEOUT:
                     log(msg, 'ERROR', id=self.id)
-                    error_handler(func.__name__, kwargs,id=self.id)
+                    error_handler(func.__name__, kwargs, id=self.id)
 
     return wrap
+
 
 def driver_wrapper(func):
     def wrap(self, *args, **kwargs):
@@ -116,6 +123,7 @@ def driver_wrapper(func):
         result = func(self, *args, **kwargs)
         self._close_driver()
         return result
+
     return wrap
 
 
@@ -128,8 +136,10 @@ def valid_rider_url(url):
         return False
     return True
 
+
 def check_int(sting):
     return re.match(r"[-+]?\d+(\.0*)?$", sting) is not None
+
 
 def to_hours(time_string):
     time = time_string.split(':')
@@ -466,7 +476,7 @@ def extract_graph_elevation_distance(soup):
 def append_row_to_csv(file_path, row, columns=None):
     if columns == None:
         columns = list(row.keys())
-    df = pd.DataFrame([row],columns=columns)
+    df = pd.DataFrame([row], columns=columns)
     file_exists = os.path.exists(file_path)
     if not file_exists:
         df.to_csv(file_path, header=True, index=False)
