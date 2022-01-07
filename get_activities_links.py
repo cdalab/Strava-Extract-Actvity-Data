@@ -34,7 +34,7 @@ class Links_Extractor(Browser):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_html_file = os.listdir(rider_dir_path)[0]
-            with open(f"{rider_dir_path}/{rider_html_file}") as f:
+            with open(f"{rider_dir_path}/{rider_html_file}", encoding='utf-8') as f:
                 rider_soup = BeautifulSoup(f.read(), 'html.parser')
                 options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
                 option_list = options_soup.find('ul', 'options').find_all('a')
@@ -68,7 +68,7 @@ class Links_Extractor(Browser):
             for year_interval_link in rider_year_interval_files:
                 log(f'Fetching week interval links from file {year_interval_link}, {i} / {len(rider_year_interval_files) - 1}',
                     id=self.id, debug=False)
-                with open(f"{rider_dir_path}/{year_interval_link}") as f:
+                with open(f"{rider_dir_path}/{year_interval_link}", encoding='utf-8') as f:
                     rider_soup = BeautifulSoup(f.read(), 'html.parser')
                     rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                     for week_interval in rider_intervals:
@@ -102,7 +102,7 @@ class Links_Extractor(Browser):
             for week_interval_link in rider_week_interval_files:
                 log(f'Fetching week interval links from file {week_interval_link}, {i} / {len(rider_week_interval_files) - 1}',
                     id=self.id, debug=False)
-                with open(f"{rider_dir_path}/{week_interval_link}") as f:
+                with open(f"{rider_dir_path}/{week_interval_link}", encoding='utf-8') as f:
                     rider_soup = BeautifulSoup(f.read(), 'html.parser')
                     activities_soup = rider_soup.find('div', attrs={'class': 'feed'})
                     activities_list = activities_soup.find_all('div', attrs={
