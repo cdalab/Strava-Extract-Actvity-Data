@@ -76,6 +76,7 @@ def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, lengt
 
 
 def log(msg, type=None, id='', debug=DEBUG):
+    Path('./log/').mkdir(parents=True, exist_ok=True)
     if type is None:
         type = LOG_LEVEL
     else:
