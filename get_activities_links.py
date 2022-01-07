@@ -53,7 +53,7 @@ class Links_Extractor(Browser):
                 csv_file_exist = os.path.exists(csv_file_path)
                 if (not csv_file_exist) or (
                         float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values):
-                    log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.riders)-1}',
+                    log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     self._fetch_rider_year_interval_links(rider_id, csv_file_path)
                 i += 1
@@ -66,7 +66,7 @@ class Links_Extractor(Browser):
             rider_year_interval_files = os.listdir(rider_dir_path)
             i = 0
             for year_interval_link in rider_year_interval_files:
-                log(f'Fetching week interval links from file {year_interval_link}, {i} / {len(rider_year_interval_files)-1}',
+                log(f'Fetching week interval links from file {year_interval_link}, {i} / {len(rider_year_interval_files) - 1}',
                     id=self.id, debug=False)
                 with open(f"{rider_dir_path}/{year_interval_link}") as f:
                     rider_soup = BeautifulSoup(f.read(), 'html.parser')
@@ -87,7 +87,7 @@ class Links_Extractor(Browser):
                 csv_file_exist = os.path.exists(csv_file_path)
                 if (not csv_file_exist) or (
                         float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values):
-                    log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.riders)-1}',
+                    log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     self._fetch_rider_week_interval_links(rider_id, csv_file_path)
                 i += 1
@@ -101,7 +101,7 @@ class Links_Extractor(Browser):
             i = 0
             for week_interval_link in rider_week_interval_files:
                 log(f'Fetching week interval links from file {week_interval_link}, {i} / {len(rider_week_interval_files) - 1}',
-                    id=self.id,debug=False)
+                    id=self.id, debug=False)
                 with open(f"{rider_dir_path}/{week_interval_link}") as f:
                     rider_soup = BeautifulSoup(f.read(), 'html.parser')
                     activities_soup = rider_soup.find('div', attrs={'class': 'feed'})
@@ -113,19 +113,26 @@ class Links_Extractor(Browser):
                         if activity_a is not None:
                             activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
                             activity_id = activity_link.split('/activities/')[1]
-                            row = {'strava_id': rider_id,
-                                   'activity_link': activity_link,
-                                   'activity_id': activity_id}
-                            append_row_to_csv(csv_file_path, row)
+                            activity_not_extracted = (not os.path.exists(csv_file_path))
+                            activity_not_extracted = activity_not_extracted or (float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values)
+                            activity_not_extracted = activity_not_extracted or (float(activity_id) not in pd.read_csv(csv_file_path)['activity_id'].values)
+                            if activity_not_extracted:
+                                row = {'strava_id': rider_id,
+                                       'activity_link': activity_link,
+                                       'activity_id': activity_id}
+                                append_row_to_csv(csv_file_path, row)
                         else:
-                            challenge = activity_card.find(
-                                lambda tag: tag.name == "a" and "/challenges/" in tag.attrs['href'])
-                            if challenge is None:
-                                raise ValueError('Activity card type is not recognized')
-                    print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',length=50)
+                            if activity_card.find('div', attrs={'data-react-class': "Activity"}) is not None:
+                                raise ValueError(
+                                    f'Activity missed and should be recognized, interval file {week_interval_link}')
+                            challenge = activity_card.find('div', attrs={'data-react-class': 'ChallengeJoin'})
+                            join_club = activity_card.find('div', attrs={'data-react-class': "ClubJoin"})
+                            if (challenge is None) and (join_club is None):
+                                raise ValueError(
+                                    f'Activity card type is not recognized, interval file {week_interval_link}')
+                    print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
+                                       length=50)
                     i += 1
-
-
 
         except:
             log(f'Could not fetch time interval links for rider {rider_id}.', 'ERROR', id=self.id)
@@ -135,12 +142,9 @@ class Links_Extractor(Browser):
             rider_id = None
             i = 0
             for rider_id in self.riders:
-                csv_file_exist = os.path.exists(csv_file_path)
-                if (not csv_file_exist) or (
-                        float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values):
-                    log(f'Fetching time interval links for cyclist {rider_id}, {i} / {len(self.riders)-1}',
-                        id=self.id)
-                    self._fetch_rider_activity_links(rider_id, csv_file_path)
+                log(f'Fetching time interval links for cyclist {rider_id}, {i} / {len(self.riders) - 1}',
+                    id=self.id)
+                self._fetch_rider_activity_links(rider_id, csv_file_path)
                 i += 1
 
         except:
@@ -173,7 +177,7 @@ class Links_Downloader(Browser):
                                                                                  url_param_dict)
             Path(html_file_dir).mkdir(parents=True, exist_ok=True)
             if (not os.path.exists(f"{html_file_dir}/{html_file_name}.html")):
-                with open(f"{html_file_dir}/{html_file_name}.html", "w+",encoding='utf-8') as f:
+                with open(f"{html_file_dir}/{html_file_name}.html", "w+", encoding='utf-8') as f:
                     f.write(self.browser.page_source)
         else:
             raise TimeoutError(
@@ -187,7 +191,7 @@ class Links_Downloader(Browser):
             for idx, rider in self.riders.iterrows():  # Fetch links for each rider
                 html_file_dir = f"{self.html_files_path}/{rider['strava_id']}"
                 if not os.path.exists(html_file_dir):
-                    log(f'Fetching page for cyclist {rider["full_name"]}, {i} / {len(self.riders)-1}', id=self.id)
+                    log(f'Fetching page for cyclist {rider["full_name"]}, {i} / {len(self.riders) - 1}', id=self.id)
                     t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["strava_id"]}.'
                     self._download_rider_page(link_fetch_error_msg,
@@ -220,7 +224,7 @@ class Links_Downloader(Browser):
                                                                                  url_param_dict)
             Path(html_file_dir).mkdir(parents=True, exist_ok=True)
             if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
-                with open(f"{html_file_dir}/{html_file_name}.html", "w+",encoding='utf-8') as f:
+                with open(f"{html_file_dir}/{html_file_name}.html", "w+", encoding='utf-8') as f:
                     f.write(self.browser.page_source)
             # TODO: to remove, it is a test to see if the first page (year) identical to week interval calc later
             else:
@@ -241,7 +245,7 @@ class Links_Downloader(Browser):
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_year_interval['strava_id'],
                                                                                      url_param_dict)
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
-                    log(f'Fetching page for cyclist {r_year_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders)-1}',
+                    log(f'Fetching page for cyclist {r_year_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch year interval {r_year_interval["time_interval_link"]}, for rider {r_year_interval["strava_id"]}.'
@@ -265,15 +269,15 @@ class Links_Downloader(Browser):
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_week_interval['strava_id'],
                                                                                      url_param_dict)
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
-                    log(f'Fetching page for cyclist {r_week_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders)-1}',
+                    log(f'Fetching page for cyclist {r_week_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch week interval {r_week_interval["time_interval_link"]}, for rider {r_week_interval["strava_id"]}.'
                     prev_week_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
-                                                                                          url_param_dict,
-                                                                                          prev_week_interval_range,
-                                                                                          **dict(
-                                                                                              rider_time_interval=r_week_interval))
+                                                                                       url_param_dict,
+                                                                                       prev_week_interval_range,
+                                                                                       **dict(
+                                                                                           rider_time_interval=r_week_interval))
                 i += 1
         except:
             log(f'Failed fetching riders pages, current rider fetched {r_week_interval}', 'ERROR', id=self.id)
@@ -298,7 +302,7 @@ class Links_Downloader(Browser):
         Path(html_file_dir).mkdir(parents=True, exist_ok=True)
         activity_file_path = f"{html_file_dir}/{rider_activity['activity_id']}.html"
         if (not os.path.exists(activity_file_path)):
-            with open(activity_file_path, "w+",encoding='utf-8') as f:
+            with open(activity_file_path, "w+", encoding='utf-8') as f:
                 f.write(self.browser.page_source)
         return current_activity_title
 
@@ -311,14 +315,14 @@ class Links_Downloader(Browser):
             for idx, activity in self.riders.iterrows():
 
                 if not os.path.exists(f"{activity['activity_id']}.html"):
-                    log(f'Fetching activity page for cyclist {activity["strava_id"]}, activity {activity["activity_id"]}, {i} / {len(self.riders)-1}',
+                    log(f'Fetching activity page for cyclist {activity["strava_id"]}, activity {activity["activity_id"]}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["strava_id"]}.'
                     prev_activity_title = self._download_rider_activity_pages(link_fetch_error_msg,
-                                                                                 prev_activity_title,
-                                                                                 **dict(
-                                                                                     rider_activity=activity))
+                                                                              prev_activity_title,
+                                                                              **dict(
+                                                                                  rider_activity=activity))
                 i += 1
         except:
             log(f'Failed fetching riders activity pages, current activity fetched {activity}.', 'ERROR', id=self.id)
