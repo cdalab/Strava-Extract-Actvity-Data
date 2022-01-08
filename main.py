@@ -1,13 +1,9 @@
 import os
-import sys
-import pickle as pk
 from pathlib import Path
-
 import pandas as pd
-from get_activities_info import Get_Activities_Info
-from get_activities_links import Links_Extractor, Links_Downloader
-from get_activities_html import Get_Activities_HTML
-from utils import valid_rider_url, log, setting_up
+from links_downloader import LinksDownloader
+from link_extractor import LinksExtractor
+from utils import log, setting_up
 
 
 def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_interval_pages', low_limit_index=0,
@@ -20,8 +16,8 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
         riders_df = riders_df.iloc[low_limit_index:high_limit_index - 1]
     else:
         riders_df = riders_df.iloc[low_limit_index:]
-    downloader = Links_Downloader(riders=riders_df, html_files_path=html_files_path,
-                                  id=id)
+    downloader = LinksDownloader(riders=riders_df, html_files_path=html_files_path,
+                                 id=id)
     downloader.download_rider_pages()
 
     log("---- FINISHED DOWNLOADING RIDER PAGES ----", id=id)
@@ -36,7 +32,7 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = Links_Extractor(riders=riders, id=id, html_files_path=html_files_path)
+    links_extractor = LinksExtractor(riders=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_year_interval_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
@@ -53,7 +49,7 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index - 1]
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
-    downloader = Links_Downloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
+    downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
     downloader.download_year_interval_pages()
 
     log("---- FINISHED DOWNLOADING YEAR INTERVAL PAGES ----", id=id)
@@ -68,7 +64,7 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = Links_Extractor(riders=riders, id=id, html_files_path=html_files_path)
+    links_extractor = LinksExtractor(riders=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_week_interval_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
@@ -85,7 +81,7 @@ def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_li
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index - 1]
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
-    downloader = Links_Downloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
+    downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
     downloader.download_week_interval_pages()
 
     log("---- FINISHED DOWNLOADING WEEK INTERVAL PAGES ----", id=id)
@@ -100,9 +96,9 @@ def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = Links_Extractor(riders=riders,
-                                      id=id,
-                                      html_files_path=html_files_path)
+    links_extractor = LinksExtractor(riders=riders,
+                                     id=id,
+                                     html_files_path=html_files_path)
     links_extractor.extract_rider_activity_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING ACTIVITY LINKS ----", id=id)
@@ -114,12 +110,12 @@ def download_activity_pages(id, csv_file_path='link/riders_activity_links',
     log("---- START DOWNLOADING ACTIVITY PAGES ----", id=id)
 
     riders_activity_links_df = pd.read_csv(f"{csv_file_path}")
-    riders_activity_links_df = riders_activity_links_df.iloc[~riders_activity_links_df['activity_link'].isna()]
+    riders_activity_links_df = riders_activity_links_df.loc[~riders_activity_links_df['activity_link'].isna()]
     if high_limit_index is not None:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:high_limit_index - 1]
     else:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:]
-    downloader = Links_Downloader(riders=riders_activity_links_df, id=id, html_files_path=html_files_path)
+    downloader = LinksDownloader(riders=riders_activity_links_df, id=id, html_files_path=html_files_path)
     downloader.download_activity_pages()
 
     log("---- FINISHED DOWNLOADING ACTIVITY PAGES ----", id=id)
@@ -294,7 +290,7 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'download_activity_pages':
-        # run example : main.py -c download_activity_pages -if link/riders_activity_links -of link/riders_activity_pages -t 2
+        # run example : main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -t 2
         # run example : main.py -c download_activity_pages -li 10 -hi 100
 
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
