@@ -213,21 +213,18 @@ class Links_Downloader(Browser):
         if num_of_activities > 0:
             WebDriverWait(self.browser, 5).until(
                 EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
-        soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-        activities_soup = soup.find('div', attrs={'class': 'feed'})
-        activities_soup_list = activities_soup.find_all('div', attrs={
-            'class': 'react-card-container'}) if activities_soup else None
-        if activities_soup_list is not None:
-            html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['strava_id'],
-                                                                                 url_param_dict)
-            write_to_html(html_file_dir,html_file_name,self.browser.page_source)
-            # TODO: to remove, it is a test to see if the first page (year) identical to week interval calc later
+            soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+            activities_soup = soup.find('div', attrs={'class': 'feed'})
+            activities_soup_list = activities_soup.find_all('div', attrs={
+                'class': 'react-card-container'}) if activities_soup else None
+            if activities_soup_list is not None:
+                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['strava_id'],
+                                                                                     url_param_dict)
+                write_to_html(html_file_dir,html_file_name,self.browser.page_source)
+                return current_interval_range
             else:
-                print('')
-            return current_interval_range
-        else:
-            raise TimeoutError(
-                f'Element have not located in page: activities = {activities_soup}')
+                raise TimeoutError(
+                    f'Element have not located in page: activities = {activities_soup}')
 
     @driver_wrapper
     def download_year_interval_pages(self):
