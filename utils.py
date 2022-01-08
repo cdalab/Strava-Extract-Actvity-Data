@@ -73,7 +73,16 @@ def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, lengt
     # Print New Line on Complete
     if iteration == total:
         print()
+def read_from_html(parent_dir,html_file):
+    with open(f"{parent_dir}/{html_file}", encoding='utf-8') as f:
+        html_content = f.read()
+    return html_content
 
+def write_to_html(parent_dir,html_file,content):
+    Path(parent_dir).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists(f"{parent_dir}/{html_file}.html"):
+        with open(f"{parent_dir}/{html_file}.html", "w+", encoding='utf-8') as f:
+            f.write(content)
 
 def log(msg, type=None, id='', debug=DEBUG):
     Path('./log/').mkdir(parents=True, exist_ok=True)
