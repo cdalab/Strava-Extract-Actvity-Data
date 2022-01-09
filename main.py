@@ -46,7 +46,7 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
     riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
     if high_limit_index is not None:
-        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index - 1]
+        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index]
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
@@ -78,7 +78,7 @@ def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_li
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
     riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
     if high_limit_index is not None:
-        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index - 1]
+        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index]
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
@@ -112,7 +112,7 @@ def download_activity_pages(id, csv_file_path='link/riders_activity_links',
     riders_activity_links_df = pd.read_csv(f"{csv_file_path}")
     riders_activity_links_df = riders_activity_links_df.loc[~riders_activity_links_df['activity_link'].isna()]
     if high_limit_index is not None:
-        riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:high_limit_index - 1]
+        riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:high_limit_index]
     else:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_activity_links_df, id=id, html_files_path=html_files_path)
