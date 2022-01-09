@@ -123,6 +123,7 @@ class Browser:
         else:
             # Success! we are logged in
             log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
+            return self.browser, user
 
 
 

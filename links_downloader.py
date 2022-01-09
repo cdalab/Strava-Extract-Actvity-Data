@@ -5,7 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from urllib.parse import parse_qsl
-
+import time as t
+import random
 
 class LinksDownloader(Browser):
 
@@ -132,22 +133,26 @@ class LinksDownloader(Browser):
         except:
             log(f'Failed fetching riders pages, current rider fetched {r_week_interval}', 'ERROR', id=self.id)
 
+    #TODO : handle 'indoor cycling' when extract activity data
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, rider_activity):
         self.browser.get(rider_activity['activity_link'])
-        t.sleep(random.random() + 0.5 + random.randint(2, 4))
+        # t.sleep(random.random() + 0.5 + random.randint(2, 4))
         WebDriverWait(self.browser, 7).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
         current_activity_title = self.browser.find_element_by_class_name("details").text
         heading = WebDriverWait(self.browser, 7).until(EC.visibility_of_element_located((By.ID, "heading")))
         activity_details = WebDriverWait(heading, 7).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
-        current_activity = activity_details[0].text + current_activity_title
+        current_activity = ''.join([t.text for t in activity_details]) + current_activity_title
         if prev_activity == current_activity:
             raise ValueError(f'The relevant activity page has not loaded yet')
+        activity_type = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2")))
+        if ("Ride" not in activity_type.text) and ("Cycling" not in activity_type.text):
+            return current_activity
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
         html_file_dir = f"{self.html_files_path}/{rider_activity['strava_id']}/{rider_activity['activity_id']}"
         write_to_html(html_file_dir, "overview", self.browser.page_source)
-        return current_activity_title
+        return current_activity
 
     @driver_wrapper
     def download_activity_pages(self):

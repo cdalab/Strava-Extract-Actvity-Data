@@ -2,18 +2,15 @@ import argparse
 import os
 import re
 import traceback
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import numpy as np
-import time as t
-import random
 from datetime import datetime
 from pathlib import Path
 import pandas as pd
 import requests
-
 from consts import *
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 def setting_up():
@@ -73,16 +70,20 @@ def print_progress_bar(iteration, total, prefix='', suffix='', decimals=1, lengt
     # Print New Line on Complete
     if iteration == total:
         print()
-def read_from_html(parent_dir,html_file):
+
+
+def read_from_html(parent_dir, html_file):
     with open(f"{parent_dir}/{html_file}", encoding='utf-8') as f:
         html_content = f.read()
     return html_content
 
-def write_to_html(parent_dir,html_file,content):
+
+def write_to_html(parent_dir, html_file, content):
     Path(parent_dir).mkdir(parents=True, exist_ok=True)
     if not os.path.exists(f"{parent_dir}/{html_file}.html"):
         with open(f"{parent_dir}/{html_file}.html", "w+", encoding='utf-8') as f:
             f.write(content)
+
 
 def log(msg, type=None, id='', debug=DEBUG):
     Path('./log/').mkdir(parents=True, exist_ok=True)
@@ -112,7 +113,7 @@ def error_handler(function, params, id=''):
 
 
 def timeout_wrapper(func):
-    def wrap(self, msg, *args, **kwargs):
+    def wrap(self, msg=ERROR_DEFAULT_MSG, *args, **kwargs):
         trials = 0
         while trials < TIMEOUT:
             try:
@@ -128,12 +129,32 @@ def timeout_wrapper(func):
     return wrap
 
 
+def validate_units(browser, user):
+    browser.get(BASE_STRAVA_URL + '/settings/display')
+    settings = WebDriverWait(browser, 2).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "setting-value")))
+    # confirm metrics: KGs & KMs
+    if 'Kilometers and Kilograms' not in settings[0].text:
+        raise ValueError(f"WRONG METRICS (KGs & KMs) - {user}")
+
+    # confirm metrics: Celsius
+    if 'Celsius' not in settings[1].text:
+        log(f"WRONG METRICS (Celsius) - {user}", 'WARNING', id='metric')
+        raise ValueError(f"WRONG METRICS (Celsius) - {user}")
+
+
+# TODO : check if the activity units are celsius, km & kg
+@timeout_wrapper
 def driver_wrapper(func):
     def wrap(self, *args, **kwargs):
-        self._open_driver()
-        result = func(self, *args, **kwargs)
-        self._close_driver()
-        return result
+        try:
+            user = self._open_driver()
+            validate_units(self.browser, user)
+            result = func(self, *args, **kwargs)
+            self._close_driver()
+            return result
+        except Exception as err:
+            self._close_driver()
+            raise err
 
     return wrap
 
@@ -409,24 +430,24 @@ def extract_graph_elevation_distance(soup):
     def calculate_distance_for_height(points, min_dis, max_dis):
         # Calculate the total distance traveled for specific height range (1000_to_1500 for example)
         in_range = False
-        relevent_points = []
+        relevant_points = []
         for x, y in points:
             if x >= min_dis and x < max_dis:
                 if not in_range:
-                    relevent_points.append([])
+                    relevant_points.append([])
                     in_range = True
-                relevent_points[-1].append((x, y))
+                relevant_points[-1].append((x, y))
             else:
                 in_range = False
         total_distance = 0
-        for section in relevent_points:
+        for section in relevant_points:
             first_point = section[0]
             end_point = section[-1]
             total_distance += end_point[1] - first_point[1]
         return total_distance
 
     def calculate_elevation_gain_loss(points):
-        # Calcualte the elevation gain and loss of graph
+        # Calculate the elevation gain and loss of graph
         # by comparing the previous point with current.
         elevation_gain = 0
         elevation_loss = 0
@@ -497,7 +518,7 @@ def append_row_to_csv(file_path, row, columns=None):
 
 def divide_to_tables(data, rider_id):
     '''
-    Divide data dictionary into relevent tables
+    Divide data dictionary into relevant tables
     '''
 
     # workout
@@ -552,4 +573,3 @@ def divide_to_tables(data, rider_id):
             workout_speeds_row[key] = None
 
     return workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found
-

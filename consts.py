@@ -1,5 +1,6 @@
 LOG_LEVEL = 'INFO'
-BASE_STRAVA_URL = 'https://www.strava.com'
+BASE_STRAVA_URL = 'https://www.strava.com/'
+ERROR_DEFAULT_MSG = 'Failed while trying to login to STRAVA.'
 DEBUG = True
 LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}
 TIMEOUT = 3
