@@ -103,7 +103,7 @@ def log(msg, type=None, id='', debug=DEBUG):
 def error_handler(function, params, id=''):
     error_df_path = f'./log/ERROR_DF_{id}.csv'
     for p in params.keys():
-        params[p] = str(p).replace('\n', '')
+        params[p] = str(params[p]).replace('\n', '')
     df = pd.DataFrame([params])
     df['function'] = function
     if not os.path.exists(error_df_path):
@@ -116,13 +116,14 @@ def timeout_wrapper(func):
         trials = 0
         while trials < TIMEOUT:
             try:
+                params = kwargs
                 result = func(self, *args, **kwargs)
                 return result
             except:
                 trials += 1
                 if trials == TIMEOUT:
                     log(msg, 'ERROR', id=self.id)
-                    error_handler(func.__name__, kwargs, id=self.id)
+                    error_handler(func.__name__, params, id=self.id)
 
     return wrap
 
@@ -551,3 +552,4 @@ def divide_to_tables(data, rider_id):
             workout_speeds_row[key] = None
 
     return workout_row, workout_hrs_row, workout_cadences_row, workout_powers_row, workout_speeds_row, key_not_found
+

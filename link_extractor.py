@@ -118,8 +118,8 @@ class LinksExtractor(Browser):
                         if (challenge is None) and (join_club is None):
                             raise ValueError(
                                 f'Activity card type is not recognized, interval file {week_interval_link}')
-                print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
-                                   length=50)
+                # print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
+                #                    length=50)
                 i += 1
 
         except:
@@ -130,7 +130,7 @@ class LinksExtractor(Browser):
             rider_id = None
             i = 0
             for rider_id in self.riders:
-                log(f'Fetching time interval links for cyclist {rider_id}, {i} / {len(self.riders) - 1}',
+                log(f'Fetching activity links for cyclist {rider_id}, {i} / {len(self.riders) - 1}',
                     id=self.id)
                 self._fetch_rider_activity_links(rider_id, csv_file_path)
                 i += 1

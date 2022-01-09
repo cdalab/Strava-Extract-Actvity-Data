@@ -103,7 +103,7 @@ class Browser:
         password.send_keys(PASSWORD) # send our default password 12345678
 
         self.browser.find_element_by_id("login-button").click() # press the login button
-        t.sleep(1)
+        t.sleep(random.random())
 
         if self.browser.current_url == LOGIN_URL:
             # ip blocked... wait until block is removed

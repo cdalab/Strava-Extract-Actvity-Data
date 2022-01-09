@@ -163,10 +163,10 @@ if __name__ == '__main__':
         csv_file_path = args['output_file']
         if csv_file_path is None:
             csv_file_path = f'link/riders_year_interval_links'
-        if low_limit_index is not None:
-            csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
-        if high_limit_index is not None:
-            csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
+        # if low_limit_index is not None:
+        #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
+        # if high_limit_index is not None:
+        #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
         csv_file_path = f'{csv_file_path}.csv'
         try:
             if low_limit_index is not None:
@@ -217,10 +217,10 @@ if __name__ == '__main__':
         csv_file_path = args['output_file']
         if csv_file_path is None:
             csv_file_path = f'link/riders_week_interval_links'
-        if low_limit_index is not None:
-            csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
-        if high_limit_index is not None:
-            csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
+        # if low_limit_index is not None:
+        #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
+        # if high_limit_index is not None:
+        #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
         csv_file_path = f'{csv_file_path}.csv'
         try:
             if low_limit_index is not None:
@@ -238,6 +238,7 @@ if __name__ == '__main__':
     elif command == 'download_week_interval_pages':
         # run example : main.py -c download_week_interval_pages -if link/riders_week_interval_links.csv -of link/riders_time_interval_pages -t 2
         # run example : main.py -c download_week_interval_pages -li 10 -hi 100
+        # "C:\Users\User\OneDrive - post.bgu.ac.il\STRAVA data\link\riders_time_interval_pages"
 
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
@@ -263,7 +264,7 @@ if __name__ == '__main__':
     elif command == 'extract_rider_activity_links':
         # run example : main.py -c extract_rider_activity_links -if link/riders_time_interval_pages -of link/riders_activity_links.csv -t 2
         # run example : main.py -c extract_rider_activity_links -li 10 -hi 100
-
+        # insert -li or -hi is the index of rider (not index of link)
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
@@ -271,10 +272,10 @@ if __name__ == '__main__':
         csv_file_path = args['output_file']
         if csv_file_path is None:
             csv_file_path = f'link/riders_activity_links'
-        if low_limit_index is not None:
-            csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
-        if high_limit_index is not None:
-            csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
+        # if low_limit_index is not None:
+        #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
+        # if high_limit_index is not None:
+        #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
         csv_file_path = f'{csv_file_path.replace(".csv","")}.csv'
         try:
             if low_limit_index is not None:

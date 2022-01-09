@@ -15,7 +15,11 @@ class LinksDownloader(Browser):
         self.html_files_path = html_files_path
 
     def _get_interval_html_file_and_dir(self, strava_id, url_param_dict):
-        html_file_name = "_".join(url_param_dict.values())
+        year_offset = url_param_dict['year_offset']
+        interval = url_param_dict['interval']
+        interval_type = url_param_dict['interval_type']
+        chart_type = url_param_dict['chart_type']
+        html_file_name = f"{interval}_{interval_type}_{chart_type}_{year_offset}"
         html_file_dir = f"{self.html_files_path}/{strava_id}"
         return html_file_dir, html_file_name
 
@@ -87,7 +91,7 @@ class LinksDownloader(Browser):
             prev_year_interval_range = None
             i = 0
             for idx, r_year_interval in self.riders.iterrows():
-                url_param_dict = dict(parse_qsl(r_year_interval['time_interval_link']))
+                url_param_dict = dict(parse_qsl(r_year_interval['time_interval_link'].split('?')[1]))
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_year_interval['strava_id'],
                                                                                      url_param_dict)
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
@@ -129,14 +133,16 @@ class LinksDownloader(Browser):
             log(f'Failed fetching riders pages, current rider fetched {r_week_interval}', 'ERROR', id=self.id)
 
     @timeout_wrapper
-    def _download_rider_activity_pages(self, prev_activity_title, rider_activity):
+    def _download_rider_activity_pages(self, prev_activity, rider_activity):
         self.browser.get(rider_activity['activity_link'])
         t.sleep(random.random() + 0.5 + random.randint(2, 4))
         WebDriverWait(self.browser, 7).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
         current_activity_title = self.browser.find_element_by_class_name("details").text
-        if prev_activity_title == current_activity_title:
-            raise ValueError(f'The relevant activity page has not loaded yet')
         heading = WebDriverWait(self.browser, 7).until(EC.visibility_of_element_located((By.ID, "heading")))
+        activity_details = WebDriverWait(heading, 7).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
+        current_activity = activity_details[0].text + current_activity_title
+        if prev_activity == current_activity:
+            raise ValueError(f'The relevant activity page has not loaded yet')
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
         html_file_dir = f"{self.html_files_path}/{rider_activity['strava_id']}/{rider_activity['activity_id']}"
@@ -147,17 +153,17 @@ class LinksDownloader(Browser):
     def download_activity_pages(self):
         try:
             activity = None
-            prev_activity_title = None
+            prev_activity = None
             i = 0
             for idx, activity in self.riders.iterrows():
-
-                if not os.path.exists(f"{activity['activity_id']}.html"):
+                html_file_dir = f"{self.html_files_path}/{activity['strava_id']}/{activity['activity_id']}"
+                if not os.path.exists(f"{html_file_dir}/overview.html"):
                     log(f'Fetching activity page for cyclist {activity["strava_id"]}, activity {activity["activity_id"]}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["strava_id"]}.'
-                    prev_activity_title = self._download_rider_activity_pages(link_fetch_error_msg,
-                                                                              prev_activity_title,
+                    prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
+                                                                              prev_activity,
                                                                               **dict(
                                                                                   rider_activity=activity))
                 i += 1
