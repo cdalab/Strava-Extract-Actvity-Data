@@ -148,6 +148,8 @@ class LinksDownloader(Browser):
         activity_type = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2")))
         if ("Ride" not in activity_type.text) and ("Cycling" not in activity_type.text):
             return current_activity
+        log(f'Fetching activity page for cyclist {rider_activity["strava_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}',
+            id=self.id)
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
         html_file_dir = f"{self.html_files_path}/{rider_activity['strava_id']}/{rider_activity['activity_id']}"
@@ -163,9 +165,7 @@ class LinksDownloader(Browser):
             for idx, activity in self.riders.iterrows():
                 html_file_dir = f"{self.html_files_path}/{activity['strava_id']}/{activity['activity_id']}"
                 if not os.path.exists(f"{html_file_dir}/overview.html"):
-                    log(f'Fetching activity page for cyclist {activity["strava_id"]}, activity {activity["activity_id"]}, {i} / {len(self.riders) - 1}',
-                        id=self.id)
-                    t.sleep(random.random())
+                    # t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["strava_id"]}.'
                     prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
                                                                               prev_activity,
