@@ -135,7 +135,7 @@ class LinksDownloader(Browser):
 
     #TODO : handle 'indoor cycling' when extract activity data
     @timeout_wrapper
-    def _download_rider_activity_pages(self, prev_activity, rider_activity):
+    def _download_rider_activity_pages(self, prev_activity,i, rider_activity):
         self.browser.get(rider_activity['activity_link'])
         # t.sleep(random.random() + 0.5 + random.randint(2, 4))
         WebDriverWait(self.browser, 7).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
@@ -168,7 +168,7 @@ class LinksDownloader(Browser):
                     # t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["strava_id"]}.'
                     prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
-                                                                              prev_activity,
+                                                                              prev_activity,i,
                                                                               **dict(
                                                                                   rider_activity=activity))
                 i += 1
