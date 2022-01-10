@@ -118,8 +118,8 @@ class LinksExtractor(Browser):
                         if (challenge is None) and (join_club is None):
                             raise ValueError(
                                 f'Activity card type is not recognized, interval file {week_interval_link}')
-                # print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
-                #                    length=50)
+                print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
+                                   length=50)
                 i += 1
 
         except:

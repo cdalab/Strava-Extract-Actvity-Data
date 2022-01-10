@@ -31,8 +31,8 @@ python main.py -c download_activity_pages -if link/riders_activity_links.csv -of
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 45100 -hi 46267
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 46267 -hi 48328
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 50193 -hi 51163
-
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 51163 -hi 53442
+
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 53442 -hi 55539
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 55539 -hi 57841
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 57841 -hi 59794

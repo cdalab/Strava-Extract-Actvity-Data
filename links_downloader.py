@@ -63,13 +63,13 @@ class LinksDownloader(Browser):
                                            rider_time_interval):
         self.browser.get(rider_time_interval['time_interval_link'])
         t.sleep(random.random() + 0.5 + random.randint(2, 4))
-        WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-value")))
-        current_interval_range = self.browser.find_element((By.ID, "interval-value")).text
+        current_interval_range_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-value")))
+        current_interval_range = current_interval_range_element.text
         if prev_interval_range == current_interval_range:
             raise ValueError(f'The relevant interval page has not loaded yet')
         self.browser.switch_to.parent_frame()
-        WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "feed")))
-        num_of_activities = len(self.browser.find_element((By.CLASS_NAME, "feed")).find_elements((By.XPATH, "./*")))
+        feed = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "feed")))
+        num_of_activities = len(feed.find_elements(By.XPATH, "./*"))
         if num_of_activities > 0:
             WebDriverWait(self.browser, 5).until(
                 EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
@@ -140,8 +140,8 @@ class LinksDownloader(Browser):
         self.browser.get(rider_activity['activity_link'])
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         heading = WebDriverWait(self.browser, 7).until(EC.visibility_of_element_located((By.ID, "heading")))
-        WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
-        current_activity_title = heading.find_element((By.CLASS_NAME, "details")).text
+        details = WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
+        current_activity_title = details.text
         activity_details = WebDriverWait(heading, 2).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
         current_activity = ''.join([ad.text for ad in activity_details]) + current_activity_title
         if prev_activity == current_activity:
