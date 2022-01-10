@@ -138,8 +138,8 @@ class LinksDownloader(Browser):
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity):
         self.browser.get(rider_activity['activity_link'])
-        # t.sleep(random.random() + 0.5 + random.randint(1, 3))
-        heading = WebDriverWait(self.browser, 7).until(EC.visibility_of_element_located((By.ID, "heading")))
+        t.sleep(random.random() + 0.5 + random.randint(1, 3))
+        heading = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "heading")))
         details = WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
         current_activity_title = details.text
         activity_details = WebDriverWait(heading, 2).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
