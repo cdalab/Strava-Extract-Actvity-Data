@@ -8,6 +8,7 @@ from urllib.parse import parse_qsl
 import time as t
 import random
 
+
 class LinksDownloader(Browser):
 
     def __init__(self, id, riders, html_files_path):
@@ -63,12 +64,12 @@ class LinksDownloader(Browser):
         self.browser.get(rider_time_interval['time_interval_link'])
         t.sleep(random.random() + 0.5 + random.randint(2, 4))
         WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-value")))
-        current_interval_range = self.browser.find_element_by_id("interval-value").text
+        current_interval_range = self.browser.find_element((By.ID, "interval-value")).text
         if prev_interval_range == current_interval_range:
             raise ValueError(f'The relevant interval page has not loaded yet')
         self.browser.switch_to.parent_frame()
         WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "feed")))
-        num_of_activities = len(self.browser.find_element_by_class_name("feed").find_elements_by_xpath("./*"))
+        num_of_activities = len(self.browser.find_element((By.CLASS_NAME, "feed")).find_elements((By.XPATH, "./*")))
         if num_of_activities > 0:
             WebDriverWait(self.browser, 5).until(
                 EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
@@ -79,7 +80,7 @@ class LinksDownloader(Browser):
             if activities_soup_list is not None:
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['strava_id'],
                                                                                      url_param_dict)
-                write_to_html(html_file_dir,html_file_name,self.browser.page_source)
+                write_to_html(html_file_dir, html_file_name, self.browser.page_source)
                 return current_interval_range
             else:
                 raise TimeoutError(
@@ -133,14 +134,14 @@ class LinksDownloader(Browser):
         except:
             log(f'Failed fetching riders pages, current rider fetched {r_week_interval}', 'ERROR', id=self.id)
 
-    #TODO : handle 'indoor cycling' when extract activity data
+    # TODO : handle 'indoor cycling' when extract activity data
     @timeout_wrapper
-    def _download_rider_activity_pages(self, prev_activity,i, rider_activity):
+    def _download_rider_activity_pages(self, prev_activity, i, rider_activity):
         self.browser.get(rider_activity['activity_link'])
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         heading = WebDriverWait(self.browser, 7).until(EC.visibility_of_element_located((By.ID, "heading")))
         WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
-        current_activity_title = heading.find_element_by_class_name("details").text
+        current_activity_title = heading.find_element((By.CLASS_NAME, "details")).text
         activity_details = WebDriverWait(heading, 2).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
         current_activity = ''.join([ad.text for ad in activity_details]) + current_activity_title
         if prev_activity == current_activity:
@@ -168,9 +169,9 @@ class LinksDownloader(Browser):
                     # t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["strava_id"]}.'
                     prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
-                                                                              prev_activity,i,
-                                                                              **dict(
-                                                                                  rider_activity=activity))
+                                                                        prev_activity, i,
+                                                                        **dict(
+                                                                            rider_activity=activity))
                 i += 1
         except:
             log(f'Failed fetching riders activity pages, current activity fetched {activity}.', 'ERROR', id=self.id)
