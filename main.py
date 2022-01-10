@@ -57,10 +57,12 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
 
 def extract_rider_week_interval_links(id, html_files_path='link/riders_time_interval_pages',
                                       csv_file_path='link/riders_week_interval_links',
-                                      low_limit_index=0, high_limit_index=None):
+                                      low_limit_index=0, high_limit_index=None,riders_input=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
     riders = os.listdir(html_files_path)
-    if high_limit_index is not None:
+    if riders_input is not None:
+       riders = [str(r) for r in riders if (float(r) in riders_input)]
+    elif high_limit_index is not None:
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
@@ -89,10 +91,12 @@ def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_li
 
 def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_pages',
                                  csv_file_path='link/riders_activity_links.csv', low_limit_index=0,
-                                 high_limit_index=None):
+                                 high_limit_index=None,riders_input=None):
     log("---- START EXTRACTING ACTIVITY LINKS ----", id=id)
     riders = os.listdir(html_files_path)
-    if high_limit_index is not None:
+    if riders_input is not None:
+        riders = [str(r) for r in riders if (float(r) in riders_input)]
+    elif high_limit_index is not None:
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
@@ -207,7 +211,7 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_rider_week_interval_links':
-        # run example : main.py -c extract_rider_week_interval_links -if link/riders_time_interval_pages -of link/riders_week_interval_links -t 2
+        # run example : main.py -c extract_rider_week_interval_links -if link/riders_time_interval_pages -of link/riders_week_interval_links -r [6913455.0]
         # run example : main.py -c extract_rider_week_interval_links -li 10 -hi 100
 
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
@@ -215,6 +219,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
+        riders = args['riders']
         if csv_file_path is None:
             csv_file_path = f'link/riders_week_interval_links'
         # if low_limit_index is not None:
@@ -228,7 +233,7 @@ if __name__ == '__main__':
                 extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                   low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path)
+                extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,riders_input=riders)
 
         except:
             log(f'Problem in extract_rider_week_interval_links function, '
@@ -262,7 +267,7 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_rider_activity_links':
-        # run example : main.py -c extract_rider_activity_links -if link/riders_time_interval_pages -of link/riders_activity_links.csv -t 2
+        # run example : main.py -c extract_rider_activity_links -if link/riders_time_interval_pages -of link/riders_activity_links.csv -r [6913455.0]
         # run example : main.py -c extract_rider_activity_links -li 10 -hi 100
         # insert -li or -hi is the index of rider (not index of link)
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
@@ -270,6 +275,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
+        riders = args['riders']
         if csv_file_path is None:
             csv_file_path = f'link/riders_activity_links'
         # if low_limit_index is not None:
@@ -283,7 +289,7 @@ if __name__ == '__main__':
                 extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                              low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path)
+                extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,riders_input=riders)
 
         except:
             log(f'Problem in extract_rider_activity_links function, '

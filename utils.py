@@ -2,6 +2,7 @@ import argparse
 import os
 import re
 import traceback
+import json
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -20,6 +21,7 @@ def setting_up():
     parser.add_argument('-of', '--output-file', type=str)
     parser.add_argument('-li', '--low-limit-index', type=int)
     parser.add_argument('-hi', '--high-limit-index', type=int)
+    parser.add_argument('-r', '--riders', type=str)
     parser.add_argument('-rl', '--riders-low-index', type=int)
     parser.add_argument('-rh', '--riders-high-index', type=int)
     parser.add_argument('-t', '--num-of-threads', type=int)
@@ -32,9 +34,10 @@ def setting_up():
         high_limit_index=args.high_limit_index,
         riders_low_index=args.riders_low_index,
         riders_high_index=args.riders_high_index,
+        riders=json.loads(args.riders) if args.riders is not None else None,
         num_of_threads=args.num_of_threads
     )
-    if args.command == None:
+    if args.command is None:
         raise ValueError('Cannot run the job without a command')
     ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
     id = f"{ip_addrs}_{args.command}"
@@ -134,11 +137,27 @@ def validate_units(browser, user):
     settings = WebDriverWait(browser, 2).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "setting-value")))
     # confirm metrics: KGs & KMs
     if 'Kilometers and Kilograms' not in settings[0].text:
+        browser.find_elements_by_css_selector(
+            'div[class="app-icon icon-dark icon-edit icon-sm"]')[0].click()  # CLICK TO EDIT
+        t.sleep(random.random() + random.randint(0, 6))
+        browser.find_element_by_xpath(
+            "//select[@id='default-measurement-js']/option[text()='Kilometers and Kilograms']").click()  # SELECT METRIC
+        t.sleep(random.random() + random.randint(0, 6))
+        browser.find_element_by_id('contents').find_elements_by_class_name('btn-sm')[0].click()  # SAVE
+        t.sleep(random.random() + random.randint(2, 6))
         raise ValueError(f"WRONG METRICS (KGs & KMs) - {user}")
 
     # confirm metrics: Celsius
     if 'Celsius' not in settings[1].text:
         log(f"WRONG METRICS (Celsius) - {user}", 'WARNING', id='metric')
+        browser.find_elements_by_css_selector(
+            'div[class="app-icon icon-dark icon-edit icon-sm"]')[1].click()  # CLICK TO EDIT
+        t.sleep(random.random() + random.randint(0, 6))
+        browser.find_element_by_xpath(
+            "//select[@id='temperature-measurement-js']/option[text()='Celsius']").click()  # SELECT METRIC
+        t.sleep(random.random() + random.randint(1, 6))
+        browser.find_element_by_id('contents').find_element_by_id('submit-button').send_keys(Keys.ENTER)  # SAVE
+        t.sleep(random.random() + random.randint(1, 6))
         raise ValueError(f"WRONG METRICS (Celsius) - {user}")
 
 
