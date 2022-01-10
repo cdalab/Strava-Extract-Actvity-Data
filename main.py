@@ -124,7 +124,7 @@ def download_activity_pages(id, csv_file_path='link/riders_activity_links',
 
     log("---- FINISHED DOWNLOADING ACTIVITY PAGES ----", id=id)
 
-
+#TODO:: while impl extract links of activity handle the case of wrong metrics!
 if __name__ == '__main__':
 
     args = setting_up()

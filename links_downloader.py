@@ -61,7 +61,7 @@ class LinksDownloader(Browser):
     def _download_rider_time_interval_page(self, url_param_dict, prev_interval_range,
                                            rider_time_interval):
         self.browser.get(rider_time_interval['time_interval_link'])
-        # t.sleep(random.random() + 0.5 + random.randint(2, 4))
+        t.sleep(random.random() + 0.5 + random.randint(2, 4))
         WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-value")))
         current_interval_range = self.browser.find_element_by_id("interval-value").text
         if prev_interval_range == current_interval_range:
@@ -137,12 +137,12 @@ class LinksDownloader(Browser):
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity,i, rider_activity):
         self.browser.get(rider_activity['activity_link'])
-        # t.sleep(random.random() + 0.5 + random.randint(2, 4))
-        WebDriverWait(self.browser, 7).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
-        current_activity_title = self.browser.find_element_by_class_name("details").text
+        # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         heading = WebDriverWait(self.browser, 7).until(EC.visibility_of_element_located((By.ID, "heading")))
-        activity_details = WebDriverWait(heading, 7).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
-        current_activity = ''.join([t.text for t in activity_details]) + current_activity_title
+        WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
+        current_activity_title = heading.find_element_by_class_name("details").text
+        activity_details = WebDriverWait(heading, 2).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
+        current_activity = ''.join([ad.text for ad in activity_details]) + current_activity_title
         if prev_activity == current_activity:
             raise ValueError(f'The relevant activity page has not loaded yet')
         activity_type = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2")))
