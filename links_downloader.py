@@ -31,7 +31,7 @@ class LinksDownloader(Browser):
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         options_soup = soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
         first_link = soup.find(lambda tag: tag.name == "a" and "Weekly" in tag.text)
-        url_param_dict = dict(parse_qsl(first_link.attrs['href']))
+        url_param_dict = dict(parse_qsl(first_link.attrs['href'].split('?')[1]))
         if options_soup and first_link:
             html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['strava_id'],
                                                                                  url_param_dict)
@@ -61,7 +61,7 @@ class LinksDownloader(Browser):
     def _download_rider_time_interval_page(self, url_param_dict, prev_interval_range,
                                            rider_time_interval):
         self.browser.get(rider_time_interval['time_interval_link'])
-        t.sleep(random.random() + 0.5 + random.randint(2, 4))
+        # t.sleep(random.random() + 0.5 + random.randint(2, 4))
         WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-value")))
         current_interval_range = self.browser.find_element_by_id("interval-value").text
         if prev_interval_range == current_interval_range:
@@ -98,7 +98,7 @@ class LinksDownloader(Browser):
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
                     log(f'Fetching page for cyclist {r_year_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
                         id=self.id)
-                    t.sleep(random.random())
+                    # t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch year interval {r_year_interval["time_interval_link"]}, for rider {r_year_interval["strava_id"]}.'
                     prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        url_param_dict,
@@ -116,13 +116,13 @@ class LinksDownloader(Browser):
             prev_week_interval_range = None
             i = 0
             for idx, r_week_interval in self.riders.iterrows():
-                url_param_dict = dict(parse_qsl(r_week_interval['time_interval_link']))
+                url_param_dict = dict(parse_qsl(r_week_interval['time_interval_link'].split('?')[1]))
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_week_interval['strava_id'],
                                                                                      url_param_dict)
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
                     log(f'Fetching page for cyclist {r_week_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
                         id=self.id)
-                    t.sleep(random.random())
+                    # t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch week interval {r_week_interval["time_interval_link"]}, for rider {r_week_interval["strava_id"]}.'
                     prev_week_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        url_param_dict,

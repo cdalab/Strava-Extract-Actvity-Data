@@ -90,6 +90,7 @@ class Browser:
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
         options.add_argument('--no-sandbox')
+        options.add_argument('log-level=1')
         options.add_argument("download.default_directory=Downloads/")
         options.add_experimental_option("prefs", preferences)
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
