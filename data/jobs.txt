@@ -30,15 +30,21 @@ python main.py -c download_activity_pages -if link/riders_activity_links.csv -of
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 43426 -hi 45100
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 45100 -hi 46267
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 46267 -hi 48328
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 48328 -hi 50193
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 50193 -hi 51163
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 51163 -hi 53442
 
-python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 53442 -hi 55539
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 53442 -hi 57841
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 55539 -hi 57841
-python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 57841 -hi 59794
+
+
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 57841 -hi 62436
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 59794 -hi 60059
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 60059 -hi 62436
-python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 62436 -hi 62455
+
+
+
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 62436 -hi 67145
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 62455 -hi 64031
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 64031 -hi 64826
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 64826 -hi 64827
@@ -52,11 +58,16 @@ python main.py -c download_activity_pages -if link/riders_activity_links.csv -of
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 64912 -hi 64933
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 64933 -hi 66619
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 66619 -hi 67145
-python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 67145 -hi 68135
+
+
+
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 67145 -hi 72617
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 68135 -hi 68259
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 68259 -hi 70260
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 70260 -hi 72217
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 72217 -hi 72617
+
+
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 72617 -hi 73850
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 73850 -hi 75102
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 75102 -hi 75625
