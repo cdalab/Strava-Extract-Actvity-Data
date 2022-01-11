@@ -31,40 +31,26 @@ class Browser:
         self.STRAVA_URL = 'https://www.strava.com'
         self.curr_user = ''
         
-    def _check_if_too_many_requests(self, url_to_refresh):
-        
+    def _check_if_too_many_requests(self):
         '''
-        Params:
-        --------
-        url_to_refresh - The current url to refresh and try again 
-        
-        
-        Check if Too many request block is present in the url_to_refresh.
-        Trying switching accounts until finding the one with not block of type "too many requests"
+        Check if the the user account blocked - Too many request string returned.
+        if blocked - switch to another user.
         '''
         
         
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-        found = re.search('too many requests' ,str(soup).lower())
-        while found is not None: # loop until there is no too many requests
-            # Too many requests
+        is_user_blocked = re.search('too many requests' ,str(soup).lower())
+        if is_user_blocked is not None:
             log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'ERROR', id=self.id)
-            self._switchAccount(url_to_refresh)
-            soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-            found = re.search('too many requests' ,str(soup).lower())
-            t.sleep(0.5)
+            self._switchAccount()
 
-    def _switchAccount(self, url_to_refresh):
+    def _switchAccount(self):
         '''
         Restart browser -> close browser and reopen
         Then enter the url_to_refresh again
         '''
-        
-        
         self._close_driver()
         self._open_driver()
-        self.browser.get(url_to_refresh)
-        t.sleep(0.5)
 
     def _restart_browser(self):
         '''

@@ -57,11 +57,11 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
 
 def extract_rider_week_interval_links(id, html_files_path='link/riders_time_interval_pages',
                                       csv_file_path='link/riders_week_interval_links',
-                                      low_limit_index=0, high_limit_index=None,riders_input=None):
+                                      low_limit_index=0, high_limit_index=None, riders_input=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
     riders = os.listdir(html_files_path)
     if riders_input is not None:
-       riders = [str(r) for r in riders if (float(r) in riders_input)]
+        riders = [str(r) for r in riders if (float(r) in riders_input)]
     elif high_limit_index is not None:
         riders = riders[low_limit_index:high_limit_index]
     else:
@@ -91,7 +91,7 @@ def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_li
 
 def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_pages',
                                  csv_file_path='link/riders_activity_links.csv', low_limit_index=0,
-                                 high_limit_index=None,riders_input=None):
+                                 high_limit_index=None, riders_input=None):
     log("---- START EXTRACTING ACTIVITY LINKS ----", id=id)
     riders = os.listdir(html_files_path)
     if riders_input is not None:
@@ -110,12 +110,14 @@ def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_
 
 def download_activity_pages(id, csv_file_path='link/riders_activity_links',
                             html_files_path='link/riders_activity_pages', low_limit_index=0,
-                            high_limit_index=None):
+                            high_limit_index=None,riders_input=None):
     log("---- START DOWNLOADING ACTIVITY PAGES ----", id=id)
 
     riders_activity_links_df = pd.read_csv(f"{csv_file_path}")
     riders_activity_links_df = riders_activity_links_df.loc[~riders_activity_links_df['activity_link'].isna()]
-    if high_limit_index is not None:
+    if riders_input is not None:
+        riders_activity_links_df = riders_activity_links_df.loc[riders_activity_links_df['strava_id'].isin(riders)]
+    elif high_limit_index is not None:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:high_limit_index]
     else:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:]
@@ -124,7 +126,8 @@ def download_activity_pages(id, csv_file_path='link/riders_activity_links',
 
     log("---- FINISHED DOWNLOADING ACTIVITY PAGES ----", id=id)
 
-#TODO:: while impl extract links of activity handle the case of wrong metrics!
+
+# TODO:: while impl extract links of activity handle the case of wrong metrics!
 if __name__ == '__main__':
 
     args = setting_up()
@@ -233,7 +236,8 @@ if __name__ == '__main__':
                 extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                   low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,riders_input=riders)
+                extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
+                                                  riders_input=riders)
 
         except:
             log(f'Problem in extract_rider_week_interval_links function, '
@@ -282,18 +286,19 @@ if __name__ == '__main__':
         #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         # if high_limit_index is not None:
         #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
-        csv_file_path = f'{csv_file_path.replace(".csv","")}.csv'
+        csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
         try:
             if low_limit_index is not None:
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                              low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,riders_input=riders)
+                extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
+                                             riders_input=riders)
 
         except:
             log(f'Problem in extract_rider_activity_links function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index}',
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
 
     elif command == 'download_activity_pages':
@@ -305,6 +310,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['output_file']
         csv_file_path = args['input_file']
+        riders = args['riders']
         if csv_file_path is None:
             csv_file_path = 'link/riders_activity_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -314,11 +320,11 @@ if __name__ == '__main__':
                 download_activity_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                         high_limit_index=high_limit_index)
             else:
-                download_activity_pages(id, csv_file_path, html_files_path)
+                download_activity_pages(id, csv_file_path, html_files_path, riders_input=riders)
 
         except:
             log(f'Problem in download_activity_pages function, '
-                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index}',
+                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
 
     log("---- FINISH ----", id=id)

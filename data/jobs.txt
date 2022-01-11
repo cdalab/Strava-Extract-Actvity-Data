@@ -73,3 +73,20 @@ python main.py -c download_activity_pages -if link/riders_activity_links.csv -of
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 75102 -hi 75625
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 75625 -hi 77062
 python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -li 77062 -hi 77572
+
+
+
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [593390.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [616061.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [644524.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [759393.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [812782.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [5943644.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [6094073.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [6913455.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [7019829.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [7491815.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [8424173.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [9503563.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [9545283.0]
+python main.py -c download_activity_pages -if link/riders_activity_links.csv -of link/riders_activity_pages -r [36281396.0]
