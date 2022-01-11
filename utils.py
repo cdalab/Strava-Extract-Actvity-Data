@@ -125,11 +125,9 @@ def timeout_wrapper(func):
                 result = func(self, *args, **kwargs)
                 return result
             except:
+                self._check_if_too_many_requests()
                 trials += 1
                 if trials == TIMEOUT:
-                    parent_dir = './log/problematic_htmls'
-                    Path(parent_dir).mkdir(parents=True, exist_ok=True)
-                    write_to_html(parent_dir, str(args), self.browser.page_source)
                     log(msg, 'ERROR', id=self.id)
                     error_handler(func.__name__, params, id=self.id)
 
