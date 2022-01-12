@@ -6,10 +6,12 @@ import json
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 import numpy as np
 from datetime import datetime
 from pathlib import Path
 import pandas as pd
+import random
 import requests
 import time as t
 from consts import *
@@ -116,6 +118,8 @@ def error_handler(function, params, id=''):
     df.to_csv(error_df_path, mode='a', index=False, header=False)
 
 
+
+
 def timeout_wrapper(func):
     def wrap(self, msg=ERROR_DEFAULT_MSG, *args, **kwargs):
         trials = 0
@@ -125,7 +129,6 @@ def timeout_wrapper(func):
                 result = func(self, *args, **kwargs)
                 return result
             except:
-                self._check_if_too_many_requests()
                 trials += 1
                 if trials == TIMEOUT:
                     log(msg, 'ERROR', id=self.id)

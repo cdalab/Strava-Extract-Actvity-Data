@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 
 from consts import *
 import random
@@ -30,21 +31,30 @@ class Browser:
         self.id = id
         self.STRAVA_URL = 'https://www.strava.com'
         self.curr_user = ''
-        
-    def _check_if_too_many_requests(self):
-        '''
-        Check if the the user account blocked - Too many request string returned.
-        if blocked - switch to another user.
-        '''
-        
-        
-        soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-        is_user_blocked = re.search('too many requests' ,str(soup).lower())
-        if is_user_blocked is not None:
-            log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'ERROR', id=self.id)
-            self._switchAccount()
 
-    def _switchAccount(self):
+
+    def _is_valid_html(self, current_url):
+        soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+        too_many_requests_error = re.search('too many requests', str(soup).lower())
+        if too_many_requests_error is not None:
+            log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'ERROR', id=self.id)
+            self._switch_account()
+            return
+        error_404 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error404" in tag['id']))
+        if error_404 is not None:
+            log(f"Page doesn't exist, url {current_url}","WARNING", id=self.id)
+            return 'error404'
+        error_500 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error500" in tag['id']))
+        if error_500 is not None:
+            log(f"Page is not available, url {current_url}", "WARNING", id=self.id)
+            return 'error_500'
+        error_unknown = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error" in tag['id']))
+        if error_unknown is not None:
+            log(f"Unknown Error in page, url {current_url}", "WARNING", id=self.id)
+            return 'error_unknown'
+
+
+    def _switch_account(self):
         '''
         Restart browser -> close browser and reopen
         Then enter the url_to_refresh again

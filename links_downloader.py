@@ -63,7 +63,8 @@ class LinksDownloader(Browser):
                                            rider_time_interval):
         self.browser.get(rider_time_interval['time_interval_link'])
         t.sleep(random.random() + 0.5 + random.randint(2, 4))
-        current_interval_range_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-value")))
+        current_interval_range_element = WebDriverWait(self.browser, 5).until(
+            EC.presence_of_element_located((By.ID, "interval-value")))
         current_interval_range = current_interval_range_element.text
         if prev_interval_range == current_interval_range:
             raise ValueError(f'The relevant interval page has not loaded yet')
@@ -134,12 +135,20 @@ class LinksDownloader(Browser):
         except:
             log(f'Failed fetching riders pages, current rider fetched {r_week_interval}', 'ERROR', id=self.id)
 
+
+
+
+
     # TODO : handle 'indoor cycling' when extract activity data
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity):
         activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'
         self.browser.get(activity_url)
-        t.sleep(random.random() + 0.5 + random.randint(1, 3))
+        # t.sleep(random.random() + 0.5 + random.randint(1, 3))
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.TAG_NAME, "body")))
+        response = self._is_valid_html(activity_url)
+        if response is not None:
+            return response
         heading = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "heading")))
         details = WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
         current_activity_title = details.text
