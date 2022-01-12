@@ -327,4 +327,13 @@ if __name__ == '__main__':
                 f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
 
+
+    # TODO: validate all unit are as expected
+    # TODO: validate the activity map to the right rider! can be wrong because of groups activities
+    # TODO: change extract activities links - check what are the type of activities exist! and handle each one,
+    #  the most important to handle now is the group activity (find all types of activities as well!)
+    # TODO: download the other pages of activities
+    # TODO: pay attention to the different structure of indoor cycling activities
+    # TODO: fix "find" in activity to find all (for each found activity - check if id of rider exist in the file of riders, the most important is the curr rider)
+    # create one flow for riders?
     log("---- FINISH ----", id=id)
