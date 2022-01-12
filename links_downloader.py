@@ -137,7 +137,7 @@ class LinksDownloader(Browser):
     # TODO : handle 'indoor cycling' when extract activity data
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity):
-        self.browser.get(rider_activity['activity_link'])
+        self.browser.get(f"{rider_activity['activity_link']}/overview")
         t.sleep(random.random() + 0.5 + random.randint(1, 3))
         heading = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "heading")))
         details = WebDriverWait(heading, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
