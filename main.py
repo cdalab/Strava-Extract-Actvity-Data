@@ -32,7 +32,7 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = LinksExtractor(riders=riders, id=id, html_files_path=html_files_path)
+    links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_year_interval_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
@@ -66,7 +66,7 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = LinksExtractor(riders=riders, id=id, html_files_path=html_files_path)
+    links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_week_interval_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
@@ -100,7 +100,7 @@ def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = LinksExtractor(riders=riders,
+    links_extractor = LinksExtractor(pages=riders,
                                      id=id,
                                      html_files_path=html_files_path)
     links_extractor.extract_rider_activity_links(csv_file_path)
@@ -126,8 +126,25 @@ def download_activity_pages(id, csv_file_path='link/riders_activity_links',
 
     log("---- FINISHED DOWNLOADING ACTIVITY PAGES ----", id=id)
 
+def extract_activity_analysis_links(id, html_files_path='link/riders_activity_pages',
+                                 csv_file_path='link/activity_analysis_links.csv', low_limit_index=0,
+                                 high_limit_index=None, riders_input=None):
+    log("---- START EXTRACTING ACTIVITY ANALYSIS LINKS ----", id=id)
+    riders = os.listdir(html_files_path)
+    if riders_input is not None:
+        riders = [str(r) for r in riders if (float(r) in riders_input)]
+    elif high_limit_index is not None:
+        riders = riders[low_limit_index:high_limit_index]
+    else:
+        riders = riders[low_limit_index:]
+    links_extractor = LinksExtractor(pages=riders,
+                                     id=id,
+                                     html_files_path=html_files_path)
+    links_extractor.extract_activity_analysis_links(csv_file_path)
 
-# TODO:: while impl extract links of activity handle the case of wrong metrics!
+    log("---- FINISHED EXTRACTING ACTIVITY ANALYSIS LINKS ----", id=id)
+
+
 if __name__ == '__main__':
 
     args = setting_up()
@@ -327,13 +344,40 @@ if __name__ == '__main__':
                 f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
 
+    elif command == 'extract_activity_analysis_links':
+        # run example : main.py -c extract_activity_analysis_links -if link/riders_activity_pages -of link/activity_analysis_links.csv
+        # insert -li or -hi is the index of rider (not index of link)
+        num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
+        low_limit_index = args['low_limit_index']
+        high_limit_index = args['high_limit_index']
+        html_files_path = args['input_file']
+        csv_file_path = args['output_file']
+        riders = args['riders']
+        if csv_file_path is None:
+            csv_file_path = f'link/activity_analysis_links'
+        csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
+        try:
+            if low_limit_index is not None:
+                log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
+                extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
+                                             low_limit_index=low_limit_index, high_limit_index=high_limit_index)
+            else:
+                extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
+                                             riders_input=riders)
+
+        except:
+            log(f'Problem in extract_activity_analysis_links function, '
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders}',
+                'ERROR', id=id)
 
     # TODO: validate all unit are as expected
     # TODO: validate the activity map to the right rider! can be wrong because of groups activities
     # TODO: change extract activities links - check what are the type of activities exist! and handle each one,
     #  the most important to handle now is the group activity (find all types of activities as well!)
     # TODO: download the other pages of activities
-    # TODO: pay attention to the different structure of indoor cycling activities
+    # TODO: pay attention to the different structure of indoor cycling activities and virtual rides
     # TODO: fix "find" in activity to find all (for each found activity - check if id of rider exist in the file of riders, the most important is the curr rider)
-    # create one flow for riders?
+    # TODO: create one flow for riders?
+    # TODO:: while impl extract links of activity handle the case of wrong metrics!
+
     log("---- FINISH ----", id=id)

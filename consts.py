@@ -5,6 +5,8 @@ DEBUG = True
 LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}
 TIMEOUT = 3
 PASSWORD = '12345678'
+OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new","/overview","/laps"]
+UNDESIRED_UNITS = ["feet","miles","Degrees Fahrenheit","miles per hour"]
 USERS = [
     r'kvspek@gmail.com',
     r'spektork@post.bgu.ac.il',
@@ -310,38 +312,36 @@ USERS = [
     r'cyc160@proton.com',
 ]
 
-
 WORKOUTS_COLS = ['workout_id', 'workout_tp_id', 'workout_strava_id', 'cyclist_id', 'type', 'tags', 'workout_week',
-                   'workout_month', 'workout_datetime','workout_location', 'total_time', 'workout_title', 'cyclist_mass', 'elevation_gain',
-                   'elevation_loss', 'elevation_average', 'elevation_maximum', 'elevation_minimum', 'temp_avg',
-                   'temp_min', 'temp_max', '_1000_to_1500_m', '_1500_to_2000_m', '_2000_to_2500_m', '_2500_to_3000_m',
-                   '_3000_to_3500_m', 'relative_effort', 'training_load', 'intensity', 'distance', 'energy', 'calories',
-                   'if', 'tss_actual', 'tss_calculation_method', 'hidden', 'locked']
+                 'workout_month', 'workout_datetime', 'workout_location', 'total_time', 'workout_title', 'cyclist_mass',
+                 'elevation_gain',
+                 'elevation_loss', 'elevation_average', 'elevation_maximum', 'elevation_minimum', 'temp_avg',
+                 'temp_min', 'temp_max', '_1000_to_1500_m', '_1500_to_2000_m', '_2000_to_2500_m', '_2500_to_3000_m',
+                 '_3000_to_3500_m', 'relative_effort', 'training_load', 'intensity', 'distance', 'energy', 'calories',
+                 'if', 'tss_actual', 'tss_calculation_method', 'hidden', 'locked']
 WORKOUTS_HRS_COLS = ['workout_id', 'workout_strava_id', 'hr_maximum', 'hr_average', 'hr_5_seconds', 'hr_10_seconds',
-                       'hr_12_seconds', 'hr_20_seconds', 'hr_30_seconds', 'hr_1_minute', 'hr_2_minutes', 'hr_5_minutes',
-                       'hr_6_minutes', 'hr_10_minutes', 'hr_12_minutes', 'hr_20_minutes', 'hr_30_minutes', 'hr_1_hour',
-                       'hr_90_minutes', 'hr_3_hours', 'hr_zone_1', 'hr_zone_2', 'hr_zone_3', 'hr_zone_4', 'hr_zone_5',
-                       'hr_zone_1_min', 'hr_zone_2_min', 'hr_zone_3_min', 'hr_zone_4_min', 'hr_zone_5_min']
+                     'hr_12_seconds', 'hr_20_seconds', 'hr_30_seconds', 'hr_1_minute', 'hr_2_minutes', 'hr_5_minutes',
+                     'hr_6_minutes', 'hr_10_minutes', 'hr_12_minutes', 'hr_20_minutes', 'hr_30_minutes', 'hr_1_hour',
+                     'hr_90_minutes', 'hr_3_hours', 'hr_zone_1', 'hr_zone_2', 'hr_zone_3', 'hr_zone_4', 'hr_zone_5',
+                     'hr_zone_1_min', 'hr_zone_2_min', 'hr_zone_3_min', 'hr_zone_4_min', 'hr_zone_5_min']
 WORKOUTS_CADENCES_COLS = ['workout_id', 'workout_strava_id', 'cadence_5_seconds', 'cadence_10_seconds',
-                            'cadence_12_seconds', 'cadence_20_seconds', 'cadence_30_seconds', 'cadence_1_minute',
-                            'cadence_2_minutes', 'cadence_5_minutes', 'cadence_6_minutes', 'cadence_10_minutes',
-                            'cadence_12_minutes', 'cadence_20_minutes', 'cadence_30_minutes', 'cadence_1_hour',
-                            'cadence_90_minutes', 'cadence_3_hours', 'cadence_maximum', 'cadence_average']
+                          'cadence_12_seconds', 'cadence_20_seconds', 'cadence_30_seconds', 'cadence_1_minute',
+                          'cadence_2_minutes', 'cadence_5_minutes', 'cadence_6_minutes', 'cadence_10_minutes',
+                          'cadence_12_minutes', 'cadence_20_minutes', 'cadence_30_minutes', 'cadence_1_hour',
+                          'cadence_90_minutes', 'cadence_3_hours', 'cadence_maximum', 'cadence_average']
 WORKOUTS_POWERS_COLS = ['workout_id', 'workout_strava_id', 'power_maximum', 'power_average', 'normalized_power',
-                          'power_5_seconds', 'power_10_seconds', 'power_12_seconds', 'power_20_seconds',
-                          'power_30_seconds', 'power_1_minute', 'power_2_minutes', 'power_5_minutes', 'power_6_minutes',
-                          'power_10_minutes', 'power_12_minutes', 'power_20_minutes', 'power_30_minutes',
-                          'power_1_hour', 'power_90_minutes', 'power_3_hours', 'power_zone_1', 'power_zone_2',
-                          'power_zone_3', 'power_zone_4', 'power_zone_5', 'power_zone_6', 'power_zone_7',
-                          'power_zone_1_min', 'power_zone_2_min', 'power_zone_3_min', 'power_zone_4_min',
-                          'power_zone_5_min', 'power_zone_6_min', 'power_zone_7_min']
+                        'power_5_seconds', 'power_10_seconds', 'power_12_seconds', 'power_20_seconds',
+                        'power_30_seconds', 'power_1_minute', 'power_2_minutes', 'power_5_minutes', 'power_6_minutes',
+                        'power_10_minutes', 'power_12_minutes', 'power_20_minutes', 'power_30_minutes',
+                        'power_1_hour', 'power_90_minutes', 'power_3_hours', 'power_zone_1', 'power_zone_2',
+                        'power_zone_3', 'power_zone_4', 'power_zone_5', 'power_zone_6', 'power_zone_7',
+                        'power_zone_1_min', 'power_zone_2_min', 'power_zone_3_min', 'power_zone_4_min',
+                        'power_zone_5_min', 'power_zone_6_min', 'power_zone_7_min']
 WORKOUTS_SPEEDS_COLS = ['workout_id', 'workout_strava_id', 'speed_maximum', 'speed_average', 'speed_5_seconds',
-                          'speed_10_seconds', 'speed_12_seconds', 'speed_20_seconds', 'speed_30_seconds',
-                          'speed_1_minute', 'speed_2_minutes', 'speed_5_minutes', 'speed_6_minutes', 'speed_10_minutes',
-                          'speed_12_minutes', 'speed_20_minutes', 'speed_30_minutes', 'speed_1_hour',
-                          'speed_90_minutes', 'speed_3_hours', 'speed_zone_1', 'speed_zone_2', 'speed_zone_3',
-                          'speed_zone_4', 'speed_zone_5', 'speed_zone_6', 'speed_zone_7', 'speed_zone_1_min',
-                          'speed_zone_2_min', 'speed_zone_3_min', 'speed_zone_4_min', 'speed_zone_5_min',
-                          'speed_zone_6_min', 'speed_zone_7_min']
-
-
+                        'speed_10_seconds', 'speed_12_seconds', 'speed_20_seconds', 'speed_30_seconds',
+                        'speed_1_minute', 'speed_2_minutes', 'speed_5_minutes', 'speed_6_minutes', 'speed_10_minutes',
+                        'speed_12_minutes', 'speed_20_minutes', 'speed_30_minutes', 'speed_1_hour',
+                        'speed_90_minutes', 'speed_3_hours', 'speed_zone_1', 'speed_zone_2', 'speed_zone_3',
+                        'speed_zone_4', 'speed_zone_5', 'speed_zone_6', 'speed_zone_7', 'speed_zone_1_min',
+                        'speed_zone_2_min', 'speed_zone_3_min', 'speed_zone_4_min', 'speed_zone_5_min',
+                        'speed_zone_6_min', 'speed_zone_7_min']

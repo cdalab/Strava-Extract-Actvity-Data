@@ -196,6 +196,8 @@ def valid_rider_url(url):
 def check_int(sting):
     return re.match(r"[-+]?\d+(\.0*)?$", sting) is not None
 
+def check_float(sting):
+    return re.match(r'^-?\d+(?:\.\d+)$', sting) is not None
 
 def to_hours(time_string):
     time = time_string.split(':')
