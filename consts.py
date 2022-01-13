@@ -12,7 +12,7 @@ ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
 ANALYSIS_PAGE_TYPES = ['/analysis', '/power-curve', '/zone-distribution',
                        '/power-distribution', '/est-power-curve',
                        '/est-power-distribution', '/heartrate']
-ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride']
+ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute']
 
 USERS = [
     r'kvspek@gmail.com',

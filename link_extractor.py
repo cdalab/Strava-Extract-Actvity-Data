@@ -173,12 +173,13 @@ class LinksExtractor(Browser):
             rider_activity_files = os.listdir(rider_dir_path)
             i = 0
             for activity_id in rider_activity_files:
-                # log(f"Fetching activity analysis from file {rider_dir_path}/{activity_id}/overview.html, {i} / {len(rider_activity_files) - 1}",
-                #     id=self.id, debug=False)
+                log(f"Fetching activity analysis from file {rider_dir_path}/{activity_id}/overview.html, {i} / {len(rider_activity_files) - 1}",
+                    id=self.id, debug=False)
                 html_content = read_from_html(f"{rider_dir_path}/{activity_id}", 'overview.html')
                 activity_soup = BeautifulSoup(html_content, 'html.parser')
-                title = activity_soup.find('section', attrs={'id': 'heading'}).find('span',attrs={'class':'title'}).text
-                activity_type = title.replace('\n','').split('–')[-1]
+                title = activity_soup.find('section', attrs={'id': 'heading'}).find('span',attrs={'class':'title'}).text.replace('\n','')
+                deli_idx = title.find('–')
+                activity_type = title[deli_idx+1:] if deli_idx > 0 else None
                 if activity_type not in ACTIVITY_TYPES:
                     log(f"New activity type found: {activity_type}", 'WARNING', id=self.id)
                 menu_options = activity_soup.find('nav', attrs={'class': 'sidenav'}).find_all('a')
