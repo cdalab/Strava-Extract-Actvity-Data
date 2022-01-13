@@ -91,12 +91,9 @@ def write_to_html(parent_dir, html_file, content):
             f.write(content)
 
 
-def log(msg, type=None, id='', debug=DEBUG):
+def log(msg, type='INFO', id='', debug=DEBUG):
     Path('./log/').mkdir(parents=True, exist_ok=True)
-    if type is None:
-        type = LOG_LEVEL
-    else:
-        type = type.upper()
+    type = type.upper()
     if LOG_LEVEL_DICT[type] <= LOG_LEVEL_DICT[LOG_LEVEL]:
         if type == 'ERROR':
             msg += f' ERROR DETAILS: {traceback.format_exc()}'

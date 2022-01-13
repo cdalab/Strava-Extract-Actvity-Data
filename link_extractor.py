@@ -25,7 +25,7 @@ class LinksExtractor(Browser):
             options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
             option_list = options_soup.find('ul', 'options').find_all('a')
             for time_interval in option_list:
-                row = {'strava_id': rider_id,
+                row = {'rider_id': rider_id,
                        'time_interval_link': f"{BASE_STRAVA_URL}{time_interval.attrs['href']}"}
                 append_row_to_csv(csv_file_path, row)
         except:
@@ -38,7 +38,7 @@ class LinksExtractor(Browser):
             for rider_id in self.pages:
                 csv_file_exist = os.path.exists(csv_file_path)
                 if (not csv_file_exist) or (
-                        float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values):
+                        float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values):
                     log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                         id=self.id)
                     self._fetch_rider_year_interval_links(rider_id, csv_file_path)
@@ -58,7 +58,7 @@ class LinksExtractor(Browser):
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                 for week_interval in rider_intervals:
-                    row = {'strava_id': rider_id,
+                    row = {'rider_id': rider_id,
                            'time_interval_link': f"{BASE_STRAVA_URL}{week_interval.attrs['href']}"}
                     append_row_to_csv(csv_file_path, row)
                 i += 1
@@ -72,7 +72,7 @@ class LinksExtractor(Browser):
             for rider_id in self.pages:
                 csv_file_exist = os.path.exists(csv_file_path)
                 if (not csv_file_exist) or (
-                        float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values):
+                        float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values):
                     log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                         id=self.id)
                     self._fetch_rider_week_interval_links(rider_id, csv_file_path)
@@ -86,7 +86,7 @@ class LinksExtractor(Browser):
             rider_week_interval_files = os.listdir(rider_dir_path)
             i = 0
             for week_interval_link in rider_week_interval_files:
-                log(f'Fetching week interval links from file {week_interval_link}, {i} / {len(rider_week_interval_files) - 1}',
+                log(f'Fetching activity links from file {week_interval_link}, {i} / {len(rider_week_interval_files) - 1}',
                     id=self.id, debug=False)
                 html_content = read_from_html(rider_dir_path, week_interval_link)
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
@@ -94,19 +94,31 @@ class LinksExtractor(Browser):
                 activities_list = activities_soup.find_all('div', attrs={
                     'class': 'react-card-container'})
                 for activity_card in activities_list:
-                    activity_a = activity_card.find(
+                    a_type = activity_card.find(lambda tag: (tag.name == 'div') and ('data-react-class' in tag.attrs))
+                    if a_type['data-react-class'] not in ACTIVITY_POST_TYPES:
+                        log(f"New post activity type found: {a_type['data-react-class']}",'WARNING',id=self.id)
+                    activity_a = activity_card.find_all(
                         lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
-                    if activity_a is not None:
+                    if len(activity_a) > 0:
+                        if a_type['data-react-class'] != 'GroupActivity':
+                            activity_a=activity_a[0]
+                        else:
+                            entries = activity_card.find(lambda tag: (tag.name == 'ul') and ('class' in tag.attrs) and ('GroupActivity--list-entries' in str(tag.attrs['class'])))
+                            for entry in entries.contents:
+                                link = entry.find(lambda tag: tag.name=='a' and (('athletes' in tag.attrs['href']) or ('pros' in tag.attrs['href'])))['href']
+                                if float(link.split('/')[-1]) == float(rider_id):
+                                    activity_a = entry.find(
+                                        lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
+                                    break
                         activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
                         activity_id = activity_link.split('/activities/')[1]
                         activity_not_extracted = (not os.path.exists(csv_file_path))
                         activity_not_extracted = activity_not_extracted or (
-                                float(rider_id) not in pd.read_csv(csv_file_path)['strava_id'].values)
+                                float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values)
                         activity_not_extracted = activity_not_extracted or (
                                 float(activity_id) not in pd.read_csv(csv_file_path)['activity_id'].values)
                         if activity_not_extracted:
-                            print('test')
-                            row = {'strava_id': rider_id,
+                            row = {'rider_id': rider_id,
                                    'activity_link': activity_link,
                                    'activity_id': activity_id}
                             append_row_to_csv(csv_file_path, row)
@@ -130,7 +142,7 @@ class LinksExtractor(Browser):
         try:
             rider_id = None
             i = 0
-            for rider_id in self.riders:
+            for rider_id in self.pages:
                 log(f'Fetching activity links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                     id=self.id)
                 self._fetch_rider_activity_links(rider_id, csv_file_path)
@@ -161,10 +173,14 @@ class LinksExtractor(Browser):
             rider_activity_files = os.listdir(rider_dir_path)
             i = 0
             for activity_id in rider_activity_files:
-                log(f'Fetching week interval links from file {activity_id}, {i} / {len(rider_activity_files) - 1}',
-                    id=self.id, debug=False)
+                # log(f"Fetching activity analysis from file {rider_dir_path}/{activity_id}/overview.html, {i} / {len(rider_activity_files) - 1}",
+                #     id=self.id, debug=False)
                 html_content = read_from_html(f"{rider_dir_path}/{activity_id}", 'overview.html')
                 activity_soup = BeautifulSoup(html_content, 'html.parser')
+                title = activity_soup.find('section', attrs={'id': 'heading'}).find('span',attrs={'class':'title'}).text
+                activity_type = title.replace('\n','').split('–')[-1]
+                if activity_type not in ACTIVITY_TYPES:
+                    log(f"New activity type found: {activity_type}", 'WARNING', id=self.id)
                 menu_options = activity_soup.find('nav', attrs={'class': 'sidenav'}).find_all('a')
                 self._validate_activity_page(activity_soup, rider_id, activity_id)
                 for option in menu_options:
@@ -175,10 +191,13 @@ class LinksExtractor(Browser):
                     if (option_type in OPTIONS_TO_IGNORE) or (csv_exist and (
                             activity_option_link in pd.read_csv(csv_file_path)['activity_option_link'].values)):
                         continue
+                    if option_type not in ANALYSIS_PAGE_TYPES:
+                        log(f"New activity analysis type found: {option_type}", 'WARNING', id=self.id)
                     row = {'rider_id': rider_id,
                            'activity_id': activity_id,
                            'activity_option_link': activity_option_link,
-                           'option_type': option_type}
+                           'option_type': option_type,
+                           'activity_type':activity_type}
                     append_row_to_csv(csv_file_path, row)
                 print_progress_bar(i + 1, len(rider_activity_files), prefix='Progress:', suffix='Complete',
                                    length=50)

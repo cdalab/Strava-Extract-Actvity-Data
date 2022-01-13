@@ -34,7 +34,7 @@ class LinksDownloader(Browser):
         first_link = soup.find(lambda tag: tag.name == "a" and "Weekly" in tag.text)
         url_param_dict = dict(parse_qsl(first_link.attrs['href'].split('?')[1]))
         if options_soup and first_link:
-            html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['strava_id'],
+            html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['rider_id'],
                                                                                  url_param_dict)
             write_to_html(html_file_dir, html_file_name, self.browser.page_source)
         else:
@@ -47,11 +47,11 @@ class LinksDownloader(Browser):
             rider = None
             i = 0
             for idx, rider in self.riders.iterrows():  # Fetch links for each rider
-                html_file_dir = f"{self.html_files_path}/{rider['strava_id']}"
+                html_file_dir = f"{self.html_files_path}/{rider['rider_id']}"
                 if not os.path.exists(html_file_dir):
                     log(f'Fetching page for cyclist {rider["full_name"]}, {i} / {len(self.riders) - 1}', id=self.id)
                     t.sleep(random.random())
-                    link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["strava_id"]}.'
+                    link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["rider_id"]}.'
                     self._download_rider_page(link_fetch_error_msg,
                                               **dict(rider=rider))
                 i += 1
@@ -79,7 +79,7 @@ class LinksDownloader(Browser):
             activities_soup_list = activities_soup.find_all('div', attrs={
                 'class': 'react-card-container'}) if activities_soup else None
             if activities_soup_list is not None:
-                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['strava_id'],
+                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
                                                                                      url_param_dict)
                 write_to_html(html_file_dir, html_file_name, self.browser.page_source)
                 return current_interval_range
@@ -95,13 +95,13 @@ class LinksDownloader(Browser):
             i = 0
             for idx, r_year_interval in self.riders.iterrows():
                 url_param_dict = dict(parse_qsl(r_year_interval['time_interval_link'].split('?')[1]))
-                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_year_interval['strava_id'],
+                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_year_interval['rider_id'],
                                                                                      url_param_dict)
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
-                    log(f'Fetching page for cyclist {r_year_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
+                    log(f'Fetching page for cyclist {r_year_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     # t.sleep(random.random())
-                    link_fetch_error_msg = f'Could not fetch year interval {r_year_interval["time_interval_link"]}, for rider {r_year_interval["strava_id"]}.'
+                    link_fetch_error_msg = f'Could not fetch year interval {r_year_interval["time_interval_link"]}, for rider {r_year_interval["rider_id"]}.'
                     prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        url_param_dict,
                                                                                        prev_year_interval_range,
@@ -119,13 +119,13 @@ class LinksDownloader(Browser):
             i = 0
             for idx, r_week_interval in self.riders.iterrows():
                 url_param_dict = dict(parse_qsl(r_week_interval['time_interval_link'].split('?')[1]))
-                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_week_interval['strava_id'],
+                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(r_week_interval['rider_id'],
                                                                                      url_param_dict)
                 if not os.path.exists(f"{html_file_dir}/{html_file_name}.html"):
-                    log(f'Fetching page for cyclist {r_week_interval["strava_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
+                    log(f'Fetching page for cyclist {r_week_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}',
                         id=self.id)
                     # t.sleep(random.random())
-                    link_fetch_error_msg = f'Could not fetch week interval {r_week_interval["time_interval_link"]}, for rider {r_week_interval["strava_id"]}.'
+                    link_fetch_error_msg = f'Could not fetch week interval {r_week_interval["time_interval_link"]}, for rider {r_week_interval["rider_id"]}.'
                     prev_week_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        url_param_dict,
                                                                                        prev_week_interval_range,
@@ -139,7 +139,6 @@ class LinksDownloader(Browser):
 
 
 
-    # TODO : handle 'indoor cycling' when extract activity data
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity):
         activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'
@@ -159,11 +158,11 @@ class LinksDownloader(Browser):
         activity_type = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2")))
         if ("Ride" not in activity_type.text) and ("Cycling" not in activity_type.text):
             return current_activity
-        log(f'Fetching activity page for cyclist {rider_activity["strava_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}',
+        log(f'Fetching activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}',
             id=self.id)
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
-        html_file_dir = f"{self.html_files_path}/{rider_activity['strava_id']}/{rider_activity['activity_id']}"
+        html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         write_to_html(html_file_dir, "overview", self.browser.page_source)
         return current_activity
 
@@ -174,10 +173,10 @@ class LinksDownloader(Browser):
             prev_activity = None
             i = 0
             for idx, activity in self.riders.iterrows():
-                html_file_dir = f"{self.html_files_path}/{activity['strava_id']}/{activity['activity_id']}"
+                html_file_dir = f"{self.html_files_path}/{activity['rider_id']}/{activity['activity_id']}"
                 if not os.path.exists(f"{html_file_dir}/overview.html"):
                     # t.sleep(random.random())
-                    link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["strava_id"]}.'
+                    link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["rider_id"]}.'
                     prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
                                                                         prev_activity, i,
                                                                         **dict(
@@ -185,3 +184,61 @@ class LinksDownloader(Browser):
                 i += 1
         except:
             log(f'Failed fetching riders activity pages, current activity fetched {activity}.', 'ERROR', id=self.id)
+
+
+
+
+    @timeout_wrapper
+    def _download_rider_activity_analysis_pages(self, prev_activity, i, rider_activity):
+
+        activity_url = rider_activity["activity_option_link"]
+        self.browser.get(activity_url)
+        # t.sleep(random.random() + 0.5 + random.randint(1, 3))
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.TAG_NAME, "body")))
+        response = self._is_valid_html(activity_url)
+        if response is not None:
+            return response
+
+
+
+        view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
+
+        heading = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "heading")))
+        details = WebDriverWait(view, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "details")))
+        current_activity_title = details.text
+        activity_details = WebDriverWait(view, 2).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "ul")))
+        current_activity = ''.join([ad.text for ad in activity_details]) + current_activity_title
+        if prev_activity == current_activity:
+            raise ValueError(f'The relevant activity page has not loaded yet')
+        activity_type = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2")))
+        if ("Ride" not in activity_type.text) and ("Cycling" not in activity_type.text):
+            return current_activity
+        if rider_activity['option_type'] not in ANALYSIS_PAGE_TYPES:
+            raise ValueError(f"Problem with activity page type {rider_activity['option_type']}")
+
+
+        log(f'Fetching activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}',
+            id=self.id)
+        WebDriverWait(heading, 7).until(
+            EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
+        html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
+        write_to_html(html_file_dir, "overview", self.browser.page_source)
+        return current_activity
+
+    @driver_wrapper
+    def download_activity_analysis_pages(self):
+        try:
+            activity = None
+            prev_activity = None
+            i = 0
+            for idx, activity in self.riders.iterrows():
+                html_file_dir = f"{self.html_files_path}/{activity['rider_id']}/{activity['activity_id']}"
+                # t.sleep(random.random())
+                link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["rider_id"]}.'
+                prev_activity = self._download_rider_activity_analysis_pages(link_fetch_error_msg,
+                                                                    prev_activity, i,
+                                                                    **dict(
+                                                                        rider_activity=activity))
+                i += 1
+        except:
+            log(f'Failed fetching rider analisys activity pages, current activity fetched {activity}.', 'ERROR', id=self.id)

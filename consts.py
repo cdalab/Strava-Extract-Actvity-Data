@@ -5,8 +5,15 @@ DEBUG = True
 LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}
 TIMEOUT = 3
 PASSWORD = '12345678'
-OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new","/overview","/laps"]
-UNDESIRED_UNITS = ["feet","miles","Degrees Fahrenheit","miles per hour"]
+OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new", "/overview", "/laps"]
+UNDESIRED_UNITS = ["feet", "miles", "Degrees Fahrenheit", "miles per hour"]
+ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
+
+ANALYSIS_PAGE_TYPES = ['/analysis', '/power-curve', '/zone-distribution',
+                       '/power-distribution', '/est-power-curve',
+                       '/est-power-distribution', '/heartrate']
+ACTIVITY_TYPES = ['Ride','Indoor Cycling']
+
 USERS = [
     r'kvspek@gmail.com',
     r'spektork@post.bgu.ac.il',

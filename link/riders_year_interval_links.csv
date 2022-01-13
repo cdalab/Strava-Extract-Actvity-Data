@@ -1,4 +1,4 @@
-strava_id,time_interval_link
+rider_id,time_interval_link
 1003912.0,https://www.strava.com/pros/1003912#graph_date_range?chart_type=miles&interval_type=week&interval=202101&year_offset=1
 1003912.0,https://www.strava.com/pros/1003912#graph_date_range?chart_type=miles&interval_type=week&interval=202001&year_offset=2
 1003912.0,https://www.strava.com/pros/1003912#graph_date_range?chart_type=miles&interval_type=week&interval=201901&year_offset=3
