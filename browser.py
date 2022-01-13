@@ -37,7 +37,7 @@ class Browser:
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         too_many_requests_error = re.search('too many requests', str(soup).lower())
         if too_many_requests_error is not None:
-            log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'ERROR', id=self.id)
+            log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'WARNING', id=self.id)
             self._switch_account()
             return
         error_404 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error404" in tag['id']))
