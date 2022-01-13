@@ -364,6 +364,34 @@ if __name__ == '__main__':
                 f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
 
+
+    elif command == 'extract_activity_analysis_links':
+        # run example : main.py -c extract_activity_analysis_links -if link/riders_activity_pages -of link/activity_analysis_links.csv
+        # insert -li or -hi is the index of rider (not index of link)
+        num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
+        low_limit_index = args['low_limit_index']
+        high_limit_index = args['high_limit_index']
+        html_files_path = args['input_file']
+        csv_file_path = args['output_file']
+        riders = args['riders']
+        if csv_file_path is None:
+            csv_file_path = f'link/activity_analysis_links'
+        csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
+        try:
+            if low_limit_index is not None:
+                log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
+                extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
+                                                low_limit_index=low_limit_index, high_limit_index=high_limit_index)
+            else:
+                extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
+                                                riders_input=riders)
+
+        except:
+            log(f'Problem in extract_activity_analysis_links function, '
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders}',
+                'ERROR', id=id)
+
+
     elif command == 'download_activity_analysis_pages':
         # run example : main.py -c download_activity_analysis_pages -if link/activity_analysis_links.csv -of link/riders_activity_pages  -r [6913455.0]
         # run example : main.py -c download_activity_analysis_pages -li 10 -hi 100
@@ -391,32 +419,6 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
 
-
-    elif command == 'extract_activity_analysis_links':
-        # run example : main.py -c extract_activity_analysis_links -if link/riders_activity_pages -of link/activity_analysis_links.csv
-        # insert -li or -hi is the index of rider (not index of link)
-        num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
-        low_limit_index = args['low_limit_index']
-        high_limit_index = args['high_limit_index']
-        html_files_path = args['input_file']
-        csv_file_path = args['output_file']
-        riders = args['riders']
-        if csv_file_path is None:
-            csv_file_path = f'link/activity_analysis_links'
-        csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
-        try:
-            if low_limit_index is not None:
-                log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
-                                                low_limit_index=low_limit_index, high_limit_index=high_limit_index)
-            else:
-                extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
-                                                riders_input=riders)
-
-        except:
-            log(f'Problem in extract_activity_analysis_links function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders}',
-                'ERROR', id=id)
 
     # TODO: validate all unit are as expected
     # TODO: validate the activity map to the right rider! can be wrong because of groups activities

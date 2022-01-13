@@ -155,8 +155,10 @@ class LinksDownloader(Browser):
         current_activity = ''.join([ad.text for ad in activity_details]) + current_activity_title
         if prev_activity == current_activity:
             raise ValueError(f'The relevant activity page has not loaded yet')
-        activity_type = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2")))
-        if ("Ride" not in activity_type.text) and ("Cycling" not in activity_type.text):
+        title = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2"))).text
+        deli_idx = title.find('–')
+        activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
+        if activity_type in ACTIVITY_TYPES_TO_IGNORE:
             return current_activity
         log(f'Fetching activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}',
             id=self.id)
