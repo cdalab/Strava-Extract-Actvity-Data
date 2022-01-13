@@ -28,6 +28,7 @@ def setting_up():
     parser.add_argument('-rl', '--riders-low-index', type=int)
     parser.add_argument('-rh', '--riders-high-index', type=int)
     parser.add_argument('-t', '--num-of-threads', type=int)
+    parser.add_argument('-o', '--overwrite-mode', type=int)
     args = parser.parse_args()
     args_dict = dict(
         command=args.command,
@@ -38,7 +39,8 @@ def setting_up():
         riders_low_index=args.riders_low_index,
         riders_high_index=args.riders_high_index,
         riders=json.loads(args.riders) if args.riders is not None else None,
-        num_of_threads=args.num_of_threads
+        num_of_threads=args.num_of_threads,
+        overwrite_mode=args.overwrite_mode
     )
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
@@ -84,9 +86,10 @@ def read_from_html(parent_dir, html_file):
     return html_content
 
 
-def write_to_html(parent_dir, html_file, content):
+def write_to_html(parent_dir, html_file, content,overwrite_mode=None):
     Path(parent_dir).mkdir(parents=True, exist_ok=True)
-    if not os.path.exists(f"{parent_dir}/{html_file}.html"):
+    overwrite = (overwrite_mode is not None) and overwrite_mode
+    if overwrite or (not os.path.exists(f"{parent_dir}/{html_file}.html")):
         with open(f"{parent_dir}/{html_file}.html", "w+", encoding='utf-8') as f:
             f.write(content)
 

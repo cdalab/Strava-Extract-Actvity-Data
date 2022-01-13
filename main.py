@@ -7,7 +7,7 @@ from utils import log, setting_up
 
 
 def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                         high_limit_index=None):
+                         high_limit_index=None,overwrite_mode=None):
     log("---- START DOWNLOADING RIDER PAGES ----", id=id)
 
     riders_df = pd.read_csv(f"{urls_file_path}")
@@ -18,7 +18,7 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
         riders_df = riders_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_df, html_files_path=html_files_path,
                                  id=id)
-    downloader.download_rider_pages()
+    downloader.download_rider_pages(overwrite_mode)
 
     log("---- FINISHED DOWNLOADING RIDER PAGES ----", id=id)
 
@@ -40,7 +40,7 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
 
 def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_links.csv',
                                  html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                                 high_limit_index=None):
+                                 high_limit_index=None,overwrite_mode=None):
     log("---- START DOWNLOADING YEAR INTERVAL PAGES ----", id=id)
 
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
@@ -50,7 +50,7 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
-    downloader.download_year_interval_pages()
+    downloader.download_year_interval_pages(overwrite_mode)
 
     log("---- FINISHED DOWNLOADING YEAR INTERVAL PAGES ----", id=id)
 
@@ -74,7 +74,7 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
 
 def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_links.csv',
                                  html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                                 high_limit_index=None):
+                                 high_limit_index=None,overwrite_mode=None):
     log("---- START DOWNLOADING WEEK INTERVAL PAGES ----", id=id)
 
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
@@ -84,7 +84,7 @@ def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_li
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
-    downloader.download_week_interval_pages()
+    downloader.download_week_interval_pages(overwrite_mode)
 
     log("---- FINISHED DOWNLOADING WEEK INTERVAL PAGES ----", id=id)
 
@@ -110,7 +110,7 @@ def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_
 
 def download_activity_pages(id, csv_file_path='link/riders_activity_links.csv',
                             html_files_path='link/riders_activity_pages', low_limit_index=0,
-                            high_limit_index=None, riders_input=None):
+                            high_limit_index=None, riders_input=None,overwrite_mode=None):
     log("---- START DOWNLOADING ACTIVITY PAGES ----", id=id)
 
     riders_activity_links_df = pd.read_csv(f"{csv_file_path}")
@@ -122,7 +122,7 @@ def download_activity_pages(id, csv_file_path='link/riders_activity_links.csv',
     else:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_activity_links_df, id=id, html_files_path=html_files_path)
-    downloader.download_activity_pages()
+    downloader.download_activity_pages(overwrite_mode)
 
     log("---- FINISHED DOWNLOADING ACTIVITY PAGES ----", id=id)
 
@@ -148,7 +148,7 @@ def extract_activity_analysis_links(id, html_files_path='link/riders_activity_pa
 
 def download_activity_analysis_pages(id, csv_file_path='link/activity_analysis_links.csv',
                             html_files_path='link/riders_activity_pages', low_limit_index=0,
-                            high_limit_index=None, riders_input=None):
+                            high_limit_index=None, riders_input=None,overwrite_mode=None):
     log("---- START DOWNLOADING ANALYSIS ACTIVITY PAGES ----", id=id)
 
     riders_activity_links_df = pd.read_csv(f"{csv_file_path}")
@@ -160,7 +160,7 @@ def download_activity_analysis_pages(id, csv_file_path='link/activity_analysis_l
     else:
         riders_activity_links_df = riders_activity_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_activity_links_df, id=id, html_files_path=html_files_path)
-    downloader.download_activity_analysis_pages()
+    downloader.download_activity_analysis_pages(overwrite_mode)
 
     log("---- FINISHED DOWNLOADING ANALYSIS ACTIVITY PAGES ----", id=id)
 
@@ -180,6 +180,7 @@ if __name__ == '__main__':
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
         html_files_path = args['output_file']
+        overwrite_mode=args['overwrite_mode']
         if html_files_path is None:
             html_files_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -187,13 +188,13 @@ if __name__ == '__main__':
             if low_limit_index is not None:
                 log(f'STARTING RIDER INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_rider_pages(urls_file_path, id, html_files_path, low_limit_index=low_limit_index,
-                                     high_limit_index=high_limit_index)
+                                     high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_rider_pages(urls_file_path, id, html_files_path)
+                download_rider_pages(urls_file_path, id, html_files_path,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_rider_pages function, '
-                f'args: {urls_file_path, html_files_path, low_limit_index, high_limit_index}',
+                f'args: {urls_file_path, html_files_path, low_limit_index, high_limit_index,overwrite_mode}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_year_interval_links':
@@ -234,6 +235,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['output_file']
         csv_file_path = args['input_file']
+        overwrite_mode = args['overwrite_mode']
         if csv_file_path is None:
             csv_file_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -241,13 +243,13 @@ if __name__ == '__main__':
             if low_limit_index is not None:
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_year_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
-                                             high_limit_index=high_limit_index)
+                                             high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_year_interval_pages(id, csv_file_path, html_files_path)
+                download_year_interval_pages(id, csv_file_path, html_files_path,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
-                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index}',
+                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_week_interval_links':
@@ -291,6 +293,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['output_file']
         csv_file_path = args['input_file']
+        overwrite_mode = args['overwrite_mode']
         if csv_file_path is None:
             csv_file_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -298,13 +301,13 @@ if __name__ == '__main__':
             if low_limit_index is not None:
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_week_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
-                                             high_limit_index=high_limit_index)
+                                             high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_week_interval_pages(id, csv_file_path, html_files_path)
+                download_week_interval_pages(id, csv_file_path, html_files_path,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
-                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index}',
+                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_activity_links':
@@ -347,6 +350,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['output_file']
         csv_file_path = args['input_file']
+        overwrite_mode = args['overwrite_mode']
         riders = args['riders']
         if csv_file_path is None:
             csv_file_path = 'link/riders_activity_links'
@@ -355,9 +359,9 @@ if __name__ == '__main__':
             if low_limit_index is not None:
                 log(f'STARTING ACTIVITIES INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_activity_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
-                                        high_limit_index=high_limit_index)
+                                        high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_activity_pages(id, csv_file_path, html_files_path, riders_input=riders)
+                download_activity_pages(id, csv_file_path, html_files_path, riders_input=riders,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_activity_pages function, '
@@ -402,6 +406,7 @@ if __name__ == '__main__':
         html_files_path = args['output_file']
         csv_file_path = args['input_file']
         riders = args['riders']
+        overwrite_mode = args['overwrite_mode']
         if csv_file_path is None:
             csv_file_path = 'link/activity_analysis_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -409,9 +414,9 @@ if __name__ == '__main__':
             if low_limit_index is not None:
                 log(f'STARTING ACTIVITIES INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_activity_analysis_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
-                                                 high_limit_index=high_limit_index)
+                                                 high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_activity_analysis_pages(id, csv_file_path, html_files_path, riders_input=riders)
+                download_activity_analysis_pages(id, csv_file_path, html_files_path, riders_input=riders,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_activity_analysis_pages function, '
@@ -420,12 +425,19 @@ if __name__ == '__main__':
 
 
 
-    # TODO: validate all unit are as expected
-    # TODO: validate the activity map to the right rider! can be wrong because of groups activities
+
     # TODO: download the other pages of activities
     # TODO: pay attention to the different structure of indoor cycling activities and virtual rides
-    # TODO: create one flow for riders?
-    # TODO:: while impl extract links of activity handle the case of wrong metrics!
-
+    # TODO:: after run extract links of activity analysis check errors - for the case of wrong metrics!
+    # TODO: validate all unit are as expected
+    # TODO: validate the activity map to the right rider! can be wrong because of groups activities
     # TODO: after extract all activity links again - check in log info if more types of activities exist
+    #TODO: add to download activity overview = check if the title in head contains "Ride", elswise - valueError (it could help to recognize activities such as Races that are not Ride)
+    # TODO: download all activity pages again (overwrite off, done for download the races!)
+    #TODO: run in all cumpoters "download again" script
+    # TODO: run in all computers - download overview (overwrite mode - for indoor cycling!)
+
+    # TODO: create one flow for riders?
+
+
     log("---- FINISH ----", id=id)

@@ -13,8 +13,8 @@ ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
 ANALYSIS_PAGE_TYPES = ['/analysis', '/power-curve', '/zone-distribution',
                        '/power-distribution', '/est-power-curve',
                        '/est-power-distribution', '/heartrate']
-ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute']
-ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski','Run']
+ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute', 'Race']
+ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weight Training', 'Ice Skate', 'Crossfit', 'Walk', 'Winter Sport', 'Treadmill workout', 'Hike']
 USERS = [
     r'kvspek@gmail.com',
     r'spektork@post.bgu.ac.il',
