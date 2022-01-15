@@ -151,9 +151,11 @@ def timeout_wrapper(func):
                 trials += 1
                 for err in self.browser.get_log('browser'):
                     if err['source'] == 'network':
+                        current_url = self.browser.current_url
                         err_url = err['message'].split(' - ')[0]
                         self.browser.get(err_url)
                         self._is_valid_html(err_url)
+                        self.browser.get(current_url)
                 if trials == TIMEOUT:
                     parent_dir = 'log/problematic_htmls'
                     file_name = datetime.now().strftime("%Y-%m-%d %H.%M.%S")
