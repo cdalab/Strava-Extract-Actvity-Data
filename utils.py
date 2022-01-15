@@ -119,19 +119,20 @@ def error_handler(function, params, id=''):
         df.to_csv(error_df_path, index=False, header=True)
     df.to_csv(error_df_path, mode='a', index=False, header=False)
 
+def get_overwrite_pred(dir,files,overwrite_mode):
+    overwrite = (overwrite_mode is not None) and overwrite_mode
+    files_exists = True
+    for file in files:
+        files_exists = files_exists and os.path.exists(f"{dir}/{file}.html")
+    return overwrite or (not files_exists)
 
 def download_files_wrapper(func):
     def wrap(self, msg, dir, files, overwrite_mode, *args, **kwargs):
-        overwrite = (overwrite_mode is not None) and overwrite_mode
-        files_exists = True
-        for file in files:
-            files_exists = files_exists and os.path.exists(f"{dir}/{file}.html")
-        if (not overwrite) and files_exists:
-            return
-        files_content = func(self, *args, **kwargs)
-        log(msg, id=self.id)
-        for file in files_content.keys():
-            write_to_html(dir, file, files_content[file])
+        if get_overwrite_pred(dir,files,overwrite_mode):
+            files_content = func(self, *args, **kwargs)
+            log(msg, id=self.id)
+            for file in files_content.keys():
+                write_to_html(dir, file, files_content[file])
 
     return wrap
 

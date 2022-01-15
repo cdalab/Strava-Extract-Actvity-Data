@@ -23,7 +23,8 @@ class LinksDownloader(Browser):
         self.riders = riders
         self.html_files_path = html_files_path
 
-    def _get_interval_html_file_and_dir(self, strava_id, url_param_dict):
+    def _get_interval_html_file_and_dir(self, strava_id, link):
+        url_param_dict = dict(parse_qsl(link.split('?')[1]))
         year_offset = url_param_dict['year_offset']
         interval = url_param_dict['interval']
         interval_type = url_param_dict['interval_type']
@@ -51,9 +52,8 @@ class LinksDownloader(Browser):
         week_btn = WebDriverWait(intervals_graph, 2).until(
             EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "Weekly")))
         first_link = week_btn.get_attribute('href')
-        url_param_dict = dict(parse_qsl(first_link.split('?')[1]))
         html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['strava_id'],
-                                                                             url_param_dict)
+                                                                             first_link)
         wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
         self._rider_page_general_handler(*wrapper_args, html_file_name)
 
@@ -64,8 +64,12 @@ class LinksDownloader(Browser):
             i = 0
             for idx, rider in self.riders.iterrows():
                 # t.sleep(random.random())
-                link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["strava_id"]}.'
-                self._download_rider_page(link_fetch_error_msg, i, **dict(rider=rider, overwrite_mode=overwrite_mode))
+                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['rider_id'],
+                                                                                     rider['time_interval_link'])
+                if get_overwrite_pred(html_file_dir, html_file_name, overwrite_mode):
+                    link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["strava_id"]}.'
+                    self._download_rider_page(link_fetch_error_msg, i,
+                                              **dict(rider=rider, overwrite_mode=overwrite_mode))
                 i += 1
         except:
             log(f'Failed fetching riders pages, current rider fetched {rider}', 'ERROR', id=self.id)
@@ -88,49 +92,35 @@ class LinksDownloader(Browser):
         if num_of_activities > 0:
             WebDriverWait(self.browser, 5).until(
                 EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
-            url_param_dict = dict(parse_qsl(rider_time_interval['time_interval_link'].split('?')[1]))
             html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
-                                                                                 url_param_dict)
+                                                                                 rider_time_interval[
+                                                                                     'time_interval_link'])
             info_msg = f'Fetching page for cyclist {rider_time_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}'
             wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
             self._rider_page_general_handler(*wrapper_args, html_file_name)
             return current_interval_range
 
     @driver_wrapper
-    def download_year_interval_pages(self, overwrite_mode=None):
+    def download_time_interval_pages(self, overwrite_mode=None):
         try:
-            r_year_interval = None
+            time_interval = None
             prev_year_interval_range = None
             i = 0
-            for idx, r_year_interval in self.riders.iterrows():
+            for idx, time_interval in self.riders.iterrows():
                 # t.sleep(random.random())
-                link_fetch_error_msg = f'Could not fetch year interval {r_year_interval["time_interval_link"]}, for rider {r_year_interval["rider_id"]}.'
-                prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
-                                                                                   prev_year_interval_range, i,
-                                                                                   **dict(
-                                                                                       rider_time_interval=r_year_interval,
-                                                                                       overwrite_mode=overwrite_mode))
+                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(time_interval['rider_id'],
+                                                                                     time_interval[
+                                                                                         'time_interval_link'])
+                if get_overwrite_pred(html_file_dir, html_file_name, overwrite_mode):
+                    link_fetch_error_msg = f'Could not fetch time interval {time_interval["time_interval_link"]}, for rider {time_interval["rider_id"]}.'
+                    prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
+                                                                                       prev_year_interval_range, i,
+                                                                                       **dict(
+                                                                                           rider_time_interval=time_interval,
+                                                                                           overwrite_mode=overwrite_mode))
                 i += 1
         except:
-            log(f'Failed fetching riders pages, current rider fetched {r_year_interval}', 'ERROR', id=self.id)
-
-    @driver_wrapper
-    def download_week_interval_pages(self, overwrite_mode=None):
-        try:
-            r_week_interval = None
-            prev_week_interval_range = None
-            i = 0
-            for idx, r_week_interval in self.riders.iterrows():
-                # t.sleep(random.random())
-                link_fetch_error_msg = f'Could not fetch week interval {r_week_interval["time_interval_link"]}, for rider {r_week_interval["rider_id"]}.'
-                prev_week_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
-                                                                                   prev_week_interval_range, i,
-                                                                                   **dict(
-                                                                                       rider_time_interval=r_week_interval,
-                                                                                       overwrite_mode=overwrite_mode))
-                i += 1
-        except:
-            log(f'Failed fetching riders pages, current rider fetched {r_week_interval}', 'ERROR', id=self.id)
+            log(f'Failed fetching riders pages, current rider fetched {time_interval}', 'ERROR', id=self.id)
 
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
@@ -175,20 +165,24 @@ class LinksDownloader(Browser):
             prev_activity = None
             i = 0
             for idx, activity in self.riders.iterrows():
-                # t.sleep(random.random())
-                link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["rider_id"]}.'
-                prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
-                                                                    prev_activity, i,
-                                                                    **dict(
-                                                                        rider_activity=activity,
-                                                                        overwrite_mode=overwrite_mode))
+                html_file_dir = f"{self.html_files_path}/{activity['rider_id']}/{activity['activity_id']}"
+
+                if get_overwrite_pred(html_file_dir, "overview", overwrite_mode):
+                    # t.sleep(random.random())
+                    link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["rider_id"]}.'
+                    prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
+                                                                        prev_activity, i,
+                                                                        **dict(
+                                                                            rider_activity=activity,
+                                                                            overwrite_mode=overwrite_mode))
                 i += 1
         except:
             log(f'Failed fetching riders activity pages, current activity fetched {activity}.', 'ERROR', id=self.id)
 
     @download_files_wrapper
     def _handle_analysis_page_case(self, rider_activity, data_container):
-        elev_chart = WebDriverWait(data_container, 3).until(EC.visibility_of_element_located((By.ID, "elevation-chart")))
+        elev_chart = WebDriverWait(data_container, 3).until(
+            EC.visibility_of_element_located((By.ID, "elevation-chart")))
         self._wait_for_chart(elev_chart)
         stacked_chart = WebDriverWait(data_container, 3).until(
             EC.visibility_of_element_located((By.ID, "stacked-chart")))
@@ -240,7 +234,6 @@ class LinksDownloader(Browser):
         return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity,
                 f"{rider_activity['option_type'][1:]}_watts-kg": watts_kg_metric_activity}
 
-
     @download_files_wrapper
     def _handle_power_distribution_page(self, rider_activity, data_container):
         chart = WebDriverWait(data_container, 3).until(
@@ -257,9 +250,11 @@ class LinksDownloader(Browser):
         return {f"{rider_activity['option_type'][1:]}": self.browser.page_source}
 
     @timeout_wrapper
-    def download_analysis_pages_loop(self,prev_activity,i,rider_activity,overwrite_mode=None):
+    def download_analysis_pages_loop(self, prev_activity, i, rider_activity, overwrite_mode=None):
         info_msg = f'Fetching {rider_activity["option_type"]} activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}'
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
+        files = ACTIVITY_ANALYSIS_FILES[rider_activity["option_type"]]
+        wrapper_args = (info_msg, html_file_dir, files, overwrite_mode)
         href = rider_activity["activity_option_link"].split(BASE_STRAVA_URL)[-1]
         side_menu = WebDriverWait(self.browser, 3).until(EC.element_to_be_clickable((By.ID, 'pagenav')))
         WebDriverWait(side_menu, 2).until(EC.element_to_be_clickable((By.XPATH, f'*//a[@href="{href}"]'))).click()
@@ -271,8 +266,6 @@ class LinksDownloader(Browser):
         section_id = data_container.get_attribute('id')
         # /analysis
         if section_id == 'basic-analysis':
-            files = [f"{rider_activity['option_type'][1:]}_distance", f"{rider_activity['option_type'][1:]}_time"]
-            wrapper_args = (info_msg, html_file_dir, files, overwrite_mode)
             self._handle_analysis_page_case(*wrapper_args, rider_activity, data_container)
             return current_activity
         header = WebDriverWait(data_container, 2).until(EC.visibility_of_element_located((By.XPATH, 'header')))
@@ -282,12 +275,8 @@ class LinksDownloader(Browser):
         chart_header = chart_container.find_element(By.TAG_NAME, 'h2').text
         # /power-curve, /est-power-curve
         if chart_header.find('Power Curve') > -1:
-            files = [f"{rider_activity['option_type'][1:]}_watts", f"{rider_activity['option_type'][1:]}_watts-kg"]
-            wrapper_args = (info_msg, html_file_dir, files, overwrite_mode)
             self._handle_power_charts_page(*wrapper_args, rider_activity, chart_container)
             return current_activity
-
-        wrapper_args = (info_msg, html_file_dir, [f"{rider_activity['option_type'][1:]}"], overwrite_mode)
 
         # /power-distribution , /est-power-distribution
         if chart_header.find('Power Distribution') > -1:
@@ -306,7 +295,6 @@ class LinksDownloader(Browser):
         self._rider_page_general_handler(*wrapper_args, f"{rider_activity['option_type'][1:]}_unknown")
         return current_activity
 
-
     @timeout_wrapper
     def _download_rider_activity_analysis_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
         self.browser.get(rider_activity["activity_option_link"])
@@ -315,9 +303,8 @@ class LinksDownloader(Browser):
         if response is not None:
             return response
         error_msg = f'Could not fetch {rider_activity["option_type"]} activity of cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}.'
-        return self.download_analysis_pages_loop(error_msg, prev_activity,i,**dict(rider_activity=rider_activity,
-                                                                                 overwrite_mode=overwrite_mode))
-
+        return self.download_analysis_pages_loop(error_msg, prev_activity, i, **dict(rider_activity=rider_activity,
+                                                                                     overwrite_mode=overwrite_mode))
 
     def _download_indoor_ride_again(self, rider_id, activity_id):
         html_dir_path = f"{self.html_files_path}/{rider_id}/{activity_id}"
@@ -360,18 +347,20 @@ class LinksDownloader(Browser):
             for idx, activity in self.riders.iterrows():
                 activity_id = activity['activity_id']
                 rider_id = activity['rider_id']
-                activity_type = activity['activity_type']
-                is_indoor = (activity_type == 'Indoor Cycling')
+                is_indoor = (activity['activity_type'] == 'Indoor Cycling')
                 if is_indoor and (activity_id not in indoor_activities_handled):
                     self._handle_indoor_cycling_overview_page(rider_id, activity_id)
                     indoor_activities_handled.add(activity_id)
-                # t.sleep(random.random())
-                link_fetch_error_msg = f'Could not fetch activity {activity_id}, for rider {activity["rider_id"]}.'
-                prev_activity = self._download_rider_activity_analysis_pages(link_fetch_error_msg,
-                                                                             prev_activity, i,
-                                                                             **dict(
-                                                                                 rider_activity=activity,
-                                                                                 overwrite_mode=overwrite_mode))
+                files = ACTIVITY_ANALYSIS_FILES[activity["option_type"]]
+                dir = f"{self.html_files_path}/{rider_id}/{activity_id}"
+                if get_overwrite_pred(dir, files, overwrite_mode):
+                    # t.sleep(random.random())
+                    link_fetch_error_msg = f'Could not fetch activity {activity_id}, for rider {activity["rider_id"]}.'
+                    prev_activity = self._download_rider_activity_analysis_pages(link_fetch_error_msg,
+                                                                                 prev_activity, i,
+                                                                                 **dict(
+                                                                                     rider_activity=activity,
+                                                                                     overwrite_mode=overwrite_mode))
                 i += 1
         except:
             log(f'Failed fetching rider analisys activity pages, current activity fetched {activity}.', 'ERROR',

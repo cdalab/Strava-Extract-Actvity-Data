@@ -38,10 +38,10 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
 
 
-def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_links.csv',
+def download_time_interval_pages(id, csv_file_path,
                                  html_files_path='link/riders_time_interval_pages', low_limit_index=0,
                                  high_limit_index=None,overwrite_mode=None):
-    log("---- START DOWNLOADING YEAR INTERVAL PAGES ----", id=id)
+    log("---- START DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
     riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
@@ -50,9 +50,9 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
     else:
         riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
-    downloader.download_year_interval_pages(overwrite_mode)
+    downloader.download_time_interval_pages(overwrite_mode)
 
-    log("---- FINISHED DOWNLOADING YEAR INTERVAL PAGES ----", id=id)
+    log("---- FINISHED DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
 
 def extract_rider_week_interval_links(id, html_files_path='link/riders_time_interval_pages',
@@ -70,23 +70,6 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
     links_extractor.extract_rider_week_interval_links(csv_file_path, start_week, end_week)
 
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
-
-
-def download_week_interval_pages(id, csv_file_path='link/riders_week_interval_links.csv',
-                                 html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                                 high_limit_index=None,overwrite_mode=None):
-    log("---- START DOWNLOADING WEEK INTERVAL PAGES ----", id=id)
-
-    riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
-    riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
-    if high_limit_index is not None:
-        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index]
-    else:
-        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
-    downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, html_files_path=html_files_path)
-    downloader.download_week_interval_pages(overwrite_mode)
-
-    log("---- FINISHED DOWNLOADING WEEK INTERVAL PAGES ----", id=id)
 
 
 def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_pages',
@@ -240,10 +223,10 @@ if __name__ == '__main__':
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                download_year_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
+                download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_year_interval_pages(id, csv_file_path, html_files_path,overwrite_mode=overwrite_mode)
+                download_time_interval_pages(id, csv_file_path, html_files_path,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
@@ -300,10 +283,10 @@ if __name__ == '__main__':
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                download_week_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
+                download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
             else:
-                download_week_interval_pages(id, csv_file_path, html_files_path,overwrite_mode=overwrite_mode)
+                download_time_interval_pages(id, csv_file_path, html_files_path,overwrite_mode=overwrite_mode)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
