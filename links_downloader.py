@@ -215,7 +215,7 @@ class LinksDownloader(Browser):
         WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'rect')))
         WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'g')))
         WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'line')))
-        WebDriverWait(chart, 3).until(EC.visibility_of_all_elements_located((By.TAG_NAME, 'path')))
+        WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'path')))
 
     @download_files_wrapper
     def _handle_power_charts_page(self, rider_activity, data_container):
@@ -231,7 +231,9 @@ class LinksDownloader(Browser):
         if watts_metric_activity == watts_kg_metric_activity:
             raise ValueError(
                 f'The watts/kg curve has not loaded yet, activity: {rider_activity["activity_id"]}')
-        if 'This athlete has not set their weight.' in watts_kg_metric_activity:
+        cyclist_has_weight = WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="power-panel-cpcurve"]/div[4]')))
+        if 'none' not in cyclist_has_weight.get_attribute('style'):
             return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity}
         return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity,
                 f"{rider_activity['option_type'][1:]}_watts-kg": watts_kg_metric_activity}
