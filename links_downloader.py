@@ -251,15 +251,15 @@ class LinksDownloader(Browser):
         WebDriverWait(table, 3).until(EC.visibility_of_element_located((By.TAG_NAME, "td")))
         return {f"{rider_activity['option_type'][1:]}": self.browser.page_source}
 
-    @timeout_wrapper
     def download_analysis_pages_loop(self, prev_activity, i, rider_activity, overwrite_mode=None):
         info_msg = f'Fetching {rider_activity["option_type"]} activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}'
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         files = ACTIVITY_ANALYSIS_FILES[rider_activity["option_type"]]
         wrapper_args = (info_msg, html_file_dir, files, overwrite_mode)
         href = rider_activity["activity_option_link"].split(BASE_STRAVA_URL)[-1]
-        side_menu = WebDriverWait(self.browser, 3).until(EC.element_to_be_clickable((By.ID, 'pagenav')))
-        WebDriverWait(side_menu, 2).until(EC.element_to_be_clickable((By.XPATH, f'*//a[@href="{href}"]'))).click()
+        side_menu = WebDriverWait(self.browser, 3).until(EC.presence_of_element_located((By.ID, 'pagenav')))
+        WebDriverWait(side_menu, 2).until(EC.element_to_be_clickable((By.XPATH, f'*//a[@href="{href}"]'))).send_keys(
+            Keys.ENTER)
         view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
         data_container = WebDriverWait(view, 2).until(EC.visibility_of_element_located((By.XPATH, 'section')))
         current_activity = self.browser.page_source
