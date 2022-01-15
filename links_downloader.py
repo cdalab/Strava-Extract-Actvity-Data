@@ -304,8 +304,7 @@ class LinksDownloader(Browser):
         response = self._is_valid_html(rider_activity["activity_option_link"])
         if response is not None:
             return response
-        error_msg = f'Could not fetch {rider_activity["option_type"]} activity of cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}.'
-        return self.download_analysis_pages_loop(error_msg, prev_activity, i, **dict(rider_activity=rider_activity,
+        return self.download_analysis_pages_loop(prev_activity, i, **dict(rider_activity=rider_activity,
                                                                                      overwrite_mode=overwrite_mode))
 
     def _download_indoor_ride_again(self, rider_id, activity_id):
