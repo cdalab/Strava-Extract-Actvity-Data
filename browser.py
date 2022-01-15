@@ -1,3 +1,4 @@
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -7,20 +8,47 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time as t
-from utils import log
+from utils import log, timeout_wrapper
 import re
-
 
 
 class Browser:
     '''
     Parent class for fetching data from strava
     '''
-    
-    
+
     def __init__(self, id):
         self.id = id
         self.curr_user = None
+
+    @timeout_wrapper
+    def validate_units(self):
+        self.browser.get(BASE_STRAVA_URL + '/settings/display')
+        settings = WebDriverWait(self.browser, 2).until(
+            EC.visibility_of_all_elements_located((By.CLASS_NAME, "setting-value")))
+        # validate metrics: KGs & KMs
+        if 'Kilometers and Kilograms' not in settings[0].text:
+            log(f"WRONG METRICS (Kilometers and Kilograms) - {self.curr_user}", 'WARNING', id=self.id)
+            WebDriverWait(settings[0], 2).until(
+                EC.presence_of_element_located((By.XPATH, "div"))).click()  # CLICK ON EDIT
+            metric_selection_xpath = "//select[@id='default-measurement-js']/option[text()='Kilometers and Kilograms']"
+            WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located((By.XPATH, metric_selection_xpath))).click()  # SELECT METRIC
+            WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located((By.ID, 'submit-button'))).send_keys(Keys.ENTER) # SAVE
+            raise ValueError(f"WRONG METRICS (KGs & KMs) - {self.curr_user}")
+
+        # validate metrics: Celsius
+        if 'Celsius' not in settings[1].text:
+            log(f"WRONG METRICS (Celsius) - {self.curr_user}", 'WARNING', id=self.id)
+            WebDriverWait(settings[1], 2).until(
+                EC.presence_of_element_located((By.XPATH, "div"))).click()  # CLICK ON EDIT
+            metric_selection_xpath = "//select[@id='temperature-measurement-js']/option[text()='Celsius']"
+            WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located((By.XPATH, metric_selection_xpath))).click()  # SELECT METRIC
+            WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located((By.ID, 'submit-button'))).send_keys(Keys.ENTER) # SAVE
+            raise ValueError(f"WRONG METRICS (Celsius) - {self.curr_user}")
 
 
     def _is_valid_html(self, current_url):
@@ -33,7 +61,7 @@ class Browser:
             return
         error_404 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error404" in tag['id']))
         if error_404 is not None:
-            log(f"Page doesn't exist, url {current_url}","WARNING", id=self.id)
+            log(f"Page doesn't exist, url {current_url}", "WARNING", id=self.id)
             return 'error404'
         error_500 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error500" in tag['id']))
         if error_500 is not None:
@@ -43,7 +71,6 @@ class Browser:
         if error_unknown is not None:
             log(f"Unknown Error in page, url {current_url}", "WARNING", id=self.id)
             return 'error_unknown'
-
 
     def _switch_account(self):
         '''
@@ -65,13 +92,10 @@ class Browser:
         Initialize selenium driver, then tries to login to STRAVA
         '''
 
-        preferences = {"download.default_directory": 'downloads/' , "directory_upgrade": True, "safebrowsing.enabled": True }
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
         options.add_argument('--no-sandbox')
         options.add_argument('log-level=1')
-        options.add_argument("download.default_directory=Downloads/")
-        options.add_experimental_option("prefs", preferences)
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
         self.browser.get(LOGIN_URL)
@@ -97,8 +121,5 @@ class Browser:
             log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
             return self.browser, user
 
-
-
     def _close_driver(self):
         self.browser.close()
-

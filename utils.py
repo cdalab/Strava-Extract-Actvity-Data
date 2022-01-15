@@ -119,16 +119,18 @@ def error_handler(function, params, id=''):
         df.to_csv(error_df_path, index=False, header=True)
     df.to_csv(error_df_path, mode='a', index=False, header=False)
 
-def get_overwrite_pred(dir,files,overwrite_mode):
+
+def get_overwrite_pred(dir, files, overwrite_mode):
     overwrite = (overwrite_mode is not None) and overwrite_mode
     files_exists = True
     for file in files:
         files_exists = files_exists and os.path.exists(f"{dir}/{file}.html")
     return overwrite or (not files_exists)
 
+
 def download_files_wrapper(func):
     def wrap(self, msg, dir, files, overwrite_mode, *args, **kwargs):
-        if get_overwrite_pred(dir,files,overwrite_mode):
+        if get_overwrite_pred(dir, files, overwrite_mode):
             files_content = func(self, *args, **kwargs)
             log(msg, id=self.id)
             for file in files_content.keys():
@@ -153,7 +155,7 @@ def timeout_wrapper(func):
                         self.browser.get(err_url)
                         self._is_valid_html(err_url)
                 if trials == TIMEOUT:
-                    parent_dir='log/problematic_htmls'
+                    parent_dir = 'log/problematic_htmls'
                     file_name = datetime.now().strftime("%Y-%m-%d %H.%M.%S")
                     Path(parent_dir).mkdir(parents=True, exist_ok=True)
                     write_to_html(parent_dir, file_name, self.browser.page_source)
@@ -163,42 +165,12 @@ def timeout_wrapper(func):
     return wrap
 
 
-def validate_units(browser, user):
-    browser.get(BASE_STRAVA_URL + '/settings/display')
-    settings = WebDriverWait(browser, 2).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "setting-value")))
-    # confirm metrics: KGs & KMs
-    if 'Kilometers and Kilograms' not in settings[0].text:
-        browser.find_elements_by_css_selector(
-            'div[class="app-icon icon-dark icon-edit icon-sm"]')[0].click()  # CLICK TO EDIT
-        t.sleep(random.random() + random.randint(0, 6))
-        browser.find_element_by_xpath(
-            "//select[@id='default-measurement-js']/option[text()='Kilometers and Kilograms']").click()  # SELECT METRIC
-        t.sleep(random.random() + random.randint(0, 6))
-        browser.find_element_by_id('contents').find_elements_by_class_name('btn-sm')[0].click()  # SAVE
-        t.sleep(random.random() + random.randint(2, 6))
-        raise ValueError(f"WRONG METRICS (KGs & KMs) - {user}")
-
-    # confirm metrics: Celsius
-    if 'Celsius' not in settings[1].text:
-        log(f"WRONG METRICS (Celsius) - {user}", 'WARNING', id='metric')
-        browser.find_elements_by_css_selector(
-            'div[class="app-icon icon-dark icon-edit icon-sm"]')[1].click()  # CLICK TO EDIT
-        t.sleep(random.random() + random.randint(0, 6))
-        browser.find_element_by_xpath(
-            "//select[@id='temperature-measurement-js']/option[text()='Celsius']").click()  # SELECT METRIC
-        t.sleep(random.random() + random.randint(1, 6))
-        browser.find_element_by_id('contents').find_element_by_id('submit-button').send_keys(Keys.ENTER)  # SAVE
-        t.sleep(random.random() + random.randint(1, 6))
-        raise ValueError(f"WRONG METRICS (Celsius) - {user}")
-
-
-# TODO : check if the activity units are celsius, km & kg
-@timeout_wrapper
 def driver_wrapper(func):
     def wrap(self, *args, **kwargs):
         try:
             user = self._open_driver()
-            validate_units(self.browser, user)
+            err_metrics = f"Metrics are not as expected in user {user}"
+            self.validate_units(err_metrics)
             result = func(self, *args, **kwargs)
             self._close_driver()
             return result

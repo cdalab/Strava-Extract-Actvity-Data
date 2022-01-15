@@ -143,6 +143,8 @@ class LinksDownloader(Browser):
         save_activity_type(rider_activity, activity_type)
         if activity_type in ACTIVITY_TYPES_TO_IGNORE:
             return current_activity
+        if 'Ride' not in self.browser.title:
+            return current_activity
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
         if activity_type == 'Indoor Cycling':
