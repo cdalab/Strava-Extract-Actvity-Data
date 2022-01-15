@@ -25,7 +25,7 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
 
 def extract_rider_year_interval_links(id, html_files_path='link/riders_time_interval_pages',
                                       csv_file_path='link/riders_year_interval_links.csv',
-                                      low_limit_index=0, high_limit_index=None):
+                                      low_limit_index=0, high_limit_index=None,start_week=None,end_week=None):
     log("---- START EXTRACTING YEAR INTERVAL LINKS ----", id=id)
     riders = os.listdir(html_files_path)
     if high_limit_index is not None:
@@ -33,7 +33,7 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
     else:
         riders = riders[low_limit_index:]
     links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
-    links_extractor.extract_rider_year_interval_links(csv_file_path)
+    links_extractor.extract_rider_year_interval_links(csv_file_path,start_week,end_week)
 
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
 
@@ -57,7 +57,7 @@ def download_year_interval_pages(id, csv_file_path='link/riders_year_interval_li
 
 def extract_rider_week_interval_links(id, html_files_path='link/riders_time_interval_pages',
                                       csv_file_path='link/riders_week_interval_links.csv',
-                                      low_limit_index=0, high_limit_index=None, riders_input=None):
+                                      low_limit_index=0, high_limit_index=None, riders_input=None, start_week=None, end_week=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
     riders = os.listdir(html_files_path)
     if riders_input is not None:
@@ -67,7 +67,7 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
     else:
         riders = riders[low_limit_index:]
     links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
-    links_extractor.extract_rider_week_interval_links(csv_file_path)
+    links_extractor.extract_rider_week_interval_links(csv_file_path, start_week, end_week)
 
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
 
@@ -185,7 +185,7 @@ if __name__ == '__main__':
             html_files_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING RIDER INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_rider_pages(urls_file_path, id, html_files_path, low_limit_index=low_limit_index,
                                      high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
@@ -206,24 +206,22 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
+        start_week = args['start_week']
+        end_week = args['end_week']
         if csv_file_path is None:
             csv_file_path = f'link/riders_year_interval_links'
-        # if low_limit_index is not None:
-        #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
-        # if high_limit_index is not None:
-        #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
         csv_file_path = f'{csv_file_path}.csv'
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_rider_year_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                   low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                extract_rider_year_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path)
+                extract_rider_year_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,start_week=start_week,end_week=end_week)
 
         except:
             log(f'Problem in extract_rider_year_interval_links function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index}',
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index,start_week,end_week}',
                 'ERROR', id=id)
 
     elif command == 'download_year_interval_pages':
@@ -240,7 +238,7 @@ if __name__ == '__main__':
             csv_file_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_year_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
@@ -262,25 +260,27 @@ if __name__ == '__main__':
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
         riders = args['riders']
+        start_week = args['start_week']
+        end_week = args['end_week']
         if csv_file_path is None:
             csv_file_path = f'link/riders_week_interval_links'
-        # if low_limit_index is not None:
+        # if (low_limit_index is not None) or (high_limit_index is not None):
         #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         # if high_limit_index is not None:
         #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
         csv_file_path = f'{csv_file_path}.csv'
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                   low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
                 extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
-                                                  riders_input=riders)
+                                                  riders_input=riders,start_week=start_week,end_week=end_week)
 
         except:
             log(f'Problem in extract_rider_week_interval_links function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index}',
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, start_week, end_week}',
                 'ERROR', id=id)
 
     elif command == 'download_week_interval_pages':
@@ -298,7 +298,7 @@ if __name__ == '__main__':
             csv_file_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_week_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
@@ -322,13 +322,13 @@ if __name__ == '__main__':
         riders = args['riders']
         if csv_file_path is None:
             csv_file_path = f'link/riders_activity_links'
-        # if low_limit_index is not None:
+        # if (low_limit_index is not None) or (high_limit_index is not None):
         #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         # if high_limit_index is not None:
         #     csv_file_path = f'{csv_file_path}_till_{high_limit_index}'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                              low_limit_index=low_limit_index, high_limit_index=high_limit_index)
@@ -356,7 +356,7 @@ if __name__ == '__main__':
             csv_file_path = 'link/riders_activity_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING ACTIVITIES INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_activity_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                         high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
@@ -367,7 +367,6 @@ if __name__ == '__main__':
             log(f'Problem in download_activity_pages function, '
                 f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
-
 
     elif command == 'extract_activity_analysis_links':
         # run example : main.py -c extract_activity_analysis_links -if link/riders_activity_pages -of link/activity_analysis_links.csv
@@ -382,7 +381,7 @@ if __name__ == '__main__':
             csv_file_path = f'link/activity_analysis_links'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                 low_limit_index=low_limit_index, high_limit_index=high_limit_index)
@@ -394,7 +393,6 @@ if __name__ == '__main__':
             log(f'Problem in extract_activity_analysis_links function, '
                 f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders}',
                 'ERROR', id=id)
-
 
     elif command == 'download_activity_analysis_pages':
         # run example : main.py -c download_activity_analysis_pages -if link/activity_analysis_links.csv -of link/riders_activity_pages  -r [6913455.0]
@@ -411,7 +409,7 @@ if __name__ == '__main__':
             csv_file_path = 'link/activity_analysis_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
-            if low_limit_index is not None:
+            if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING ACTIVITIES INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_activity_analysis_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                                  high_limit_index=high_limit_index,overwrite_mode=overwrite_mode)
@@ -434,8 +432,6 @@ if __name__ == '__main__':
     # TODO: after extract all activity links again - check in log info if more types of activities exist
     #TODO: add to download activity overview = check if the title in head contains "Ride", elswise - valueError (it could help to recognize activities such as Races that are not Ride)
     # TODO: download all activity pages again (overwrite off, done for download the races!)
-    #TODO: run in all cumpoters "download again" script
-    # TODO: run in all computers - download overview (overwrite mode - for indoor cycling!)
 
     # TODO: create one flow for riders?
 

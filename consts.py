@@ -1,5 +1,10 @@
 LOG_LEVEL = 'INFO'
 BASE_STRAVA_URL = 'https://www.strava.com/'
+LOGGED_OUT_SLEEP = 15 * 60  # 15 minutes
+LOGIN_URL = f'{BASE_STRAVA_URL}login'
+ONBOARD_URL = f'{BASE_STRAVA_URL}onboarding'
+DASHBOARD_URL = f'{BASE_STRAVA_URL}dashboard'
+
 ERROR_DEFAULT_MSG = 'Failed while trying to login to STRAVA.'
 DEBUG = True
 LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}
@@ -13,10 +18,16 @@ ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
 ANALYSIS_PAGE_TYPES = ['/analysis', '/power-curve', '/zone-distribution',
                        '/power-distribution', '/est-power-curve',
                        '/est-power-distribution', '/heartrate']
-ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute', 'Race']
-ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weight Training', 'Ice Skate', 'Crossfit', 'Walk', 'Winter Sport', 'Treadmill workout', 'Hike']
-USERS = [
-    r'kvspek@gmail.com',
+
+ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute', 'Race', 'E-Bike Ride']
+ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weight Training', 'Yoga', 'Swim',
+                            'Alpine Ski', 'Ice Skate', 'Long Run', 'Virtual Run', 'Run – Commute',
+                            'Winter Sport', 'Backcountry Ski', 'Crossfit', 'Walk', 'Winter Sport',
+                            'E-Bike Ride', 'Stand Up Paddling', 'Rowing', 'Treadmill workout', 'Hike']
+
+# TODO: ask robert -   'E-Bike Ride'
+
+USERS = [r'kvspek@gmail.com',
     r'spektork@post.bgu.ac.il',
     r'kev_backup@yahoo.com',
     r'cool_table@yahoo.com',

@@ -29,6 +29,8 @@ def setting_up():
     parser.add_argument('-rh', '--riders-high-index', type=int)
     parser.add_argument('-t', '--num-of-threads', type=int)
     parser.add_argument('-o', '--overwrite-mode', type=int)
+    parser.add_argument('-sw', '--start-week', type=int)
+    parser.add_argument('-ew', '--end-week', type=int)
     args = parser.parse_args()
     args_dict = dict(
         command=args.command,
@@ -40,7 +42,9 @@ def setting_up():
         riders_high_index=args.riders_high_index,
         riders=json.loads(args.riders) if args.riders is not None else None,
         num_of_threads=args.num_of_threads,
-        overwrite_mode=args.overwrite_mode
+        overwrite_mode=args.overwrite_mode,
+        start_week=args.start_week,
+        end_week=args.end_week
     )
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
@@ -86,12 +90,10 @@ def read_from_html(parent_dir, html_file):
     return html_content
 
 
-def write_to_html(parent_dir, html_file, content,overwrite_mode=None):
+def write_to_html(parent_dir, html_file, content):
     Path(parent_dir).mkdir(parents=True, exist_ok=True)
-    overwrite = (overwrite_mode is not None) and overwrite_mode
-    if overwrite or (not os.path.exists(f"{parent_dir}/{html_file}.html")):
-        with open(f"{parent_dir}/{html_file}.html", "w+", encoding='utf-8') as f:
-            f.write(content)
+    with open(f"{parent_dir}/{html_file}.html", "w+", encoding='utf-8') as f:
+        f.write(content)
 
 
 def log(msg, type='INFO', id='', debug=DEBUG):
@@ -118,6 +120,20 @@ def error_handler(function, params, id=''):
     df.to_csv(error_df_path, mode='a', index=False, header=False)
 
 
+def download_files_wrapper(func):
+    def wrap(self, msg, dir, files, overwrite_mode, *args, **kwargs):
+        overwrite = (overwrite_mode is not None) and overwrite_mode
+        files_exists = True
+        for file in files:
+            files_exists = files_exists and os.path.exists(f"{dir}/{file}.html")
+        if (not overwrite) and files_exists:
+            return
+        files_content = func(self, *args, **kwargs)
+        log(msg, id=self.id)
+        for file in files_content.keys():
+            write_to_html(dir, file, files_content[file])
+
+    return wrap
 
 
 def timeout_wrapper(func):
@@ -130,7 +146,16 @@ def timeout_wrapper(func):
                 return result
             except:
                 trials += 1
+                for err in self.browser.get_log('browser'):
+                    if err['source'] == 'network':
+                        err_url = err['message'].split(' - ')[0]
+                        self.browser.get(err_url)
+                        self._is_valid_html(err_url)
                 if trials == TIMEOUT:
+                    parent_dir='log/problematic_htmls'
+                    file_name = datetime.now().strftime("%Y-%m-%d %H.%M.%S")
+                    Path(parent_dir).mkdir(parents=True, exist_ok=True)
+                    write_to_html(parent_dir, file_name, self.browser.page_source)
                     log(msg, 'ERROR', id=self.id)
                     error_handler(func.__name__, params, id=self.id)
 
@@ -196,8 +221,10 @@ def valid_rider_url(url):
 def check_int(sting):
     return re.match(r"[-+]?\d+(\.0*)?$", sting) is not None
 
+
 def check_float(sting):
     return re.match(r'^-?\d+(?:\.\d+)$', sting) is not None
+
 
 def to_hours(time_string):
     time = time_string.split(':')

@@ -1,3 +1,5 @@
+from urllib.parse import parse_qsl
+
 import pandas as pd
 from bs4 import BeautifulSoup
 from utils import *
@@ -16,7 +18,7 @@ class LinksExtractor(Browser):
         html_file_dir = f"{self.html_files_path}/{strava_id}"
         return html_file_dir, html_file_name
 
-    def _fetch_rider_year_interval_links(self, rider_id, csv_file_path):
+    def _fetch_rider_year_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_html_file = os.listdir(rider_dir_path)[0]
@@ -25,13 +27,20 @@ class LinksExtractor(Browser):
             options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
             option_list = options_soup.find('ul', 'options').find_all('a')
             for time_interval in option_list:
-                row = {'rider_id': rider_id,
-                       'time_interval_link': f"{BASE_STRAVA_URL}{time_interval.attrs['href']}"}
-                append_row_to_csv(csv_file_path, row)
+                link = f"{BASE_STRAVA_URL}{time_interval.attrs['href']}"
+                url_param_dict = dict(parse_qsl(link.split('?')[1]))
+                interval = url_param_dict['interval']
+                curr_year, curr_week = int(interval[:4]), int(interval[4:])
+                start_year, s_week = int(start_week[:4]), int(start_week[4:])
+                end_year, e_week = int(end_week[:4]), int(end_week[4:])
+                if (start_year <= curr_year <= end_year) and (s_week <= curr_week <= e_week):
+                    row = {'rider_id': rider_id,
+                           'time_interval_link': link}
+                    append_row_to_csv(csv_file_path, row)
         except:
             log(f'Could not fetch year interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
-    def extract_rider_year_interval_links(self, csv_file_path):
+    def extract_rider_year_interval_links(self, csv_file_path, start_week, end_week):
         try:
             rider_id = None
             i = 0
@@ -41,12 +50,12 @@ class LinksExtractor(Browser):
                         float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values):
                     log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                         id=self.id)
-                    self._fetch_rider_year_interval_links(rider_id, csv_file_path)
+                    self._fetch_rider_year_interval_links(rider_id, csv_file_path, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders year interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
 
-    def _fetch_rider_week_interval_links(self, rider_id, csv_file_path):
+    def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_year_interval_files = os.listdir(rider_dir_path)
@@ -58,14 +67,21 @@ class LinksExtractor(Browser):
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                 for week_interval in rider_intervals:
-                    row = {'rider_id': rider_id,
-                           'time_interval_link': f"{BASE_STRAVA_URL}{week_interval.attrs['href']}"}
-                    append_row_to_csv(csv_file_path, row)
+                    link = f"{BASE_STRAVA_URL}{week_interval.attrs['href']}"
+                    url_param_dict = dict(parse_qsl(link.split('?')[1]))
+                    interval = url_param_dict['interval']
+                    curr_year, curr_week = int(interval[:4]), int(interval[4:])
+                    start_year, s_week = int(start_week[:4]), int(start_week[4:])
+                    end_year, e_week = int(end_week[:4]), int(end_week[4:])
+                    if (start_year <= curr_year <= end_year) and (s_week <= curr_week <= e_week):
+                        row = {'rider_id': rider_id,
+                               'time_interval_link': link}
+                        append_row_to_csv(csv_file_path, row)
                 i += 1
         except:
             log(f'Could not fetch week interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
-    def extract_rider_week_interval_links(self, csv_file_path):
+    def extract_rider_week_interval_links(self, csv_file_path, start_week, end_week):
         try:
             rider_id = None
             i = 0
@@ -75,7 +91,7 @@ class LinksExtractor(Browser):
                         float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values):
                     log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                         id=self.id)
-                    self._fetch_rider_week_interval_links(rider_id, csv_file_path)
+                    self._fetch_rider_week_interval_links(rider_id, csv_file_path, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders week interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
@@ -96,16 +112,18 @@ class LinksExtractor(Browser):
                 for activity_card in activities_list:
                     a_type = activity_card.find(lambda tag: (tag.name == 'div') and ('data-react-class' in tag.attrs))
                     if a_type['data-react-class'] not in ACTIVITY_POST_TYPES:
-                        log(f"New post activity type found: {a_type['data-react-class']}",'WARNING',id=self.id)
+                        log(f"New post activity type found: {a_type['data-react-class']}", 'WARNING', id=self.id)
                     activity_a = activity_card.find_all(
                         lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
                     if len(activity_a) > 0:
                         if a_type['data-react-class'] != 'GroupActivity':
-                            activity_a=activity_a[0]
+                            activity_a = activity_a[0]
                         else:
-                            entries = activity_card.find(lambda tag: (tag.name == 'ul') and ('class' in tag.attrs) and ('GroupActivity--list-entries' in str(tag.attrs['class'])))
+                            entries = activity_card.find(lambda tag: (tag.name == 'ul') and ('class' in tag.attrs) and (
+                                        'GroupActivity--list-entries' in str(tag.attrs['class'])))
                             for entry in entries.contents:
-                                link = entry.find(lambda tag: tag.name=='a' and (('athletes' in tag.attrs['href']) or ('pros' in tag.attrs['href'])))['href']
+                                link = entry.find(lambda tag: tag.name == 'a' and (
+                                            ('athletes' in tag.attrs['href']) or ('pros' in tag.attrs['href'])))['href']
                                 if float(link.split('/')[-1]) == float(rider_id):
                                     activity_a = entry.find(
                                         lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
@@ -166,6 +184,9 @@ class LinksExtractor(Browser):
         if any([unit in units_in_page for unit in UNDESIRED_UNITS]):
             raise ValueError(
                 f'The metrics in the page of activity {activity_id}, cyclist {rider_id}, are wrong.')
+        if 'Ride' not in activity_soup.find('head').find('title').text:
+            raise ValueError(
+                f'The activity should be Ride- id {activity_id}, cyclist {rider_id}.')
 
     def _activity_analysis_links(self, rider_id, csv_file_path):
         try:
@@ -177,9 +198,10 @@ class LinksExtractor(Browser):
                     id=self.id, debug=False)
                 html_content = read_from_html(f"{rider_dir_path}/{activity_id}", 'overview.html')
                 activity_soup = BeautifulSoup(html_content, 'html.parser')
-                title = activity_soup.find('section', attrs={'id': 'heading'}).find('span',attrs={'class':'title'}).text.replace('\n','')
+                title = activity_soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
+                    'class': 'title'}).text.replace('\n', '')
                 deli_idx = title.find('–')
-                activity_type = title[deli_idx+1:].strip() if deli_idx > 0 else None
+                activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
                 if activity_type not in ACTIVITY_TYPES:
                     log(f"New activity type found: {activity_type}", 'WARNING', id=self.id)
                 menu_options = activity_soup.find('nav', attrs={'class': 'sidenav'}).find_all('a')
@@ -198,7 +220,7 @@ class LinksExtractor(Browser):
                            'activity_id': activity_id,
                            'activity_option_link': activity_option_link,
                            'option_type': option_type,
-                           'activity_type':activity_type}
+                           'activity_type': activity_type}
                     append_row_to_csv(csv_file_path, row)
                 print_progress_bar(i + 1, len(rider_activity_files), prefix='Progress:', suffix='Complete',
                                    length=50)

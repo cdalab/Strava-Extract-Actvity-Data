@@ -1,5 +1,6 @@
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-
 from consts import *
 import random
 from selenium import webdriver
@@ -11,16 +12,6 @@ import re
 
 
 
-
-MIN_RAND_SLEEP = 5
-MAX_RAND_SLEEP = 20
-LOGGED_OUT_SLEEP = 1801
-LOGIN_URL = 'https://www.strava.com/login'
-ONBOARD_URL = 'https://www.strava.com/onboarding'
-DASHBOARD_URL = 'https://www.strava.com/dashboard'
-
-
-
 class Browser:
     '''
     Parent class for fetching data from strava
@@ -29,11 +20,11 @@ class Browser:
     
     def __init__(self, id):
         self.id = id
-        self.STRAVA_URL = 'https://www.strava.com'
-        self.curr_user = ''
+        self.curr_user = None
 
 
     def _is_valid_html(self, current_url):
+        WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.TAG_NAME, "body")))
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         too_many_requests_error = re.search('too many requests', str(soup).lower())
         if too_many_requests_error is not None:
@@ -56,18 +47,10 @@ class Browser:
 
     def _switch_account(self):
         '''
-        Restart browser -> close browser and reopen
-        Then enter the url_to_refresh again
+        Switch logged-in user
         '''
         self._close_driver()
         self._open_driver()
-
-    def _restart_browser(self):
-        '''
-        Open the driver if something went wrong
-        '''
-        self._open_driver()
-        t.sleep(0.5)
 
     def _get_username(self):
         '''
@@ -79,7 +62,7 @@ class Browser:
 
     def _open_driver(self):
         '''
-        Main method. Opens a new driver. Then tries to login to strava
+        Initialize selenium driver, then tries to login to STRAVA
         '''
 
         preferences = {"download.default_directory": 'downloads/' , "directory_upgrade": True, "safebrowsing.enabled": True }
@@ -91,56 +74,31 @@ class Browser:
         options.add_experimental_option("prefs", preferences)
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-        URL = self.STRAVA_URL + '/login'
-        self.browser.get(URL)
-        email = self.browser.find_element_by_id("email") # Get email element
-        password = self.browser.find_element_by_id("password") # Get password element
+        self.browser.get(LOGIN_URL)
+        email = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "email")))
+        password = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "password")))
         user = self._get_username()
-        email.send_keys(user) # send email with our username
-        password.send_keys(PASSWORD) # send our default password 12345678
-
-        self.browser.find_element_by_id("login-button").click() # press the login button
-        t.sleep(random.random())
-
-        if self.browser.current_url == LOGIN_URL:
-            # ip blocked... wait until block is removed
-
+        email.send_keys(user)
+        password.send_keys(PASSWORD)
+        WebDriverWait(self.browser, 2).until(EC.element_to_be_clickable((By.ID, "login-button"))).click()
+        current_url = self.browser.current_url
+        if current_url == LOGIN_URL:
             log(f"IP BLOCKED - waiting for {LOGGED_OUT_SLEEP} seconds.", 'WARNING', id=self.id)
             self._close_driver()
             t.sleep(LOGGED_OUT_SLEEP)
             self._open_driver()
-        elif not self.browser.current_url == ONBOARD_URL and not self.browser.current_url == DASHBOARD_URL:
-            # BAD ACCOUNT! need
-            
-            log(f"BAD ACCOUNT {user} {self.browser.current_url}: SWITCHING ACCOUNT", 'WARNING', id=self.id)
+
+        elif (not current_url == ONBOARD_URL) and (not current_url == DASHBOARD_URL):
+            log(f"BAD ACCOUNT {user} {current_url}: SWITCHING ACCOUNT", 'WARNING', id=self.id)
             self._close_driver()
             self._open_driver()
-            t.sleep(300)
 
         else:
-            # Success! we are logged in
             log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
             return self.browser, user
 
 
 
     def _close_driver(self):
-        # Close driver with the close method
         self.browser.close()
-
-    def _is_logged_out(self):
-        '''
-        Check if user is logged in.
-        returns bool
-        '''
-        try:
-            site_soup = BeautifulSoup(self.browser.page_source, 'html.parser')
-            if site_soup.find('html')['class'][0] == 'logged-out': # logged out ...
-                log(f'logged out. username: {self.curr_user}', 'ERROR', id=self.id)
-
-                return True
-
-            return False
-        except:
-            return False # Failed to check if logged in....
 
