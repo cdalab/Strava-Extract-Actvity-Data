@@ -20,9 +20,7 @@ from consts import *
 def setting_up():
     from consts import USERS
 
-    log(f'', id=id)
-    log(f'', id=id)
-    log(f'====================================================================', id=id)
+
 
 
 
@@ -70,12 +68,16 @@ def setting_up():
         else:
             raise ValueError('User range input is not valid.')
         USERS = USERS[s_idx:e_idx]
-        log(f'USERS[{s_idx}:{e_idx}]', id=id)
+
 
     ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
     id = f"{ip_addrs}_{args.command}"
     args_dict['id'] = id
-
+    log(f'', id=id)
+    log(f'', id=id)
+    log(f'====================================================================', id=id)
+    if args.users_range is not None:
+        log(f'USERS[{s_idx}:{e_idx}]', id=id)
     log(f'{args_dict}', id=id)
     log(f'', id=id)
     log(f'', id=id)
