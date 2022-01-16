@@ -232,7 +232,7 @@ class LinksDownloader(Browser):
             raise ValueError(
                 f'The watts/kg curve has not loaded yet, activity: {rider_activity["activity_id"]}')
         cyclist_has_weight = WebDriverWait(self.browser, 2).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="power-panel-cpcurve"]/div[4]')))
+            EC.presence_of_all_elements_located((By.XPATH, '//*[@id="power-panel-cpcurve"]/div')))[-1]
         if 'none' not in cyclist_has_weight.get_attribute('style'):
             return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity}
         return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity,
