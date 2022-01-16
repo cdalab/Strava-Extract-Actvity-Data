@@ -55,16 +55,15 @@ def setting_up():
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
     if args.users_range is not None:
-        s_idx, e_idx = None,None
+        s_idx, e_idx = 0,len(USERS)
         users_input = json.loads(args.users_range)
-        if ('start' in users_input):
-            s_idx=users_input['start']
-            if ('step' in users_input):
+        if 'start' in users_input:
+            s_idx = users_input['start']
+            if 'end' in users_input:
+                e_idx = users_input['end']
+            elif 'step' in users_input:
+                s_idx = s_idx * users_input['step']
                 e_idx = s_idx + users_input['step']
-            elif ('end' in users_input):
-                e_idx =users_input['end']
-            else:
-                e_idx = len(USERS)
         else:
             raise ValueError('User range input is not valid.')
         USERS = USERS[s_idx:e_idx]
