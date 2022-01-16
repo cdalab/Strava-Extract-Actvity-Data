@@ -18,8 +18,8 @@ def save_activity_type(rider_activity, activity_type):
 
 class LinksDownloader(Browser):
 
-    def __init__(self, id, riders, html_files_path):
-        Browser.__init__(self, id)
+    def __init__(self, id, users, riders, html_files_path):
+        Browser.__init__(self, id, users)
         self.riders = riders
         self.html_files_path = html_files_path
 

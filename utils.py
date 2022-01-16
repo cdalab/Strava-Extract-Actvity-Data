@@ -18,12 +18,6 @@ from consts import *
 
 
 def setting_up():
-    from consts import USERS
-
-
-
-
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--command', type=str)
     parser.add_argument('-if', '--input-file', type=str)
@@ -66,7 +60,7 @@ def setting_up():
                 e_idx = s_idx + users_input['step']
         else:
             raise ValueError('User range input is not valid.')
-        USERS = USERS[s_idx:e_idx]
+        args_dict['users'] = USERS[s_idx:e_idx]
 
 
     ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
@@ -75,8 +69,6 @@ def setting_up():
     log(f'', id=id)
     log(f'', id=id)
     log(f'====================================================================', id=id)
-    if args.users_range is not None:
-        log(f'USERS[{s_idx}:{e_idx}]', id=id)
     log(f'{args_dict}', id=id)
     log(f'', id=id)
     log(f'', id=id)

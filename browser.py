@@ -18,10 +18,10 @@ class Browser:
     Parent class for fetching data from strava
     '''
 
-    def __init__(self, id):
+    def __init__(self, id, users=USERS):
         self.id = id
         self.curr_user = None
-        self.user_pool = cycle(USERS)
+        self.user_pool = cycle(users)
 
     @timeout_wrapper
     def validate_units(self):
