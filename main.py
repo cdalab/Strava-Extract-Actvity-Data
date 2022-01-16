@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 import pandas as pd
@@ -25,13 +26,17 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
 
 def extract_rider_year_interval_links(id, html_files_path='link/riders_time_interval_pages',
                                       csv_file_path='link/riders_year_interval_links.csv',
-                                      low_limit_index=0, high_limit_index=None,start_week=None,end_week=None):
+                                      low_limit_index=0, high_limit_index=None,week_range=None):
     log("---- START EXTRACTING YEAR INTERVAL LINKS ----", id=id)
     riders = os.listdir(html_files_path)
+    start_week, end_week=None,None
     if high_limit_index is not None:
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
+    if week_range is not None:
+        week_range = json.loads(week_range)
+        start_week, end_week = str(week_range[0]), str(week_range[1])
     links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_year_interval_links(csv_file_path,start_week,end_week)
 
@@ -57,15 +62,19 @@ def download_time_interval_pages(id, csv_file_path,
 
 def extract_rider_week_interval_links(id, html_files_path='link/riders_time_interval_pages',
                                       csv_file_path='link/riders_week_interval_links.csv',
-                                      low_limit_index=0, high_limit_index=None, riders_input=None, start_week=None, end_week=None):
+                                      low_limit_index=0, high_limit_index=None, riders_input=None, week_range=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
     riders = os.listdir(html_files_path)
+    start_week, end_week=None,None
     if riders_input is not None:
         riders = [str(r) for r in riders if (float(r) in riders_input)]
     elif high_limit_index is not None:
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
+    if week_range is not None:
+        week_range = json.loads(week_range)
+        start_week, end_week = str(week_range[0]), str(week_range[1])
     links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_week_interval_links(csv_file_path, start_week, end_week)
 
@@ -149,6 +158,7 @@ def download_activity_analysis_pages(id, csv_file_path='link/activity_analysis_l
 
 
 if __name__ == '__main__':
+    # users input example: -u {\"start\":0,\"step\":18}
 
     args = setting_up()
     command = args['command']
@@ -189,8 +199,7 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
-        start_week = args['start_week']
-        end_week = args['end_week']
+        week_range = args['week_range']
         if csv_file_path is None:
             csv_file_path = f'link/riders_year_interval_links'
         csv_file_path = f'{csv_file_path}.csv'
@@ -200,11 +209,11 @@ if __name__ == '__main__':
                 extract_rider_year_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                   low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
-                extract_rider_year_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,start_week=start_week,end_week=end_week)
+                extract_rider_year_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,week_range=week_range)
 
         except:
             log(f'Problem in extract_rider_year_interval_links function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index,start_week,end_week}',
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index,week_range}',
                 'ERROR', id=id)
 
     elif command == 'download_year_interval_pages':
@@ -243,8 +252,7 @@ if __name__ == '__main__':
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
         riders = args['riders']
-        start_week = args['start_week']
-        end_week = args['end_week']
+        week_range = args['week_range']
         if csv_file_path is None:
             csv_file_path = f'link/riders_week_interval_links'
         # if (low_limit_index is not None) or (high_limit_index is not None):
@@ -259,11 +267,11 @@ if __name__ == '__main__':
                                                   low_limit_index=low_limit_index, high_limit_index=high_limit_index)
             else:
                 extract_rider_week_interval_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
-                                                  riders_input=riders,start_week=start_week,end_week=end_week)
+                                                  riders_input=riders,week_range=week_range)
 
         except:
             log(f'Problem in extract_rider_week_interval_links function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, start_week, end_week}',
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, week_range}',
                 'ERROR', id=id)
 
     elif command == 'download_week_interval_pages':

@@ -9,6 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time as t
 from utils import log, timeout_wrapper
+from itertools import cycle
 import re
 
 
@@ -20,6 +21,7 @@ class Browser:
     def __init__(self, id):
         self.id = id
         self.curr_user = None
+        self.user_pool = cycle(USERS)
 
     @timeout_wrapper
     def validate_units(self):
@@ -81,11 +83,10 @@ class Browser:
 
     def _get_username(self):
         '''
-        Get a random username from the usernames pool
+        Get a username from the usernames pool
         '''
-        rand_index = random.randint(0, len(USERS) - 1)
-        self.curr_user = USERS[rand_index]
-        return USERS[rand_index]
+        self.curr_user = next(self.user_pool)
+        return self.curr_user
 
     def _open_driver(self):
         '''

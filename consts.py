@@ -26,7 +26,7 @@ ACTIVITY_ANALYSIS_FILES = {'/analysis': ['analysis_distance', 'analysis_time'],
 
 ANALYSIS_PAGE_TYPES = list(ACTIVITY_ANALYSIS_FILES.keys())
 
-ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute', 'Race', 'E-Bike Ride']
+ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute', 'Race']
 ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weight Training', 'Yoga', 'Swim',
                             'Alpine Ski', 'Ice Skate', 'Long Run', 'Virtual Run', 'Run – Commute',
                             'Winter Sport', 'Backcountry Ski', 'Crossfit', 'Walk', 'Winter Sport',

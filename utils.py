@@ -18,6 +18,7 @@ from consts import *
 
 
 def setting_up():
+    from consts import USERS
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--command', type=str)
     parser.add_argument('-if', '--input-file', type=str)
@@ -29,8 +30,8 @@ def setting_up():
     parser.add_argument('-rh', '--riders-high-index', type=int)
     parser.add_argument('-t', '--num-of-threads', type=int)
     parser.add_argument('-o', '--overwrite-mode', type=int)
-    parser.add_argument('-sw', '--start-week', type=int)
-    parser.add_argument('-ew', '--end-week', type=int)
+    parser.add_argument('-w', '--week-range', type=str)
+    parser.add_argument('-u', '--users-range', type=str)
     args = parser.parse_args()
     args_dict = dict(
         command=args.command,
@@ -43,11 +44,24 @@ def setting_up():
         riders=json.loads(args.riders) if args.riders is not None else None,
         num_of_threads=args.num_of_threads,
         overwrite_mode=args.overwrite_mode,
-        start_week=args.start_week,
-        end_week=args.end_week
+        week_range=args.week_range,
     )
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
+    if args.users_range is not None:
+        s_idx, e_idx = None,None
+        users_input = json.loads(args.users_range)
+        if ('start' in users_input):
+            s_idx=users_input['start']
+            if ('step' in users_input):
+                e_idx = s_idx + users_input['step']
+            elif ('end' in users_input):
+                e_idx =users_input['end']
+            else:
+                e_idx = len(USERS)
+        else:
+            raise ValueError('User range input is not valid.')
+        USERS = USERS[s_idx:e_idx]
     ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
     id = f"{ip_addrs}_{args.command}"
     args_dict['id'] = id
@@ -169,16 +183,11 @@ def timeout_wrapper(func):
 
 def driver_wrapper(func):
     def wrap(self, *args, **kwargs):
-        try:
             user = self._open_driver()
             err_metrics = f"Metrics are not as expected in user {user}"
             self.validate_units(err_metrics)
             result = func(self, *args, **kwargs)
-            self._close_driver()
             return result
-        except Exception as err:
-            self._close_driver()
-            raise err
 
     return wrap
 
