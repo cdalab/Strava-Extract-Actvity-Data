@@ -19,6 +19,13 @@ from consts import *
 
 def setting_up():
     from consts import USERS
+
+    log(f'', id=id)
+    log(f'', id=id)
+    log(f'====================================================================', id=id)
+
+
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--command', type=str)
     parser.add_argument('-if', '--input-file', type=str)
@@ -46,6 +53,7 @@ def setting_up():
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
     )
+
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
     if args.users_range is not None:
@@ -62,12 +70,12 @@ def setting_up():
         else:
             raise ValueError('User range input is not valid.')
         USERS = USERS[s_idx:e_idx]
+        log(f'USERS[{s_idx}:{e_idx}]', id=id)
+
     ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
     id = f"{ip_addrs}_{args.command}"
     args_dict['id'] = id
-    log(f'', id=id)
-    log(f'', id=id)
-    log(f'====================================================================', id=id)
+
     log(f'{args_dict}', id=id)
     log(f'', id=id)
     log(f'', id=id)
