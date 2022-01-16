@@ -233,7 +233,7 @@ class LinksDownloader(Browser):
                 f'The watts/kg curve has not loaded yet, activity: {rider_activity["activity_id"]}')
         cyclist_hasnt_add_weight = WebDriverWait(self.browser, 2).until(
             EC.presence_of_all_elements_located((By.XPATH, '//*[@id="power-panel-cpcurve"]/div')))[-1]
-        if cyclist_hasnt_add_weight.is_displyed():
+        if cyclist_hasnt_add_weight.is_displayed():
             return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity}
         return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity,
                 f"{rider_activity['option_type'][1:]}_watts-kg": watts_kg_metric_activity}
