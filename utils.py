@@ -48,6 +48,17 @@ def setting_up():
 
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
+
+    ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
+    id = f"{ip_addrs}_{args.command}"
+    args_dict['id'] = id
+    log(f'', id=id)
+    log(f'', id=id)
+    log(f'====================================================================', id=id)
+    log(f'{args_dict}', id=id)
+    log(f'', id=id)
+    log(f'', id=id)
+
     if args.users_range is not None:
         s_idx, e_idx = 0,len(USERS)
         users_input = json.loads(args.users_range)
@@ -61,17 +72,6 @@ def setting_up():
         else:
             raise ValueError('User range input is not valid.')
         args_dict['users'] = USERS[s_idx:e_idx]
-
-
-    ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
-    id = f"{ip_addrs}_{args.command}"
-    args_dict['id'] = id
-    log(f'', id=id)
-    log(f'', id=id)
-    log(f'====================================================================', id=id)
-    log(f'{args_dict}', id=id)
-    log(f'', id=id)
-    log(f'', id=id)
 
     return args_dict
 
