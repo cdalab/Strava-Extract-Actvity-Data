@@ -44,6 +44,7 @@ def setting_up():
         num_of_threads=args.num_of_threads,
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
+        users=args.users_range
     )
 
     if args.command is None:
