@@ -53,19 +53,33 @@ class Browser:
             raise ValueError(f"WRONG METRICS (Celsius) - {self.curr_user}")
 
 
-
-    def _is_valid_html(self):
-        current_url = self.browser.current_url
+    def browser_error_log_validation(self):
         for err in self.browser.get_log('browser'):
             if err['source'] == 'network':
                 err_url = err['message'].split(' - ')[0]
                 self.browser.get(err_url)
+
+    def too_many_requests_loop(self, current_url):
+        while True:
+            log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'WARNING', id=self.id)
+            self._switch_account(current_url)
+            self.browser_error_log_validation()
+            WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.TAG_NAME, "body")))
+            soup = BeautifulSoup(self.browser.page_source, 'html.parser')
+            too_many_requests_error = re.search('too many requests', str(soup).lower())
+            if too_many_requests_error is None:
+                break
+
+
+
+    def _is_valid_html(self):
+        current_url = self.browser.current_url
+        self.browser_error_log_validation()
         WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.TAG_NAME, "body")))
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         too_many_requests_error = re.search('too many requests', str(soup).lower())
         if too_many_requests_error is not None:
-            log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'WARNING', id=self.id)
-            self._switch_account(current_url)
+            self.too_many_requests_loop(current_url)
             return
         error_404 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error404" in tag['id']))
         if error_404 is not None:
