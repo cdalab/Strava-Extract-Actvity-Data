@@ -68,6 +68,7 @@ class Browser:
             soup = BeautifulSoup(self.browser.page_source, 'html.parser')
             too_many_requests_error = re.search('too many requests', str(soup).lower())
             if too_many_requests_error is None:
+                self.browser.get(current_url)
                 break
 
 
