@@ -54,7 +54,8 @@ class Browser:
 
 
 
-    def _is_valid_html(self, current_url):
+    def _is_valid_html(self):
+        current_url = self.browser.current_url
         for err in self.browser.get_log('browser'):
             if err['source'] == 'network':
                 err_url = err['message'].split(' - ')[0]

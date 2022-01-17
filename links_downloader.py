@@ -41,7 +41,7 @@ class LinksDownloader(Browser):
     def _download_rider_page(self, i, rider, overwrite_mode=None):
         info_msg = f'Fetching page for cyclist {rider["full_name"]}, {i} / {len(self.riders) - 1}'
         self.browser.get(rider['strava_link'])
-        response = self._is_valid_html(rider['strava_link'])
+        response = self._is_valid_html()
         if response is not None:
             return response
         # t.sleep(random.random() + random.randint(0, 1))
@@ -78,7 +78,7 @@ class LinksDownloader(Browser):
     def _download_rider_time_interval_page(self, prev_interval_range, i,
                                            rider_time_interval, overwrite_mode=None):
         self.browser.get(rider_time_interval['time_interval_link'])
-        response = self._is_valid_html(rider_time_interval['time_interval_link'])
+        response = self._is_valid_html()
         if response is not None:
             return response
         # t.sleep(random.random() + 0.5 + random.randint(2, 4))
@@ -127,7 +127,7 @@ class LinksDownloader(Browser):
         activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'
         self.browser.get(activity_url)
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
-        response = self._is_valid_html(activity_url)
+        response = self._is_valid_html()
         if response is not None:
             return response
         heading = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "heading")))
@@ -149,6 +149,7 @@ class LinksDownloader(Browser):
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
         if activity_type == 'Indoor Cycling':
             self.browser.find_element(By.PARTIAL_LINK_TEXT, 'Overview').click()
+            self._is_valid_html()
             view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
             stacked_chart = WebDriverWait(view, 3).until(EC.visibility_of_element_located((By.ID, "stacked-chart")))
             self._wait_for_chart(stacked_chart,rider_activity)
@@ -196,6 +197,7 @@ class LinksDownloader(Browser):
         for icon in axis_icons:
             if 'time' in icon.get_attribute('href'):
                 icon.click()
+                self._is_valid_html()
                 break
         elev_chart = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located((By.ID, "elevation-chart")))
@@ -230,6 +232,7 @@ class LinksDownloader(Browser):
         self._wait_for_chart(chart,rider_activity)
         watts_metric_activity = self.browser.page_source
         WebDriverWait(data_container, 2).until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, 'KG'))).click()
+        self._is_valid_html()
         chart = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "power-charts")))
         self._wait_for_chart(chart,rider_activity)
@@ -268,6 +271,7 @@ class LinksDownloader(Browser):
         side_menu = WebDriverWait(self.browser, 3).until(EC.presence_of_element_located((By.ID, 'pagenav')))
         WebDriverWait(side_menu, 2).until(EC.element_to_be_clickable((By.XPATH, f'*//a[@href="{href}"]'))).send_keys(
             Keys.ENTER)
+        self._is_valid_html()
         view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
         data_container = WebDriverWait(view, 2).until(EC.visibility_of_element_located((By.XPATH, 'section')))
         current_activity = self.browser.page_source
@@ -309,7 +313,7 @@ class LinksDownloader(Browser):
     def _download_rider_activity_analysis_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
         self.browser.get(rider_activity["activity_option_link"])
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
-        response = self._is_valid_html(rider_activity["activity_option_link"])
+        response = self._is_valid_html()
         if response is not None:
             return response
         return self.download_analysis_pages_loop(prev_activity, i, **dict(rider_activity=rider_activity,
