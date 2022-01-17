@@ -57,7 +57,9 @@ class Browser:
         for err in self.browser.get_log('browser'):
             if err['source'] == 'network':
                 err_url = err['message'].split(' - ')[0]
-                self.browser.get(err_url)
+                if 'strava' in err_url:
+                    self.browser.get(err_url)
+                    break
 
     def too_many_requests_loop(self, current_url):
         while True:
