@@ -53,13 +53,18 @@ class Browser:
             raise ValueError(f"WRONG METRICS (Celsius) - {self.curr_user}")
 
 
+
     def _is_valid_html(self, current_url):
+        for err in self.browser.get_log('browser'):
+            if err['source'] == 'network':
+                err_url = err['message'].split(' - ')[0]
+                self.browser.get(err_url)
         WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.TAG_NAME, "body")))
         soup = BeautifulSoup(self.browser.page_source, 'html.parser')
         too_many_requests_error = re.search('too many requests', str(soup).lower())
         if too_many_requests_error is not None:
             log(f'Too many requests: {self.curr_user} SWITCHING ACCOUNT', 'WARNING', id=self.id)
-            self._switch_account()
+            self._switch_account(current_url)
             return
         error_404 = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error404" in tag['id']))
         if error_404 is not None:
@@ -74,12 +79,13 @@ class Browser:
             log(f"Unknown Error in page, url {current_url}", "WARNING", id=self.id)
             return 'error_unknown'
 
-    def _switch_account(self):
+    def _switch_account(self,url_last_session):
         '''
         Switch logged-in user
         '''
         self._close_driver()
         self._open_driver()
+        self.browser.get(url_last_session)
 
     def _get_username(self):
         '''
@@ -87,6 +93,8 @@ class Browser:
         '''
         self.curr_user = next(self.user_pool)
         return self.curr_user
+
+
 
     def _open_driver(self):
         '''
