@@ -153,7 +153,11 @@ class LinksDownloader(Browser):
             self._is_valid_html()
             view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
             stacked_chart = WebDriverWait(view, 3).until(EC.visibility_of_element_located((By.ID, "stacked-chart")))
-            self._wait_for_chart(stacked_chart,rider_activity)
+            result = self._wait_for_chart(stacked_chart, rider_activity)
+            if isinstance(result, Exception):
+                log(f'Cycling Indoor analysis activity: {rider_activity} ' +
+                    f'is not valid, html saved anyway. error details: {result}.',
+                    'WARNING', id=self.id)
             WebDriverWait(stacked_chart, 3).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "label-box")))
 
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
@@ -187,10 +191,10 @@ class LinksDownloader(Browser):
     def _handle_analysis_page_case(self, rider_activity, data_container):
         elev_chart = WebDriverWait(data_container, 3).until(
             EC.visibility_of_element_located((By.ID, "elevation-chart")))
-        self._wait_for_chart(elev_chart,rider_activity)
+        elev_distance_result = self._wait_for_chart(elev_chart, rider_activity)
         stacked_chart = WebDriverWait(data_container, 3).until(
             EC.visibility_of_element_located((By.ID, "stacked-chart")))
-        self._wait_for_chart(stacked_chart,rider_activity)
+        group_chart_distance_result = self._wait_for_chart(stacked_chart, rider_activity)
         WebDriverWait(stacked_chart, 3).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "label-box")))
         distance_metric_activity = self.browser.page_source
         axis_icons = WebDriverWait(stacked_chart, 3).until(
@@ -202,57 +206,78 @@ class LinksDownloader(Browser):
                 break
         elev_chart = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located((By.ID, "elevation-chart")))
-        self._wait_for_chart(elev_chart,rider_activity)
+        elev_time_result = self._wait_for_chart(elev_chart, rider_activity)
         stacked_chart = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located((By.ID, "stacked-chart")))
-        self._wait_for_chart(stacked_chart,rider_activity)
+        group_chart_time_result = self._wait_for_chart(stacked_chart, rider_activity)
         time_metric_activity = self.browser.page_source
         if distance_metric_activity == time_metric_activity:
             raise ValueError(f'The time metric analysis has not loaded yet, activity: {rider_activity["activity_id"]}')
-        return {f"{rider_activity['option_type'][1:]}_distance": distance_metric_activity,
-                f"{rider_activity['option_type'][1:]}_time": time_metric_activity}
+        result_dict = {}
+        if (not isinstance(elev_distance_result, Exception)) or (
+                not isinstance(group_chart_distance_result, Exception)):
+            result_dict[f"{rider_activity['option_type'][1:]}_distance"] = distance_metric_activity
+        if (not isinstance(elev_time_result, Exception)) or (not isinstance(group_chart_time_result, Exception)):
+            result_dict[f"{rider_activity['option_type'][1:]}_time"] = time_metric_activity
+        if not result_dict:
+            raise ValueError(f'The activity analysis page is not valid, activity {rider_activity}.')
+        return result_dict
 
-    def _wait_for_chart(self, chart,rider_activity):
-        WebDriverWait(chart, 5).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "svg")))
-        WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'defs')))
-        WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'rect')))
-        WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'g')))
-        WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'line')))
-        paths = WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'path')))
-        for path in paths:
-            try:
-                WebDriverWait(chart, 3).until(EC.visibility_of(path))
-            except:
-                log(f'Partial paths visible in the rider activity: {rider_activity}','WARNING',id=self.id)
-
+    def _wait_for_chart(self, chart, rider_activity):
+        error = None
+        try:
+            WebDriverWait(chart, 5).until(EC.visibility_of_all_elements_located((By.TAG_NAME, "svg")))
+            WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'defs')))
+            WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'rect')))
+            WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'g')))
+            WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'line')))
+            paths = WebDriverWait(chart, 3).until(EC.presence_of_all_elements_located((By.TAG_NAME, 'path')))
+            success = 0
+            for path in paths:
+                try:
+                    WebDriverWait(chart, 3).until(EC.visibility_of(path))
+                except Exception as err:
+                    log(f'Partial paths visible in the rider activity: {rider_activity}', 'WARNING', id=self.id)
+                    error = err
+            if success == 0:
+                return error
+        except Exception as err:
+            return err
 
     @download_files_wrapper
     def _handle_power_charts_page(self, rider_activity, data_container):
+        dict_result = {}
         chart = WebDriverWait(data_container, 3).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "power-charts")))
-        self._wait_for_chart(chart,rider_activity)
+        power_watts_chart_result = self._wait_for_chart(chart, rider_activity)
         watts_metric_activity = self.browser.page_source
+        if not isinstance(power_watts_chart_result, Exception):
+            dict_result[f"{rider_activity['option_type'][1:]}_watts"] = watts_metric_activity
         WebDriverWait(data_container, 2).until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, 'KG'))).click()
         self._is_valid_html()
         chart = WebDriverWait(self.browser, 3).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "power-charts")))
-        self._wait_for_chart(chart,rider_activity)
+        power_watts_kgs_chart_result = self._wait_for_chart(chart, rider_activity)
         watts_kg_metric_activity = self.browser.page_source
         if watts_metric_activity == watts_kg_metric_activity:
             raise ValueError(
                 f'The watts/kg curve has not loaded yet, activity: {rider_activity["activity_id"]}')
-        cyclist_hasnt_add_weight = WebDriverWait(self.browser, 2).until(
-            EC.presence_of_all_elements_located((By.XPATH, '//*[@id="power-panel-cpcurve"]/div')))[-1]
-        if cyclist_hasnt_add_weight.is_displayed():
-            return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity}
-        return {f"{rider_activity['option_type'][1:]}_watts": watts_metric_activity,
-                f"{rider_activity['option_type'][1:]}_watts-kg": watts_kg_metric_activity}
+        if not isinstance(power_watts_kgs_chart_result, Exception):
+            cyclist_hasnt_add_weight = WebDriverWait(self.browser, 2).until(
+                EC.presence_of_all_elements_located((By.XPATH, '//*[@id="power-panel-cpcurve"]/div')))[-1]
+            if not cyclist_hasnt_add_weight.is_displayed():
+                dict_result[f"{rider_activity['option_type'][1:]}_watts-kg"] = watts_kg_metric_activity
+        if not dict_result:
+            raise ValueError(f'The activity analysis page is not valid, activity {rider_activity}.')
+        return dict_result
 
     @download_files_wrapper
     def _handle_power_distribution_page(self, rider_activity, data_container):
         chart = WebDriverWait(data_container, 3).until(
             EC.visibility_of_element_located((By.ID, "power-dist-chart")))
-        self._wait_for_chart(chart,rider_activity)
+        result = self._wait_for_chart(chart, rider_activity)
+        if isinstance(result, Exception):
+            raise result
         return {f"{rider_activity['option_type'][1:]}": self.browser.page_source}
 
     @download_files_wrapper
@@ -318,7 +343,7 @@ class LinksDownloader(Browser):
         if response is not None:
             return response
         return self.download_analysis_pages_loop(prev_activity, i, **dict(rider_activity=rider_activity,
-                                                                                     overwrite_mode=overwrite_mode))
+                                                                          overwrite_mode=overwrite_mode))
 
     def _download_indoor_ride_again(self, rider_id, activity_id):
         html_dir_path = f"{self.html_files_path}/{rider_id}/{activity_id}"
