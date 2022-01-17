@@ -16,27 +16,25 @@ UNDESIRED_UNITS = ["feet", "miles", "Degrees Fahrenheit", "miles per hour"]
 ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
 
 ACTIVITY_ANALYSIS_FILES = {'/analysis': ['analysis_distance', 'analysis_time'],
-                       '/power-curve': ['power-curve_watts', 'power-curve_watts-kg'],
-                       '/zone-distribution': ['zone-distribution'],
-                       '/power-distribution': ['power-distribution'],
-                       '/est-power-curve': ['est-power-curve_watts', 'est-power-curve_watts-kg'],
-                       '/est-power-distribution': ['est-power-distribution'],
-                       '/heartrate': ['heartrate']
-                       }
+                           '/power-curve': ['power-curve_watts', 'power-curve_watts-kg'],
+                           '/zone-distribution': ['zone-distribution'],
+                           '/power-distribution': ['power-distribution'],
+                           '/est-power-curve': ['est-power-curve_watts', 'est-power-curve_watts-kg'],
+                           '/est-power-distribution': ['est-power-distribution'],
+                           '/heartrate': ['heartrate']
+                           }
 
 ANALYSIS_PAGE_TYPES = list(ACTIVITY_ANALYSIS_FILES.keys())
 
 ACTIVITY_TYPES = ['Ride', 'Indoor Cycling', 'Virtual Ride', 'Ride–Commute', 'Race']
 ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weight Training', 'Yoga', 'Swim',
                             'Alpine Ski', 'Ice Skate', 'Long Run', 'Virtual Run', 'Run – Commute',
-                            'Winter Sport', 'Backcountry Ski', 'Crossfit', 'Walk', 'Winter Sport',
-                            'E-Bike Ride', 'Stand Up Paddling', 'Rowing', 'Treadmill workout', 'Hike']
+                            'Winter Sport', 'Backcountry Ski', 'Crossfit', 'Walk', 'E-Bike Ride', 'Stand Up Paddling',
+                            'Rowing', 'Treadmill workout', 'Hike']
 
 # TODO: ask robert -   'E-Bike Ride'
 
-USERS = [r'kvspek@gmail.com',
-         r'spektork@post.bgu.ac.il',
-         r'kev_backup@yahoo.com',
+USERS = [r'kev_backup@yahoo.com',
          r'cool_table@yahoo.com',
          r'cool_table2@yahoo.com',
          r'cool_table3@yahoo.com',
