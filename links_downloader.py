@@ -8,7 +8,8 @@ from urllib.parse import parse_qsl
 
 
 def save_activity_type(rider_activity, activity_type):
-    if not rider_activity["activity_link"] in pd.read_csv('link/activity_link_types.csv').values:
+    csv_exists = os.path.exists('link/activity_link_types.csv')
+    if (not csv_exists) or (rider_activity["activity_link"] not in pd.read_csv('link/activity_link_types.csv').values):
         row = {'rider_id': rider_activity["rider_id"],
                'activity_link': rider_activity["activity_link"],
                'activity_id': rider_activity["activity_id"],
