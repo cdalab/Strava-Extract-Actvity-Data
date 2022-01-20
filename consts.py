@@ -10,6 +10,9 @@ DEBUG = True
 LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}
 TIMEOUT = 3
 PASSWORD = '12345678'
+
+DOWNLOAD_AGAIN_FILE_PATH = 'link/links_to_download_again.csv'
+
 OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new", "/overview", "/laps"]
 
 UNDESIRED_UNITS = ["feet", "miles", "Degrees Fahrenheit", "miles per hour"]

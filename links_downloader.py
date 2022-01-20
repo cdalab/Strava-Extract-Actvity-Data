@@ -40,7 +40,7 @@ class LinksDownloader(Browser):
 
     @timeout_wrapper
     def _download_rider_page(self, i, rider, overwrite_mode=None):
-        info_msg = f'Fetching page for cyclist {rider["full_name"]}, {i} / {len(self.riders) - 1}'
+        info_msg = f'Fetching page for cyclist {rider["strava_id"]}, {i} / {len(self.riders) - 1}'
         self.browser.get(rider['strava_link'])
         response = self._is_valid_html()
         if response is not None:
@@ -65,11 +65,8 @@ class LinksDownloader(Browser):
             i = 0
             for idx, rider in self.riders.iterrows():
                 # t.sleep(random.random())
-                html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['rider_id'],
-                                                                                     rider['time_interval_link'])
-                if get_overwrite_pred(html_file_dir, html_file_name, overwrite_mode):
-                    link_fetch_error_msg = f'Could not fetch rider {rider["full_name"]}, id {rider["strava_id"]}.'
-                    self._download_rider_page(link_fetch_error_msg, i,
+                link_fetch_error_msg = f'Could not fetch rider id {rider["strava_id"]}.'
+                self._download_rider_page(link_fetch_error_msg, i,
                                               **dict(rider=rider, overwrite_mode=overwrite_mode))
                 i += 1
         except:
@@ -345,51 +342,16 @@ class LinksDownloader(Browser):
         return self.download_analysis_pages_loop(prev_activity, i, **dict(rider_activity=rider_activity,
                                                                           overwrite_mode=overwrite_mode))
 
-    def _download_indoor_ride_again(self, rider_id, activity_id):
-        html_dir_path = f"{self.html_files_path}/{rider_id}/{activity_id}"
-        html_content = read_from_html(html_dir_path, 'overview.html')
-        activity_soup = BeautifulSoup(html_content, 'html.parser')
-        stacked_chart = activity_soup.find('div', attrs={'id': 'stacked-chart'})
-        if stacked_chart is None:
-            return True
-        base_chart = stacked_chart.find('div', attrs={'class': 'base-chart'})
-        if (base_chart is None) or (len(base_chart.contents) == 0):
-            return True
-        paths = stacked_chart.find_all('path', attrs={'class': 'simple-line'})
-        lines = stacked_chart.find_all(lambda tag: (tag.name == 'g') and ('clip-path' in tag.attrs))
-        if len(paths) != len(lines):
-            return True
-        boxes = stacked_chart.find_all('g', attrs={'class': 'label-box'})
-        if len(boxes) != len(paths):
-            return True
-        return False
-
-    def _handle_indoor_cycling_overview_page(self, rider_id, activity_id):
-        download_overview_again = self._download_indoor_ride_again(rider_id, activity_id)
-        if download_overview_again:
-            csv_path = 'link/overview_links_to_download_again.csv'
-            csv_exists = os.path.exists(csv_path)
-            activity_link = f"{BASE_STRAVA_URL}/activities/{activity_id}"
-            if (not csv_exists) or (activity_link not in pd.read_csv(csv_path)['activity_link'].values):
-                activity_of_overview = {'rider_id': rider_id,
-                                        'activity_link': activity_link,
-                                        'activity_id': activity_id}
-                append_row_to_csv(csv_path, activity_of_overview)
 
     @driver_wrapper
     def download_activity_analysis_pages(self, overwrite_mode=None):
         try:
             activity = None
             prev_activity = None
-            indoor_activities_handled = set()
             i = 0
             for idx, activity in self.riders.iterrows():
                 activity_id = activity['activity_id']
                 rider_id = activity['rider_id']
-                is_indoor = (activity['activity_type'] == 'Indoor Cycling')
-                if is_indoor and (activity_id not in indoor_activities_handled):
-                    self._handle_indoor_cycling_overview_page(rider_id, activity_id)
-                    indoor_activities_handled.add(activity_id)
                 files = ACTIVITY_ANALYSIS_FILES[activity["option_type"]]
                 dir = f"{self.html_files_path}/{rider_id}/{activity_id}"
                 if get_overwrite_pred(dir, files, overwrite_mode):
