@@ -79,7 +79,7 @@ class LinksDownloader(Browser):
         response = self._is_valid_html()
         if response is not None:
             return response
-        # t.sleep(random.random() + 0.5 + random.randint(2, 4))
+        t.sleep(random.random() + 0.5)
         current_interval_range_element = WebDriverWait(self.browser, 3).until(
             EC.presence_of_element_located((By.ID, "interval-value")))
         current_interval_range = current_interval_range_element.text
