@@ -26,6 +26,9 @@ class Browser:
     @timeout_wrapper
     def validate_units(self):
         self.browser.get(BASE_STRAVA_URL + '/settings/display')
+        response = self._is_valid_html()
+        if response is not None:
+            raise ValueError(f'Display settings page is not loaded currectly, error {response}')
         settings = WebDriverWait(self.browser, 2).until(
             EC.visibility_of_all_elements_located((By.CLASS_NAME, "setting-value")))
         # validate metrics: KGs & KMs
