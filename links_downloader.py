@@ -96,7 +96,7 @@ class LinksDownloader(Browser):
             info_msg = f'Fetching page for cyclist {rider_time_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}'
             wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
             self._rider_page_general_handler(*wrapper_args, html_file_name)
-            return current_interval_range
+        return current_interval_range
 
     @driver_wrapper
     def download_time_interval_pages(self, overwrite_mode=None):
