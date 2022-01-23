@@ -7,13 +7,14 @@ from selenium.webdriver.common.by import By
 from urllib.parse import parse_qsl
 
 
-def save_activity_type(rider_activity, activity_type):
+def save_activity_type(rider_activity, activity_type, activity_title):
     csv_exists = os.path.exists('link/activity_link_types.csv')
     if (not csv_exists) or (rider_activity["activity_link"] not in pd.read_csv('link/activity_link_types.csv').values):
         row = {'rider_id': rider_activity["rider_id"],
                'activity_link': rider_activity["activity_link"],
                'activity_id': rider_activity["activity_id"],
-               'activity_type': activity_type}
+               'activity_type': activity_type,
+               'activity_title':activity_title}
         append_row_to_csv('link/activity_link_types.csv', row)
 
 
@@ -138,7 +139,7 @@ class LinksDownloader(Browser):
         title = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2"))).text
         deli_idx = title.find('–')
         activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
-        save_activity_type(rider_activity, activity_type)
+        save_activity_type(rider_activity, activity_type, self.browser.title)
         if activity_type in ACTIVITY_TYPES_TO_IGNORE:
             return current_activity
         if 'Ride' not in self.browser.title:
