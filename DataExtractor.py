@@ -1,3 +1,4 @@
+import os.path
 from urllib.parse import parse_qsl
 import shutil
 import pandas as pd
@@ -20,28 +21,37 @@ class DataExtractor(Browser):
 
     def _fetch_rider_year_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
+            processed_files=set()
+            if os.path.exists('link/processed_time_intervals_files.txt'):
+                with open('link/processed_time_intervals_files.txt') as f:
+                    processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
-            rider_html_file = os.listdir(rider_dir_path)[0]
-            html_content = read_from_html(rider_dir_path, rider_html_file)
-            rider_soup = BeautifulSoup(html_content, 'html.parser')
-            options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
-            option_list = options_soup.find('ul', 'options').find_all('a')
-            for time_interval in option_list:
-                link = f"{BASE_STRAVA_URL}{time_interval.attrs['href']}"
-                url_param_dict = dict(parse_qsl(link.split('?')[1]))
-                interval = url_param_dict['interval']
-                curr_year, curr_week = int(interval[:4]), int(interval[4:])
-                if start_week is not None:
-                    start_year, s_week = int(start_week[:4]), int(start_week[4:])
-                    if (curr_year < start_year) or (curr_week < s_week):
-                        continue
-                if end_week is not None:
-                    end_year, e_week = int(end_week[:4]), int(end_week[4:])
-                    if (curr_year >= end_year) or (curr_week >= e_week):
-                        continue
-                row = {'rider_id': rider_id,
-                        'time_interval_link': link}
-                append_row_to_csv(csv_file_path, row)
+            for rider_html_file in os.listdir(rider_dir_path):
+                if rider_html_file in processed_files:
+                    continue
+                html_content = read_from_html(rider_dir_path, rider_html_file)
+                rider_soup = BeautifulSoup(html_content, 'html.parser')
+                options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
+                option_list = options_soup.find('ul', 'options').find_all('a')
+                for time_interval in option_list:
+                    link = f"{BASE_STRAVA_URL}{time_interval.attrs['href']}"
+                    url_param_dict = dict(parse_qsl(link.split('?')[1]))
+                    interval = url_param_dict['interval']
+                    curr_year, curr_week = int(interval[:4]), int(interval[4:])
+                    if start_week is not None:
+                        start_year, s_week = int(start_week[:4]), int(start_week[4:])
+                        if (curr_year < start_year) or (curr_week < s_week):
+                            continue
+                    if end_week is not None:
+                        end_year, e_week = int(end_week[:4]), int(end_week[4:])
+                        if (curr_year >= end_year) or (curr_week >= e_week):
+                            continue
+                    row = {'rider_id': rider_id,
+                            'time_interval_link': link}
+                    append_row_to_csv(csv_file_path, row)
+                with open('link/processed_time_intervals_files.txt','a+') as f:
+                    f.write(f'{rider_html_file}\n')
+
         except:
             log(f'Could not fetch year interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
@@ -62,10 +72,16 @@ class DataExtractor(Browser):
 
     def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
+            processed_files=set()
+            if os.path.exists('link/processed_time_intervals_files.txt'):
+                with open('link/processed_time_intervals_files.txt') as f:
+                    processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_year_interval_files = os.listdir(rider_dir_path)
             i = 0
             for year_interval_link in rider_year_interval_files:
+                if year_interval_link in processed_files:
+                    continue
                 log(f'Fetching week interval links from file {year_interval_link}, {i} / {len(rider_year_interval_files) - 1}',
                     id=self.id, debug=False)
                 html_content = read_from_html(rider_dir_path, year_interval_link)
@@ -82,6 +98,8 @@ class DataExtractor(Browser):
                         row = {'rider_id': rider_id,
                                'time_interval_link': link}
                         append_row_to_csv(csv_file_path, row)
+                with open('link/processed_time_intervals_files.txt','a+') as f:
+                    f.write(f'{year_interval_link}\n')
                 i += 1
         except:
             log(f'Could not fetch week interval links for rider {rider_id}.', 'ERROR', id=self.id)
