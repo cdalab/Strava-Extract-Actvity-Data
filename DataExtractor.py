@@ -3,7 +3,7 @@ import shutil
 import pandas as pd
 from bs4 import BeautifulSoup
 from utils import *
-from browser import Browser
+from Browser import Browser
 
 
 class DataExtractor(Browser):
