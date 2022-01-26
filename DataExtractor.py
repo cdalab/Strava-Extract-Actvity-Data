@@ -6,7 +6,7 @@ from utils import *
 from browser import Browser
 
 
-class LinksExtractor(Browser):
+class DataExtractor(Browser):
 
     def __init__(self, id, pages, html_files_path):
         Browser.__init__(self, id)

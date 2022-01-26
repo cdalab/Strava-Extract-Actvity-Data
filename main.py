@@ -2,8 +2,8 @@ import json
 import os
 from pathlib import Path
 import pandas as pd
-from links_downloader import LinksDownloader
-from link_extractor import LinksExtractor
+from LinksDownloader import LinksDownloader
+from DataExtractor import DataExtractor
 from utils import log, setting_up
 from consts import *
 
@@ -38,7 +38,7 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
     if week_range is not None:
         week_range = json.loads(week_range)
         start_week, end_week = str(week_range[0]), str(week_range[1])
-    links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
+    links_extractor = DataExtractor(pages=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_year_interval_links(csv_file_path, start_week, end_week)
 
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
@@ -76,7 +76,7 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
     if week_range is not None:
         week_range = json.loads(week_range)
         start_week, end_week = str(week_range[0]), str(week_range[1])
-    links_extractor = LinksExtractor(pages=riders, id=id, html_files_path=html_files_path)
+    links_extractor = DataExtractor(pages=riders, id=id, html_files_path=html_files_path)
     links_extractor.extract_rider_week_interval_links(csv_file_path, start_week, end_week)
 
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
@@ -93,7 +93,7 @@ def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = LinksExtractor(pages=riders,
+    links_extractor = DataExtractor(pages=riders,
                                      id=id,
                                      html_files_path=html_files_path)
     links_extractor.extract_rider_activity_links(csv_file_path)
@@ -131,7 +131,7 @@ def extract_activity_analysis_links(id, html_files_path='link/riders_activity_pa
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = LinksExtractor(pages=riders,
+    links_extractor = DataExtractor(pages=riders,
                                      id=id,
                                      html_files_path=html_files_path)
     links_extractor.extract_activity_analysis_links(csv_file_path)
@@ -168,7 +168,7 @@ def extract_data_from_analysis_activities(id, html_files_path='link/riders_activ
         riders = riders[low_limit_index:high_limit_index]
     else:
         riders = riders[low_limit_index:]
-    links_extractor = LinksExtractor(pages=riders,
+    links_extractor = DataExtractor(pages=riders,
                                      id=id,
                                      html_files_path=html_files_path)
     links_extractor.extract_data_from_analysis_activities()
