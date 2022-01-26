@@ -298,6 +298,7 @@ class DataExtractor(Browser):
                 id=self.id)
 
     def _handle_overview_table(self, overview_soup, file, activity_link, rider_id, activity_id):
+        row = {'rider_id':rider_id,'activity_id':activity_id}
         args = (file, activity_link, rider_id, activity_id)
         overview_table = overview_soup.find('div', attrs={'class': 'spans8 activity-stats mt-md mb-md'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table is empty or doesn't exist."
@@ -310,8 +311,17 @@ class DataExtractor(Browser):
             return
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table li's missing."
         for ul in ul_table:
-            if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(ul.find_all('li')) < 2)), warn_msg, *args):
+            lis = ul.find_all('li')
+            if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(lis) < 2)), warn_msg, *args):
                 return
+            for li in lis:
+                label = li.contents[1].text
+                value = li.contents[0].text
+                if 'time' in label.lower():
+                    value = string_to_time(value)
+                value = float(value)
+
+
         div_table = overview_table.findChildren("div", recursive=False)
         # warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table div's missing."
         # if self._element_doesnt_exist((len(div_table) == 0), warn_msg, *args):
@@ -321,6 +331,7 @@ class DataExtractor(Browser):
             if self._element_doesnt_exist((len(div.contents) == 0), warn_msg, *args):
                 return
 
+
     def _handle_overview_page(self, soup, *args):
         self._handle_overview_table(soup, *args)
         title = soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
@@ -329,6 +340,7 @@ class DataExtractor(Browser):
         activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
         if activity_type == 'Indoor Cycling':
             self._handle_analysis_stacked_chart(soup, *args)
+
 
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
         pass

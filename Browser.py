@@ -59,10 +59,11 @@ class Browser:
     def browser_error_log_validation(self):
         for err in self.browser.get_log('browser'):
             if err['source'] == 'network':
-                err_url = err['message'].split(' - ')[0]
-                if 'strava' in err_url:
-                    self.browser.get(err_url)
-                    break
+                if '429' in err['message']:
+                    err_url = err['message'].split(' - ')[0]
+                    if 'strava' in err_url:
+                        self.browser.get(err_url)
+                        break
 
     def too_many_requests_loop(self, current_url):
         while True:

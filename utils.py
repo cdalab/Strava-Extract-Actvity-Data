@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import numpy as np
-from datetime import datetime
+from datetime import datetime,timedelta
 from pathlib import Path
 import pandas as pd
 import random
@@ -205,20 +205,24 @@ def check_float(sting):
     return re.match(r'^-?\d+(?:\.\d+)$', sting) is not None
 
 
-def to_hours(time_string):
-    time = time_string.split(':')
-    total = 0
-    for i in range(len(time)):
-        total += int(re.sub('\D', '', time[i])) / (60 ** i)
-    return total
+def string_to_time(string):
+    string_list = string.split(':')
+    string_formats = ['seconds','minutes','hours'][:len(string_list)]
+    list_len = len(string_list)
+    print(string_formats)
+    timedelta_dict ={}
+    for i in reversed(range(len(string_list))):
+        format = string_formats[list_len-1-i]
+        time_part = int(string_list[i]) if check_int(string_list[i]) else None
+        if time_part is None:
+            raise ValueError(f'Time value is not valid {string}')
+        # elif (format == 'days') and time_part>24
+        timedelta_dict[format]=time_part
+        print(timedelta_dict)
+    time = timedelta(**timedelta_dict)
+    hours = round(time.total_seconds()/3600,3)
+    return hours
 
-
-def to_seconds(time_string):
-    time = time_string.split(':')
-    total = 0
-    for i in range(len(time)):
-        total += int(re.sub('\D', '', time[i])) * (60 ** (len(time) - i - 1))
-    return total
 
 
 def extract_points_from_graph(soup):
