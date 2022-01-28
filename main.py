@@ -14,11 +14,12 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
     riders_df = pd.read_csv(f"{urls_file_path}")
     riders_df = riders_df[riders_df['strava_link'].notna()]
     if riders is not None:
-        riders_input = riders_df[riders_df['strava_id'].isin(riders)]
-    if high_limit_index is not None:
-        riders_df = riders_df.iloc[low_limit_index:high_limit_index - 1]
+        riders_df = riders_df[riders_df['strava_id'].isin(riders)]
     else:
-        riders_df = riders_df.iloc[low_limit_index:]
+        if high_limit_index is not None:
+            riders_df = riders_df.iloc[low_limit_index:high_limit_index - 1]
+        else:
+            riders_df = riders_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_df, html_files_path=html_files_path,
                                  id=id, users=users)
     downloader.download_rider_pages(overwrite_mode)
