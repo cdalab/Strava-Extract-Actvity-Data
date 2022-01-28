@@ -9,11 +9,12 @@ from consts import *
 
 
 def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                         high_limit_index=None, overwrite_mode=None, users=USERS):
+                         high_limit_index=None, overwrite_mode=None,riders=None, users=USERS):
     log("---- START DOWNLOADING RIDER PAGES ----", id=id)
-
     riders_df = pd.read_csv(f"{urls_file_path}")
     riders_df = riders_df[riders_df['strava_link'].notna()]
+    if riders is not None:
+        riders_input = riders_df[riders_df['strava_id'].isin(riders)]
     if high_limit_index is not None:
         riders_df = riders_df.iloc[low_limit_index:high_limit_index - 1]
     else:
@@ -188,13 +189,14 @@ if __name__ == '__main__':
     if command == 'download_rider_pages':
         # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -of link/riders_time_interval_pages -t 2
         # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -li 10 -hi 100
-
+        riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         urls_file_path = args['input_file']
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
         html_files_path = args['output_file']
         overwrite_mode = args['overwrite_mode']
+
         if html_files_path is None:
             html_files_path = 'link/riders_time_interval_pages'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -202,13 +204,13 @@ if __name__ == '__main__':
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING RIDER INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_rider_pages(urls_file_path, id, html_files_path, low_limit_index=low_limit_index,
-                                     high_limit_index=high_limit_index, overwrite_mode=overwrite_mode, users=users)
+                                     high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,riders=riders, users=users)
             else:
-                download_rider_pages(urls_file_path, id, html_files_path, overwrite_mode=overwrite_mode, users=users)
+                download_rider_pages(urls_file_path, id, html_files_path, overwrite_mode=overwrite_mode,riders=riders, users=users)
 
         except:
             log(f'Problem in download_rider_pages function, '
-                f'args: {urls_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode}',
+                f'args: {urls_file_path, html_files_path, low_limit_index, high_limit_index, riders,overwrite_mode}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_year_interval_links':
