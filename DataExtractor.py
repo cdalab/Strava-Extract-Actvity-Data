@@ -92,12 +92,17 @@ class DataExtractor(Browser):
                     url_param_dict = dict(parse_qsl(link.split('?')[1]))
                     interval = url_param_dict['interval']
                     curr_year, curr_week = int(interval[:4]), int(interval[4:])
-                    start_year, s_week = int(start_week[:4]), int(start_week[4:])
-                    end_year, e_week = int(end_week[:4]), int(end_week[4:])
-                    if (start_year <= curr_year <= end_year) and (s_week <= curr_week <= e_week):
-                        row = {'rider_id': rider_id,
-                               'time_interval_link': link}
-                        append_row_to_csv(csv_file_path, row)
+                    if start_week is not None:
+                        start_year, s_week = int(start_week[:4]), int(start_week[4:])
+                        if (curr_year < start_year) or (curr_week < s_week):
+                            continue
+                    if end_week is not None:
+                        end_year, e_week = int(end_week[:4]), int(end_week[4:])
+                        if (curr_year >= end_year) or (curr_week >= e_week):
+                            continue
+                    row = {'rider_id': rider_id,
+                           'time_interval_link': link}
+                    append_row_to_csv(csv_file_path, row)
                 with open('link/processed_time_intervals_files.txt','a+') as f:
                     f.write(f'{year_interval_link}\n')
                 i += 1
