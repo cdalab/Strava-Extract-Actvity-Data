@@ -54,7 +54,7 @@ def download_time_interval_pages(id, csv_file_path,
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
     riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
     if riders is not None:
-        riders_intervals_links_df = riders_intervals_links_df[riders_intervals_links_df['strava_id'].isin(riders)]
+        riders_intervals_links_df = riders_intervals_links_df[riders_intervals_links_df['rider_id'].isin(riders)]
     else:
         if high_limit_index is not None:
             riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index]
