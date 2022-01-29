@@ -59,13 +59,13 @@ class DataExtractor(Browser):
         try:
             rider_id = None
             i = 0
+            if os.path.exists('link/processed_time_intervals_files.txt'):
+                with open('link/processed_time_intervals_files.txt') as f:
+                    processed_files = set(f.readlines())
             for rider_id in self.pages:
-                csv_file_exist = os.path.exists(csv_file_path)
-                if (not csv_file_exist) or (
-                        float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values):
-                    log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
+                log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                         id=self.id)
-                    self._fetch_rider_year_interval_links(rider_id, csv_file_path, start_week, end_week)
+                self._fetch_rider_year_interval_links(rider_id, csv_file_path, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders year interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
@@ -109,12 +109,9 @@ class DataExtractor(Browser):
             rider_id = None
             i = 0
             for rider_id in self.pages:
-                csv_file_exist = os.path.exists(csv_file_path)
-                if (not csv_file_exist) or (
-                        float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values):
-                    log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
-                        id=self.id)
-                    self._fetch_rider_week_interval_links(rider_id, csv_file_path, start_week, end_week)
+                log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
+                    id=self.id)
+                self._fetch_rider_week_interval_links(rider_id, csv_file_path, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders week interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
