@@ -9,7 +9,7 @@ from consts import *
 
 
 def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                         high_limit_index=None, overwrite_mode=None,riders=None, users=USERS):
+                         high_limit_index=None, overwrite_mode=None, riders=None, users=USERS):
     log("---- START DOWNLOADING RIDER PAGES ----", id=id)
     riders_df = pd.read_csv(f"{urls_file_path}")
     riders_df = riders_df[riders_df['strava_link'].notna()]
@@ -48,15 +48,18 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
 
 def download_time_interval_pages(id, csv_file_path,
                                  html_files_path='link/riders_time_interval_pages', low_limit_index=0,
-                                 high_limit_index=None, overwrite_mode=None, users=USERS):
+                                 high_limit_index=None, overwrite_mode=None, riders=None, users=USERS):
     log("---- START DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
     riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
     riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
-    if high_limit_index is not None:
-        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index]
+    if riders is not None:
+        riders_intervals_links_df = riders_intervals_links_df[riders_intervals_links_df['strava_id'].isin(riders)]
     else:
-        riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
+        if high_limit_index is not None:
+            riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:high_limit_index]
+        else:
+            riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, users=users, html_files_path=html_files_path)
     downloader.download_time_interval_pages(overwrite_mode)
 
@@ -96,8 +99,8 @@ def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_
     else:
         riders = riders[low_limit_index:]
     links_extractor = DataExtractor(pages=riders,
-                                     id=id,
-                                     html_files_path=html_files_path)
+                                    id=id,
+                                    html_files_path=html_files_path)
     links_extractor.extract_rider_activity_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING ACTIVITY LINKS ----", id=id)
@@ -134,8 +137,8 @@ def extract_activity_analysis_links(id, html_files_path='link/riders_activity_pa
     else:
         riders = riders[low_limit_index:]
     links_extractor = DataExtractor(pages=riders,
-                                     id=id,
-                                     html_files_path=html_files_path)
+                                    id=id,
+                                    html_files_path=html_files_path)
     links_extractor.extract_activity_analysis_links(csv_file_path)
 
     log("---- FINISHED EXTRACTING ACTIVITY ANALYSIS LINKS ----", id=id)
@@ -171,8 +174,8 @@ def extract_data_from_analysis_activities(id, html_files_path='link/riders_activ
     else:
         riders = riders[low_limit_index:]
     links_extractor = DataExtractor(pages=riders,
-                                     id=id,
-                                     html_files_path=html_files_path)
+                                    id=id,
+                                    html_files_path=html_files_path)
     links_extractor.extract_data_from_analysis_activities()
 
     log("---- FINISHED EXTRACTING ACTIVITY ANALYSIS DATA ----", id=id)
@@ -205,13 +208,15 @@ if __name__ == '__main__':
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING RIDER INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_rider_pages(urls_file_path, id, html_files_path, low_limit_index=low_limit_index,
-                                     high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,riders=riders, users=users)
+                                     high_limit_index=high_limit_index, overwrite_mode=overwrite_mode, riders=riders,
+                                     users=users)
             else:
-                download_rider_pages(urls_file_path, id, html_files_path, overwrite_mode=overwrite_mode,riders=riders, users=users)
+                download_rider_pages(urls_file_path, id, html_files_path, overwrite_mode=overwrite_mode, riders=riders,
+                                     users=users)
 
         except:
             log(f'Problem in download_rider_pages function, '
-                f'args: {urls_file_path, html_files_path, low_limit_index, high_limit_index, riders,overwrite_mode}',
+                f'args: {urls_file_path, html_files_path, low_limit_index, high_limit_index, riders, overwrite_mode}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_year_interval_links':
@@ -245,6 +250,7 @@ if __name__ == '__main__':
         # run example : main.py -c download_year_interval_pages -if link/riders_year_interval_links.csv -of link/riders_time_interval_pages -t 2
         # run example : main.py -c download_year_interval_pages -li 10 -hi 100
 
+        riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
@@ -259,14 +265,14 @@ if __name__ == '__main__':
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
-                                             users=users)
+                                             users=users, riders=riders)
             else:
                 download_time_interval_pages(id, csv_file_path, html_files_path, overwrite_mode=overwrite_mode,
-                                             users=users)
+                                             users=users, riders=riders)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
-                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode}',
+                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode, riders}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_week_interval_links':
@@ -306,6 +312,7 @@ if __name__ == '__main__':
         # run example : main.py -c download_week_interval_pages -li 10 -hi 100
         # "C:\Users\User\OneDrive - post.bgu.ac.il\STRAVA data\link\riders_time_interval_pages"
 
+        riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
@@ -320,14 +327,14 @@ if __name__ == '__main__':
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
-                                             users=users)
+                                             users=users,riders=riders)
             else:
                 download_time_interval_pages(id, csv_file_path, html_files_path, overwrite_mode=overwrite_mode,
-                                             users=users)
+                                             users=users,riders=riders)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
-                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode}',
+                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode,riders}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_activity_links':
