@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import numpy as np
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 import pandas as pd
 import random
@@ -31,6 +31,7 @@ def setting_up():
     parser.add_argument('-o', '--overwrite-mode', type=int)
     parser.add_argument('-w', '--week-range', type=str)
     parser.add_argument('-u', '--users-range', type=str)
+    parser.add_argument('-dt', '--data-types', type=str)
     args = parser.parse_args()
     args_dict = dict(
         command=args.command,
@@ -44,7 +45,8 @@ def setting_up():
         num_of_threads=args.num_of_threads,
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
-        users=args.users_range
+        users=args.users_range,
+        data_types=json.loads(args.data_types) if args.data_types is not None else None,
     )
 
     if args.command is None:
@@ -61,7 +63,7 @@ def setting_up():
     log(f'', id=id)
 
     if args.users_range is not None:
-        s_idx, e_idx = 0,len(USERS)
+        s_idx, e_idx = 0, len(USERS)
         users_input = json.loads(args.users_range)
         if 'start' in users_input:
             s_idx = users_input['start']
@@ -178,11 +180,11 @@ def timeout_wrapper(func):
 
 def driver_wrapper(func):
     def wrap(self, *args, **kwargs):
-            user = self._open_driver()
-            err_metrics = f"Metrics are not as expected in user {user}"
-            self.validate_units(err_metrics)
-            result = func(self, *args, **kwargs)
-            return result
+        user = self._open_driver()
+        err_metrics = f"Metrics are not as expected in user {user}"
+        self.validate_units(err_metrics)
+        result = func(self, *args, **kwargs)
+        return result
 
     return wrap
 
@@ -207,22 +209,18 @@ def check_float(sting):
 
 def string_to_time(string):
     string_list = string.split(':')
-    string_formats = ['seconds','minutes','hours'][:len(string_list)]
+    string_formats = ['seconds', 'minutes', 'hours'][:len(string_list)]
     list_len = len(string_list)
-    print(string_formats)
-    timedelta_dict ={}
+    timedelta_dict = {}
     for i in reversed(range(len(string_list))):
-        format = string_formats[list_len-1-i]
+        format = string_formats[list_len - 1 - i]
         time_part = int(string_list[i]) if check_int(string_list[i]) else None
         if time_part is None:
             raise ValueError(f'Time value is not valid {string}')
-        # elif (format == 'days') and time_part>24
-        timedelta_dict[format]=time_part
-        print(timedelta_dict)
+        timedelta_dict[format] = time_part
     time = timedelta(**timedelta_dict)
-    hours = round(time.total_seconds()/3600,3)
+    hours = round(time.total_seconds() / 3600, 3)
     return hours
-
 
 
 def extract_points_from_graph(soup):

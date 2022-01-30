@@ -1,3 +1,4 @@
+import json
 import os.path
 from urllib.parse import parse_qsl
 import shutil
@@ -21,21 +22,21 @@ class DataExtractor(Browser):
 
     def _fetch_rider_year_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
-            processed_files=set()
+            processed_files = set()
             if os.path.exists('link/processed_time_intervals_files.txt'):
                 with open('link/processed_time_intervals_files.txt') as f:
                     processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             for rider_html_file in os.listdir(rider_dir_path):
-                if rider_html_file in processed_files:
+                if f'{rider_html_file}\n' in processed_files:
                     continue
                 html_content = read_from_html(rider_dir_path, rider_html_file)
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
                 option_list = options_soup.find('ul', 'options').find_all('a')
                 for time_interval in option_list:
-                    self._handle_time_interval_page(rider_id,time_interval,csv_file_path,start_week,end_week)
-                with open('link/processed_time_intervals_files.txt','a+') as f:
+                    self._handle_time_interval_page(rider_id, time_interval, csv_file_path, start_week, end_week)
+                with open('link/processed_time_intervals_files.txt', 'a+') as f:
                     f.write(f'{rider_html_file}\n')
 
         except:
@@ -45,22 +46,18 @@ class DataExtractor(Browser):
         try:
             rider_id = None
             i = 0
-            if os.path.exists('link/processed_time_intervals_files.txt'):
-                with open('link/processed_time_intervals_files.txt') as f:
-                    processed_files = set(f.readlines())
             for rider_id in self.pages:
                 log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
-                        id=self.id)
+                    id=self.id)
                 self._fetch_rider_year_interval_links(rider_id, csv_file_path, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders year interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
 
-
-    def _handle_time_interval_page(self,rider_id,interval,csv_file_path,start_week,end_week):
+    def _handle_time_interval_page(self, rider_id, interval, csv_file_path, start_week, end_week):
         link = f"{BASE_STRAVA_URL}{interval.attrs['href']}"
         csv_exists = os.path.exists(csv_file_path)
-        if csv_exists and (link in pd.read_csv(csv_file_path)['time_interval_link'].values):
+        if csv_exists and (link in list(pd.read_csv(csv_file_path)['time_interval_link'].values)):
             return
         url_param_dict = dict(parse_qsl(link.split('?')[1]))
         interval = url_param_dict['interval']
@@ -79,7 +76,7 @@ class DataExtractor(Browser):
 
     def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
-            processed_files=set()
+            processed_files = set()
             if os.path.exists('link/processed_time_intervals_files.txt'):
                 with open('link/processed_time_intervals_files.txt') as f:
                     processed_files = set(f.readlines())
@@ -87,7 +84,7 @@ class DataExtractor(Browser):
             rider_year_interval_files = os.listdir(rider_dir_path)
             i = 0
             for year_interval_link in rider_year_interval_files:
-                if year_interval_link in processed_files:
+                if f'{year_interval_link}\n' in processed_files:
                     continue
                 log(f'Fetching week interval links from file {year_interval_link}, {i} / {len(rider_year_interval_files) - 1}',
                     id=self.id, debug=False)
@@ -95,9 +92,11 @@ class DataExtractor(Browser):
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                 for week_interval in rider_intervals:
-                    self._handle_time_interval_page(rider_id,week_interval,csv_file_path,start_week,end_week)
-                with open('link/processed_time_intervals_files.txt','a+') as f:
+                    self._handle_time_interval_page(rider_id, week_interval, csv_file_path, start_week, end_week)
+                with open('link/processed_time_intervals_files.txt', 'a+') as f:
                     f.write(f'{year_interval_link}\n')
+                print_progress_bar(i + 1, len(rider_year_interval_files), prefix='Progress:', suffix='Complete',
+                                   length=50)
                 i += 1
         except:
             log(f'Could not fetch week interval links for rider {rider_id}.', 'ERROR', id=self.id)
@@ -148,14 +147,14 @@ class DataExtractor(Browser):
                                     break
                         activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
                         csv_exists = os.path.exists(csv_file_path)
-                        if csv_exists and (activity_link in pd.read_csv(csv_file_path)['activity_link'].values):
+                        if csv_exists and (activity_link in list(pd.read_csv(csv_file_path)['activity_link'].values)):
                             continue
                         activity_id = activity_link.split('/activities/')[1]
                         activity_not_extracted = (not os.path.exists(csv_file_path))
                         activity_not_extracted = activity_not_extracted or (
-                                float(rider_id) not in pd.read_csv(csv_file_path)['rider_id'].values)
+                                float(rider_id) not in list(pd.read_csv(csv_file_path)['rider_id'].values))
                         activity_not_extracted = activity_not_extracted or (
-                                float(activity_id) not in pd.read_csv(csv_file_path)['activity_id'].values)
+                                float(activity_id) not in list(pd.read_csv(csv_file_path)['activity_id'].values))
                         if activity_not_extracted:
                             row = {'rider_id': rider_id,
                                    'activity_link': activity_link,
@@ -233,7 +232,7 @@ class DataExtractor(Browser):
                     option_type = ref.split(f"{activity_id}")[-1]
                     csv_exist = os.path.exists(csv_file_path)
                     if (option_type in OPTIONS_TO_IGNORE) or (csv_exist and (
-                            activity_option_link in pd.read_csv(csv_file_path)['activity_option_link'].values)):
+                            activity_option_link in list(pd.read_csv(csv_file_path)['activity_option_link'].values))):
                         continue
                     if option_type not in ANALYSIS_PAGE_TYPES:
                         log(f"New activity analysis type found: {option_type}", 'WARNING', id=self.id)
@@ -247,7 +246,7 @@ class DataExtractor(Browser):
                                    length=50)
                 i += 1
         except:
-            log(f'Could not fetch week interval links for rider {rider_id}.', 'ERROR', id=self.id)
+            log(f'Could not fetch analysis links for rider {rider_id}.', 'ERROR', id=self.id)
 
     def extract_activity_analysis_links(self, csv_file_path):
         try:
@@ -263,8 +262,12 @@ class DataExtractor(Browser):
             log(f'Failed fetching rider activity links, current rider fetched {rider_id}', 'ERROR',
                 id=self.id)
 
-    def _fetch_activity_analysis_data(self, rider_id):
+    def _fetch_activity_analysis_data(self, rider_id, data_types):
         try:
+            processed_files = set()
+            if os.path.exists('link/processed_analysis_files.txt'):
+                with open('link/processed_analysis_files.txt') as f:
+                    processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_activity_dirs = os.listdir(rider_dir_path)
             i = 0
@@ -274,47 +277,106 @@ class DataExtractor(Browser):
                 activity_dir_path = f"{rider_dir_path}/{activity_id}"
                 rider_activity_files = os.listdir(activity_dir_path)
                 for activity_file in rider_activity_files:
+                    if f'{activity_dir_path}/{activity_file}\n' in processed_files:
+                        continue
                     if os.path.isdir(f"{activity_dir_path}/{activity_file}"):
                         continue
                     activity_link = f"{BASE_STRAVA_URL}/activities/{activity_id}"
                     html_content = read_from_html(activity_dir_path, activity_file)
                     soup = BeautifulSoup(html_content, 'html.parser')
-                    args=(activity_file, activity_link, rider_id, activity_id)
-                    if 'overview' in activity_file:
+                    args = (activity_file, activity_link, rider_id, activity_id)
+                    if all(['overview' in f for f in [activity_file] + data_types]):
                         self._handle_overview_page(soup, *args)
-                    elif 'analysis' in activity_file:
+                    elif all(['analysis' in f for f in [activity_file] + data_types]):
                         self._handle_analysis_page(soup, *args)
-                    elif 'power-curve' in activity_file:
+                    elif all(['power-curve' in f for f in [activity_file] + data_types]):
                         self._handle_power_curve_page(soup, *args)
-                    elif ('heartrate' in activity_file) or ('zone' in activity_file):
+                    elif all(['heartrate' in f for f in [activity_file] + data_types]) or all(
+                            ['zone' in f for f in [activity_file] + data_types]):
                         self._handle_table_page(soup, *args)
-                    elif 'power-distribution' in activity_file:
+                    elif all(['power-distribution' in f for f in [activity_file] + data_types]):
                         self._handle_power_distribution_page(soup, *args)
-                    else:
+                    elif all([f[1:] not in activity_file for f in ANALYSIS_PAGE_TYPES]):
                         log(f'Could not fetch analysis data for activity file {rider_dir_path}/{activity_id}/{activity_file}, unknown type page.',
                             'ERROR', id=self.id)
+                    with open('link/processed_analysis_files.txt', 'a+') as f:
+                        f.write(f'{activity_dir_path}/{activity_file}\n')
                 print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
                                    length=50)
                 i += 1
         except:
             log(f'Could not fetch analysis data for rider {rider_id}.', 'ERROR', id=self.id)
 
-    def extract_data_from_analysis_activities(self):
+    def extract_data_from_analysis_activities(self, data_types):
         try:
             rider_id = None
             i = 0
             for rider_id in self.pages:
                 log(f'Fetching activity analysis data for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                     id=self.id)
-                self._fetch_activity_analysis_data(rider_id)
+                self._fetch_activity_analysis_data(rider_id, data_types)
                 i += 1
 
         except:
             log(f'Failed fetching rider activity links, current rider fetched {rider_id}', 'ERROR',
                 id=self.id)
 
-    def _handle_overview_table(self, overview_soup, file, activity_link, rider_id, activity_id):
-        row = {'rider_id':rider_id,'activity_id':activity_id}
+    def _handle_overview_ul_table(self, activity_id, rider_id, ul_table, data, args):
+        warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table li's missing."
+        for ul in ul_table:
+            lis = ul.find_all('li')
+            if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(lis) < 2)), warn_msg, *args):
+                return
+            for li in lis:
+                value = li.find('strong').contents[0].text.replace(',', '')
+                label = li.find('div').text.strip()
+                if 'time' in label.lower():
+                    value = string_to_time(value)
+                value = float(value)
+                data[label] = value
+        return data
+
+    def _handle_overview_div(self, activity_id, rider_id, div_table, data, args):
+        warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table div's contents missing."
+        for div in div_table:
+            if self._element_doesnt_exist((len(div.contents) == 0), warn_msg, *args):
+                return
+            table = div.find('table')
+            if table is not None:
+                theads = table.find('thead').find_all('th')
+                for tr in table.find_all('tr')[1:]:
+                    j = 0
+                    label_suffix, label, value = '', '', ''
+                    for c in tr.findChildren(recursive=False):
+                        if c.name == 'th':
+                            label_suffix = c.text
+                        elif c.name == 'td':
+                            for ch in c.findChildren(recursive=False):
+                                if (ch.name == 'abbr') and (any([unit in ch['title'] for unit in UNDESIRED_UNITS])):
+                                    raise ValueError(
+                                        f'The metrics in the page of activity {activity_id}, cyclist {rider_id}, are wrong.')
+                            if 'colspan' in c.attrs:
+                                if j != 1:
+                                    print('not expected')
+                                else:
+                                    label = label_suffix.strip()
+                            else:
+                                label = f'{theads[j].text}{label_suffix}'
+                            value = c.contents[0].text.replace(',', '').strip()
+                            if 'time' in label.lower():
+                                value = string_to_time(value)
+                            value = float(value)
+                            data[label] = value
+                        else:
+                            raise ValueError(
+                                f'Unknown structure in the overview page of activity {activity_id}, cyclist {rider_id}, are wrong.')
+                        j += 1
+            else:
+                data["Device"] = div.find('div').find('div').text.strip() if div.find(
+                    'div') is not None else None
+        return data
+
+    def _handle_overview_table(self, overview_soup, data, file, activity_link, rider_id, activity_id):
         args = (file, activity_link, rider_id, activity_id)
         overview_table = overview_soup.find('div', attrs={'class': 'spans8 activity-stats mt-md mb-md'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table is empty or doesn't exist."
@@ -325,47 +387,58 @@ class DataExtractor(Browser):
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table ul's missing."
         if self._element_doesnt_exist((len(ul_table) == 0), warn_msg, *args):
             return
-        warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table li's missing."
-        for ul in ul_table:
-            lis = ul.find_all('li')
-            if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(lis) < 2)), warn_msg, *args):
-                return
-            for li in lis:
-                label = li.contents[1].text
-                value = li.contents[0].text
-                if 'time' in label.lower():
-                    value = string_to_time(value)
-                value = float(value)
-
+        data = self._handle_overview_ul_table(activity_id, rider_id, ul_table, data, args)
 
         div_table = overview_table.findChildren("div", recursive=False)
         # warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table div's missing."
         # if self._element_doesnt_exist((len(div_table) == 0), warn_msg, *args):
         #     return
-        warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table div's contents missing."
-        for div in div_table:
-            if self._element_doesnt_exist((len(div.contents) == 0), warn_msg, *args):
+        data = self._handle_overview_div(activity_id, rider_id, div_table, data, args)
+        return data
+
+    def _handle_date_and_location(self, overview_soup, data ,file, activity_link, rider_id, activity_id):
+        args = (file, activity_link, rider_id, activity_id)
+        overview_details_container = overview_soup.find('div', attrs={'class': 'spans8 activity-summary mt-md mb-md'})
+        overview_details = overview_details_container.find('div', attrs={'class': 'details'})
+        warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - date and location don't exist."
+        if self._element_doesnt_exist(((overview_details is None) or (len(overview_details.contents) == 0)), warn_msg,
+                                      *args):
+            return
+        data['Date'] = overview_details.find('time').text.strip() if overview_details.find('time') is not None else None
+        location = overview_details.find('span',attrs={'class':'location'})
+        data['Location'] = location.text.strip() if location is not None else None
+        return data
+
+    def _handle_overview_page(self, soup, file, activity_link, rider_id, activity_id):
+        try:
+            args = (file, activity_link, rider_id, activity_id)
+            csv_exists = os.path.exists('data/overview_data.csv')
+            csv_path = 'data/overview_data.csv'
+            if csv_exists and (activity_id in list(pd.read_csv(csv_path)['activity_id'].values)):
                 return
-
-
-    def _handle_overview_page(self, soup, *args):
-        self._handle_overview_table(soup, *args)
-        title = soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
-            'class': 'title'}).text.replace('\n', '')
-        deli_idx = title.find('–')
-        activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
-        if activity_type == 'Indoor Cycling':
-            self._handle_analysis_stacked_chart(soup, *args)
-
+            data = {}
+            data = self._handle_date_and_location(soup, data, *args)
+            data = self._handle_overview_table(soup, data, *args)
+            data = json.dumps(data)
+            append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
+                              columns=['rider_id', 'activity_id', 'data'])
+            title = soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
+                'class': 'title'}).text.strip()
+            deli_idx = title.find('–')
+            activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
+            if activity_type == 'Indoor Cycling':
+                self._handle_analysis_stacked_chart(soup, *args)
+        except:
+            log(f'Failed fetching overview activity data, current rider fetched {rider_id}', 'ERROR',
+                id=self.id)
 
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
         pass
 
-
     def _section_and_header_handler(self, soup, file, activity_link, rider_id, activity_id):
         args = (file, activity_link, rider_id, activity_id)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - section part is missing."
-        section = soup.find('div',attrs={'id':'view'}).find('section', attrs={'class': 'with-border'})
+        section = soup.find('div', attrs={'id': 'view'}).find('section', attrs={'class': 'with-border'})
         if self._element_doesnt_exist(((section is None) or (len(section.contents) == 0)), warn_msg, *args):
             return
         header = section.find('header')
@@ -381,7 +454,6 @@ class DataExtractor(Browser):
             if self._element_doesnt_exist(len(ul.contents) == 0, warn_msg, *args):
                 return
         return section
-
 
     def _handle_table_page(self, soup, file, activity_link, rider_id, activity_id):
         args = (file, activity_link, rider_id, activity_id)
@@ -406,11 +478,10 @@ class DataExtractor(Browser):
             if self._element_doesnt_exist((len(tds) == 0), warn_msg, *args):
                 return
 
-
     def _handle_power_distribution_page(self, file, soup, activity_link, rider_id, activity_id):
         pass
 
-    def _handle_analysis_page(self, soup,*args):
+    def _handle_analysis_page(self, soup, *args):
         self._handle_analysis_stacked_chart(soup, *args)
         self._handle_elevation_chart(soup, *args)
 
@@ -453,7 +524,7 @@ class DataExtractor(Browser):
         Path(f'{src_dir}/backup').mkdir(parents=True, exist_ok=True)
         shutil.move(f"{src_dir}/{file}", f"{src_dir}/backup/{file}")
         csv_exists = os.path.exists(DOWNLOAD_AGAIN_FILE_PATH)
-        if (not csv_exists) or (activity_link not in pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_link'].values):
+        if (not csv_exists) or (activity_link not in list(pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_link'].values)):
             activity_of_overview = {'rider_id': rider_id,
                                     'activity_link': activity_link,
                                     'activity_id': activity_id}

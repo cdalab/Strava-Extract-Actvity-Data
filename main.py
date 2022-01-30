@@ -164,7 +164,7 @@ def download_activity_analysis_pages(id, csv_file_path='link/activity_analysis_l
 
 
 def extract_data_from_analysis_activities(id, html_files_path='link/riders_activity_pages',
-                                          low_limit_index=0, high_limit_index=None, riders_input=None):
+                                          low_limit_index=0, high_limit_index=None, riders_input=None,data_types=None):
     log("---- START EXTRACTING ACTIVITY ANALYSIS DATA ----", id=id)
     riders = os.listdir(html_files_path)
     if riders_input is not None:
@@ -176,7 +176,7 @@ def extract_data_from_analysis_activities(id, html_files_path='link/riders_activ
     links_extractor = DataExtractor(pages=riders,
                                     id=id,
                                     html_files_path=html_files_path)
-    links_extractor.extract_data_from_analysis_activities()
+    links_extractor.extract_data_from_analysis_activities(data_types=data_types)
 
     log("---- FINISHED EXTRACTING ACTIVITY ANALYSIS DATA ----", id=id)
 
@@ -452,7 +452,7 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_data_from_analysis_activities':
-        # run example : main.py -c extract_data_from_analysis_activities -if link/riders_activity_pages
+        # run example : main.py -c extract_data_from_analysis_activities -if link/riders_activity_pages -dt [overview]
         # insert -li or -hi is the index of rider (not index of link)
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
@@ -460,6 +460,7 @@ if __name__ == '__main__':
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
         riders = args['riders']
+        data_types = args['data_types']
         if csv_file_path is None:
             csv_file_path = f'link/activity_link_types'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
@@ -468,14 +469,14 @@ if __name__ == '__main__':
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_data_from_analysis_activities(id, html_files_path=html_files_path,
                                                       low_limit_index=low_limit_index,
-                                                      high_limit_index=high_limit_index)
+                                                      high_limit_index=high_limit_index,data_types=data_types)
             else:
                 extract_data_from_analysis_activities(id, html_files_path=html_files_path,
-                                                      riders_input=riders)
+                                                      riders_input=riders,data_types=data_types)
 
         except:
             log(f'Problem in extract_data_from_analysis_activities function, '
-                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders}',
+                f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders, data_types}',
                 'ERROR', id=id)
 
     # TODO: download the other pages of activities
