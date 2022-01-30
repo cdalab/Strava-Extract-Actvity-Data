@@ -34,21 +34,7 @@ class DataExtractor(Browser):
                 options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
                 option_list = options_soup.find('ul', 'options').find_all('a')
                 for time_interval in option_list:
-                    link = f"{BASE_STRAVA_URL}{time_interval.attrs['href']}"
-                    url_param_dict = dict(parse_qsl(link.split('?')[1]))
-                    interval = url_param_dict['interval']
-                    curr_year, curr_week = int(interval[:4]), int(interval[4:])
-                    if start_week is not None:
-                        start_year, s_week = int(start_week[:4]), int(start_week[4:])
-                        if (curr_year < start_year) or (curr_week < s_week):
-                            continue
-                    if end_week is not None:
-                        end_year, e_week = int(end_week[:4]), int(end_week[4:])
-                        if (curr_year >= end_year) or (curr_week >= e_week):
-                            continue
-                    row = {'rider_id': rider_id,
-                            'time_interval_link': link}
-                    append_row_to_csv(csv_file_path, row)
+                    self._handle_time_interval_page(rider_id,time_interval,csv_file_path,start_week,end_week)
                 with open('link/processed_time_intervals_files.txt','a+') as f:
                     f.write(f'{rider_html_file}\n')
 
@@ -70,6 +56,26 @@ class DataExtractor(Browser):
         except:
             log(f'Failed fetching riders year interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
 
+
+    def _handle_time_interval_page(self,rider_id,interval,csv_file_path,start_week,end_week):
+        link = f"{BASE_STRAVA_URL}{interval.attrs['href']}"
+        if link in pd.read_csv(csv_file_path)['time_interval_link'].values:
+            return
+        url_param_dict = dict(parse_qsl(link.split('?')[1]))
+        interval = url_param_dict['interval']
+        curr_year, curr_week = int(interval[:4]), int(interval[4:])
+        if start_week is not None:
+            start_year, s_week = int(start_week[:4]), int(start_week[4:])
+            if (curr_year < start_year) or (curr_week < s_week):
+                return
+        if end_week is not None:
+            end_year, e_week = int(end_week[:4]), int(end_week[4:])
+            if (curr_year >= end_year) or (curr_week >= e_week):
+                return
+        row = {'rider_id': rider_id,
+               'time_interval_link': link}
+        append_row_to_csv(csv_file_path, row)
+
     def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
             processed_files=set()
@@ -88,21 +94,7 @@ class DataExtractor(Browser):
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                 for week_interval in rider_intervals:
-                    link = f"{BASE_STRAVA_URL}{week_interval.attrs['href']}"
-                    url_param_dict = dict(parse_qsl(link.split('?')[1]))
-                    interval = url_param_dict['interval']
-                    curr_year, curr_week = int(interval[:4]), int(interval[4:])
-                    if start_week is not None:
-                        start_year, s_week = int(start_week[:4]), int(start_week[4:])
-                        if (curr_year < start_year) or (curr_week < s_week):
-                            continue
-                    if end_week is not None:
-                        end_year, e_week = int(end_week[:4]), int(end_week[4:])
-                        if (curr_year >= end_year) or (curr_week >= e_week):
-                            continue
-                    row = {'rider_id': rider_id,
-                           'time_interval_link': link}
-                    append_row_to_csv(csv_file_path, row)
+                    self._handle_time_interval_page(rider_id,week_interval,csv_file_path,start_week,end_week)
                 with open('link/processed_time_intervals_files.txt','a+') as f:
                     f.write(f'{year_interval_link}\n')
                 i += 1
@@ -154,6 +146,8 @@ class DataExtractor(Browser):
                                         lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
                                     break
                         activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
+                        if activity_link in pd.read_csv(csv_file_path)['activity_link'].values:
+                            continue
                         activity_id = activity_link.split('/activities/')[1]
                         activity_not_extracted = (not os.path.exists(csv_file_path))
                         activity_not_extracted = activity_not_extracted or (
