@@ -429,7 +429,7 @@ class DataExtractor(Browser):
             if activity_type == 'Indoor Cycling':
                 self._handle_analysis_stacked_chart(soup, *args)
         except:
-            log(f'Failed fetching overview activity data, current rider fetched {rider_id}', 'ERROR',
+            log(f'Failed fetching overview activity data, current rider fetched {rider_id}, activity {activity_id}', 'ERROR',
                 id=self.id)
 
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
