@@ -59,7 +59,8 @@ class DataExtractor(Browser):
 
     def _handle_time_interval_page(self,rider_id,interval,csv_file_path,start_week,end_week):
         link = f"{BASE_STRAVA_URL}{interval.attrs['href']}"
-        if link in pd.read_csv(csv_file_path)['time_interval_link'].values:
+        csv_exists = os.path.exists(csv_file_path)
+        if csv_exists and link in pd.read_csv(csv_file_path)['time_interval_link'].values:
             return
         url_param_dict = dict(parse_qsl(link.split('?')[1]))
         interval = url_param_dict['interval']
@@ -146,7 +147,8 @@ class DataExtractor(Browser):
                                         lambda tag: tag.name == "a" and "/activities/" in tag.attrs['href'])
                                     break
                         activity_link = f"{BASE_STRAVA_URL}{activity_a.attrs['href']}"
-                        if activity_link in pd.read_csv(csv_file_path)['activity_link'].values:
+                        csv_exists = os.path.exists(csv_file_path)
+                        if csv_exists and (activity_link in pd.read_csv(csv_file_path)['activity_link'].values):
                             continue
                         activity_id = activity_link.split('/activities/')[1]
                         activity_not_extracted = (not os.path.exists(csv_file_path))
