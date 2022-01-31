@@ -195,7 +195,6 @@ def restore_activities_from_backup(id, html_files_path='link/riders_activity_pag
                                     id=id,
                                     html_files_path=html_files_path)
     links_extractor.restore_activities_from_backup(data_types=data_types)
-
     log("---- FINISHED RESTORING ACTIVITY ANALYSIS PAGES ----", id=id)
 
 

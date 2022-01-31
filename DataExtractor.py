@@ -292,7 +292,7 @@ class DataExtractor(Browser):
                         continue
                     if 'overview' in activity_file:
                         activity_link += '/overview'
-                        args = (activity_file, activity_link, rider_id, activity_id,activity_type)
+                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
                         self._handle_overview_page(soup, *args)
                     elif 'analysis' in activity_file:
                         activity_link += '/analysis'
@@ -349,7 +349,7 @@ class DataExtractor(Browser):
                 label = li.find('div').text.strip()
                 if '—' in value:
                     continue
-                if any([(l in label.lower()) for l in ['time','duration']]):
+                if any([(l in label.lower()) for l in ['time', 'duration']]):
                     value = string_to_time(value)
                 try:
                     value = float(value)
@@ -387,7 +387,7 @@ class DataExtractor(Browser):
                             value = c.contents[0].text.replace(',', '').strip()
                             if '—' in value:
                                 continue
-                            if any([(l in label.lower()) for l in ['time','duration']]):
+                            if any([(l in label.lower()) for l in ['time', 'duration']]):
                                 value = string_to_time(value)
                             try:
                                 value = float(value)
@@ -399,11 +399,12 @@ class DataExtractor(Browser):
                                 f'Unknown structure in the overview page of activity {activity_id}, cyclist {rider_id}, are wrong.')
                         j += 1
             else:
-                data["Device"] = div.find('div').find('div').text.strip() if all([e is not None for e in [div.find('div'),div.find('div').find('div')]]) else None
+                data["Device"] = div.find('div').find('div').text.strip() if all(
+                    [e is not None for e in [div.find('div'), div.find('div').find('div')]]) else None
         return data
 
-    def _handle_overview_table(self, overview_soup, data, file, activity_link, rider_id, activity_id,activity_type):
-        args = (file, activity_link, rider_id, activity_id,activity_type)
+    def _handle_overview_table(self, overview_soup, data, file, activity_link, rider_id, activity_id, activity_type):
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         overview_table = overview_soup.find('div', attrs={'class': 'spans8 activity-stats mt-md mb-md'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table is empty or doesn't exist."
         if self._element_doesnt_exists(((overview_table is None) or (len(overview_table.contents) == 0)), warn_msg,
@@ -422,7 +423,7 @@ class DataExtractor(Browser):
         data = self._handle_overview_div(activity_id, rider_id, div_table, data, args)
         return data
 
-    def _handle_date_and_location(self, overview_soup, data ,file, activity_link, rider_id, activity_id,activity_type):
+    def _handle_date_and_location(self, overview_soup, data, file, activity_link, rider_id, activity_id, activity_type):
         args = (file, activity_link, rider_id, activity_id)
         overview_details_container = overview_soup.find('div', attrs={'class': 'spans8 activity-summary mt-md mb-md'})
         overview_details = overview_details_container.find('div', attrs={'class': 'details'})
@@ -431,16 +432,13 @@ class DataExtractor(Browser):
                                        *args):
             return
         data['Date'] = overview_details.find('time').text.strip() if overview_details.find('time') is not None else None
-        location = overview_details.find('span',attrs={'class':'location'})
+        location = overview_details.find('span', attrs={'class': 'location'})
         data['Location'] = location.text.strip() if location is not None else None
         return data
 
-
-
-
-    def _handle_overview_page(self, soup, file, activity_link, rider_id, activity_id,activity_type):
+    def _handle_overview_page(self, soup, file, activity_link, rider_id, activity_id, activity_type):
         try:
-            args = (file, activity_link, rider_id, activity_id,activity_type)
+            args = (file, activity_link, rider_id, activity_id, activity_type)
             csv_exists = os.path.exists('data/overview_data.csv')
             csv_path = 'data/overview_data.csv'
             if csv_exists and (activity_id in list(pd.read_csv(csv_path)['activity_id'].values)):
@@ -454,7 +452,8 @@ class DataExtractor(Browser):
             if activity_type == 'Indoor Cycling':
                 self._handle_analysis_stacked_chart(soup, *args)
         except:
-            log(f'Failed fetching overview activity data, current rider fetched {rider_id}, activity {activity_id}', 'ERROR',
+            log(f'Failed fetching overview activity data, current rider fetched {rider_id}, activity {activity_id}',
+                'ERROR',
                 id=self.id)
 
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
@@ -544,18 +543,19 @@ class DataExtractor(Browser):
         if self._element_doesnt_exists(len(boxes) != len(paths), warn_msg, *args):
             return
 
-    def _save_activity_page_to_download_again(self, file, activity_link, rider_id, activity_id,activity_type):
+    def _save_activity_page_to_download_again(self, file, activity_link, rider_id, activity_id, activity_type):
         src_dir = f"{self.html_files_path}/{rider_id}/{activity_id}"
         Path(f'{src_dir}/backup').mkdir(parents=True, exist_ok=True)
         shutil.move(f"{src_dir}/{file}", f"{src_dir}/backup/{file}")
         csv_exists = os.path.exists(DOWNLOAD_AGAIN_FILE_PATH)
         option_type = activity_link.split(f"{activity_id}")[-1]
-        if (not csv_exists) or (activity_link not in list(pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_link'].values)):
+        if (not csv_exists) or (
+                activity_link not in list(pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_link'].values)):
             activity_to_download = {'rider_id': rider_id,
                                     'activity_id': activity_id,
                                     'activity_option_link': activity_link,
-                                    'option_type':option_type,
-                                    'activity_type':activity_type}
+                                    'option_type': option_type,
+                                    'activity_type': activity_type}
             append_row_to_csv(DOWNLOAD_AGAIN_FILE_PATH, activity_to_download)
 
     def _handle_elevation_chart(self, soup, file, activity_link, rider_id, activity_id):
@@ -579,22 +579,28 @@ class DataExtractor(Browser):
             return True
         return False
 
-    def restore_activities_from_backup(self, rider_id, data_types=None):
+    def restore_activities_from_backup(self, data_types=None):
+        rider_id = None
+        j = 0
         try:
-            rider_dir_path = f"{self.html_files_path}/{rider_id}"
-            rider_activity_dirs = os.listdir(rider_dir_path)
-            i = 0
-            for activity_id in rider_activity_dirs:
-                log(f"Restoring activity page from {rider_dir_path}/{activity_id}, {i} / {len(rider_activity_dirs) - 1}",
-                    id=self.id, debug=False)
-                activity_dir_path = f"{rider_dir_path}/{activity_id}"
-                if not os.path.exists(f"{activity_dir_path}/backup"):
-                    continue
-                for file in os.listdir(f"{activity_dir_path}/backup"):
-                    if (data_types is None) or (any([f in file for f in data_types])):
-                        shutil.move(f"{activity_dir_path}/backup/{file}", f"{activity_dir_path}/{file}")
-                print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
-                                   length=50)
-                i += 1
+            for rider_id in self.pages:
+                log(f'Fetching activity analysis data for cyclist {rider_id}, {j} / {len(self.pages) - 1}',
+                    id=self.id)
+                rider_dir_path = f"{self.html_files_path}/{rider_id}"
+                rider_activity_dirs = os.listdir(rider_dir_path)
+                i = 0
+                for activity_id in rider_activity_dirs:
+                    log(f"Restoring activity page from {rider_dir_path}/{activity_id}, {i} / {len(rider_activity_dirs) - 1}",
+                        id=self.id, debug=False)
+                    activity_dir_path = f"{rider_dir_path}/{activity_id}"
+                    if not os.path.exists(f"{activity_dir_path}/backup"):
+                        continue
+                    for file in os.listdir(f"{activity_dir_path}/backup"):
+                        if (data_types is None) or (any([f in file for f in data_types])):
+                            shutil.move(f"{activity_dir_path}/backup/{file}", f"{activity_dir_path}/{file}")
+                    print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
+                                       length=50)
+                    i += 1
+                j += 1
         except:
             log(f'Could not restore activity pages for rider {rider_id}.', 'ERROR', id=self.id)
