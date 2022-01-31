@@ -287,6 +287,9 @@ class LinksDownloader(Browser):
         return {f"{rider_activity['option_type'][1:]}": self.browser.page_source}
 
     def download_analysis_pages_loop(self, prev_activity, i, rider_activity, overwrite_mode=None):
+        if rider_activity["option_type"] == '/overview':
+            rider_activity['activity_link'] = rider_activity['activity_option_link']
+            return self._download_rider_activity_pages(prev_activity, i, rider_activity, overwrite_mode)
         info_msg = f'Fetching {rider_activity["option_type"]} activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}'
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         files = ACTIVITY_ANALYSIS_FILES[rider_activity["option_type"]]
