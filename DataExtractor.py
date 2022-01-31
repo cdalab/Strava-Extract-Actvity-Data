@@ -325,7 +325,7 @@ class DataExtractor(Browser):
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - overview table li's missing."
         for ul in ul_table:
             lis = ul.find_all('li')
-            if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(lis) < 2)), warn_msg, *args):
+            if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(lis) == 0)), warn_msg, *args):
                 return
             for li in lis:
                 if li.find('strong').find('a') is None:
