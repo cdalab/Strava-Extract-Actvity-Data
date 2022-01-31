@@ -333,10 +333,10 @@ class DataExtractor(Browser):
                 else:
                     value = li.find('strong').find('a').text.strip()
                 label = li.find('div').text.strip()
-                if 'time' in label.lower():
-                    value = string_to_time(value)
                 if '—' in value:
                     continue
+                if 'time' in label.lower():
+                    value = string_to_time(value)
                 try:
                     value = float(value)
                     data[label] = value
@@ -371,6 +371,8 @@ class DataExtractor(Browser):
                             else:
                                 label = f'{theads[j].text}{label_suffix}'
                             value = c.contents[0].text.replace(',', '').strip()
+                            if '—' in value:
+                                continue
                             if 'time' in label.lower():
                                 value = string_to_time(value)
                             try:
