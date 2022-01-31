@@ -452,7 +452,7 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_data_from_analysis_activities':
-        # run example : main.py -c extract_data_from_analysis_activities -if link/riders_activity_pages -dt [overview]
+        # run example : main.py -c extract_data_from_analysis_activities -if link/riders_activity_pages -dt [\"overview\"]
         # insert -li or -hi is the index of rider (not index of link)
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']

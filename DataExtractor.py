@@ -372,8 +372,7 @@ class DataExtractor(Browser):
                                 f'Unknown structure in the overview page of activity {activity_id}, cyclist {rider_id}, are wrong.')
                         j += 1
             else:
-                data["Device"] = div.find('div').find('div').text.strip() if div.find(
-                    'div') is not None else None
+                data["Device"] = div.find('div').find('div').text.strip() if all([e is not None for e in [div.find('div'),div.find('div').find('div')]]) else None
         return data
 
     def _handle_overview_table(self, overview_soup, data, file, activity_link, rider_id, activity_id):
