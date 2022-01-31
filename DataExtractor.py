@@ -552,7 +552,7 @@ class DataExtractor(Browser):
         csv_exists = os.path.exists(DOWNLOAD_AGAIN_FILE_PATH)
         option_type = activity_link.split(f"{activity_id}")[-1]
         if (not csv_exists) or (
-                activity_link not in list(pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_link'].values)):
+                activity_link not in list(pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_option_link'].values)):
             activity_to_download = {'rider_id': rider_id,
                                     'activity_id': activity_id,
                                     'activity_option_link': activity_link,
