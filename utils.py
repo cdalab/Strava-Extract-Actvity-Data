@@ -214,7 +214,7 @@ def string_to_time(string):
     timedelta_dict = {}
     for i in reversed(range(len(string_list))):
         format = string_formats[list_len - 1 - i]
-        time_part = int(string_list[i]) if check_int(string_list[i]) else None
+        time_part = int(float(string_list[i])) if check_int(string_list[i]) else None
         if time_part is None:
             raise ValueError(f'Time value is not valid {string}')
         timedelta_dict[format] = time_part

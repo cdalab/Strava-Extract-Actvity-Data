@@ -335,7 +335,7 @@ class DataExtractor(Browser):
                 label = li.find('div').text.strip()
                 if '—' in value:
                     continue
-                if 'time' in label.lower():
+                if any([(l in label.lower()) for l in ['time','duration']]):
                     value = string_to_time(value)
                 try:
                     value = float(value)
@@ -373,7 +373,7 @@ class DataExtractor(Browser):
                             value = c.contents[0].text.replace(',', '').strip()
                             if '—' in value:
                                 continue
-                            if 'time' in label.lower():
+                            if any([(l in label.lower()) for l in ['time','duration']]):
                                 value = string_to_time(value)
                             try:
                                 value = float(value)
