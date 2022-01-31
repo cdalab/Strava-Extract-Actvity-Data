@@ -328,7 +328,7 @@ class DataExtractor(Browser):
             if self._element_doesnt_exist(((len(ul.contents) == 0) or (len(lis) < 2)), warn_msg, *args):
                 return
             for li in lis:
-                value = li.find('strong').contents[0].text.replace(',', '')
+                value = li.find('strong').contents[0].text.replace(',', '').replace('%', '')
                 label = li.find('div').text.strip()
                 if 'time' in label.lower():
                     value = string_to_time(value)
