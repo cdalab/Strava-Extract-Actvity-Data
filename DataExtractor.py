@@ -332,7 +332,10 @@ class DataExtractor(Browser):
                 label = li.find('div').text.strip()
                 if 'time' in label.lower():
                     value = string_to_time(value)
-                value = float(value)
+                try:
+                    value = float(value)
+                except Exception as err:
+                    raise ValueError(f'Cannot parse li - label {label}, {err}')
                 data[label] = value
         return data
 
@@ -365,7 +368,10 @@ class DataExtractor(Browser):
                             value = c.contents[0].text.replace(',', '').strip()
                             if 'time' in label.lower():
                                 value = string_to_time(value)
-                            value = float(value)
+                            try:
+                                value = float(value)
+                            except Exception as err:
+                                raise ValueError(f'Cannot parse tr - label {label}, {err}')
                             data[label] = value
                         else:
                             raise ValueError(
