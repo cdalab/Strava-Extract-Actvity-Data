@@ -601,7 +601,7 @@ class DataExtractor(Browser):
                         if (data_types is None) or (any([f in file for f in data_types])):
                             shutil.move(f"{activity_dir_path}/backup/{file}", f"{activity_dir_path}/{file}")
                     if len(os.listdir(f"{activity_dir_path}/backup")) == 0:
-                        os.remove(f"{activity_dir_path}/backup")
+                        shutil.rmtree(f"{activity_dir_path}/backup")
                     print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
                                        length=50)
                     i += 1
