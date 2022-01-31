@@ -313,8 +313,6 @@ class DataExtractor(Browser):
                     elif all([f[1:] not in activity_file for f in ANALYSIS_PAGE_TYPES]):
                         log(f'Could not fetch analysis data for activity file {rider_dir_path}/{activity_id}/{activity_file}, unknown type page.',
                             'ERROR', id=self.id)
-                    with open('link/processed_analysis_files.txt', 'a+') as f:
-                        f.write(f'{activity_dir_path}/{activity_file}\n')
                 print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
                                    length=50)
                 i += 1
@@ -424,7 +422,7 @@ class DataExtractor(Browser):
         return data
 
     def _handle_date_and_location(self, overview_soup, data, file, activity_link, rider_id, activity_id, activity_type):
-        args = (file, activity_link, rider_id, activity_id)
+        args = (file, activity_link, rider_id, activity_id,activity_type)
         overview_details_container = overview_soup.find('div', attrs={'class': 'spans8 activity-summary mt-md mb-md'})
         overview_details = overview_details_container.find('div', attrs={'class': 'details'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - date and location don't exist."
@@ -445,10 +443,14 @@ class DataExtractor(Browser):
                 return
             data = {}
             data = self._handle_date_and_location(soup, data, *args)
-            data = self._handle_overview_table(soup, data, *args)
-            data = json.dumps(data)
-            append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
-                              columns=['rider_id', 'activity_id', 'data'])
+            data = self._handle_overview_table(soup, data, *args) if data is not None else None
+            if data is not None:
+                data = json.dumps(data)
+                append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
+                                  columns=['rider_id', 'activity_id', 'data'])
+                with open('link/processed_analysis_files.txt', 'a+') as f:
+                    file_path = f"{self.html_files_path}/{rider_id}/{activity_id}/{file}"
+                    f.write(f'{file_path}\n')
             if activity_type == 'Indoor Cycling':
                 self._handle_analysis_stacked_chart(soup, *args)
         except:
@@ -459,8 +461,8 @@ class DataExtractor(Browser):
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
         pass
 
-    def _section_and_header_handler(self, soup, file, activity_link, rider_id, activity_id):
-        args = (file, activity_link, rider_id, activity_id)
+    def _section_and_header_handler(self, soup, file, activity_link, rider_id, activity_id,activity_type):
+        args = (file, activity_link, rider_id, activity_id,activity_type)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - section part is missing."
         section = soup.find('div', attrs={'id': 'view'}).find('section', attrs={'class': 'with-border'})
         if self._element_doesnt_exists(((section is None) or (len(section.contents) == 0)), warn_msg, *args):
@@ -479,8 +481,8 @@ class DataExtractor(Browser):
                 return
         return section
 
-    def _handle_table_page(self, soup, file, activity_link, rider_id, activity_id):
-        args = (file, activity_link, rider_id, activity_id)
+    def _handle_table_page(self, soup, file, activity_link, rider_id, activity_id,activity_type):
+        args = (file, activity_link, rider_id, activity_id,activity_type)
         section = self._section_and_header_handler(soup, *args)
         if section is None:
             return
@@ -509,8 +511,8 @@ class DataExtractor(Browser):
         self._handle_analysis_stacked_chart(soup, *args)
         self._handle_elevation_chart(soup, *args)
 
-    def _handle_base_chart_and_svg(self, soup, file, activity_link, rider_id, activity_id):
-        args = (file, activity_link, rider_id, activity_id)
+    def _handle_base_chart_and_svg(self, soup, file, activity_link, rider_id, activity_id,activity_type):
+        args = (file, activity_link, rider_id, activity_id,activity_type)
         base_chart = soup.find('div', attrs={'class': 'base-chart'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - base chart is missing."
         if self._element_doesnt_exists(((base_chart is None) or (len(base_chart.contents) == 0)), warn_msg, *args):
@@ -521,9 +523,9 @@ class DataExtractor(Browser):
             return
         return svg
 
-    def _handle_analysis_stacked_chart(self, soup, file, activity_link, rider_id, activity_id):
+    def _handle_analysis_stacked_chart(self, soup, file, activity_link, rider_id, activity_id,activity_type):
         stacked_chart = soup.find('div', attrs={'id': 'stacked-chart'})
-        args = (file, activity_link, rider_id, activity_id)
+        args = (file, activity_link, rider_id, activity_id,activity_type)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - stacked chart is missing."
         if self._element_doesnt_exists(stacked_chart is None, warn_msg, *args):
             return
@@ -558,9 +560,9 @@ class DataExtractor(Browser):
                                     'activity_type': activity_type}
             append_row_to_csv(DOWNLOAD_AGAIN_FILE_PATH, activity_to_download)
 
-    def _handle_elevation_chart(self, soup, file, activity_link, rider_id, activity_id):
+    def _handle_elevation_chart(self, soup, file, activity_link, rider_id, activity_id,activity_type):
         elevation_chart = soup.find('div', attrs={'id': 'elevation-chart'})
-        args = (file, activity_link, rider_id, activity_id)
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - stacked chart is missing."
         if self._element_doesnt_exists(elevation_chart is None, warn_msg, *args):
             return
