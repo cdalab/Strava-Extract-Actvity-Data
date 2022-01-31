@@ -164,7 +164,7 @@ def download_activity_analysis_pages(id, csv_file_path='link/activity_analysis_l
 
 
 def extract_data_from_analysis_activities(id, html_files_path='link/riders_activity_pages',
-                                          low_limit_index=0, high_limit_index=None, riders_input=None,data_types=None):
+                                          low_limit_index=0, high_limit_index=None, riders_input=None, data_types=None):
     log("---- START EXTRACTING ACTIVITY ANALYSIS DATA ----", id=id)
     riders = os.listdir(html_files_path)
     if riders_input is not None:
@@ -179,6 +179,24 @@ def extract_data_from_analysis_activities(id, html_files_path='link/riders_activ
     links_extractor.extract_data_from_analysis_activities(data_types=data_types)
 
     log("---- FINISHED EXTRACTING ACTIVITY ANALYSIS DATA ----", id=id)
+
+
+def restore_activities_from_backup(id, html_files_path='link/riders_activity_pages',
+                                   low_limit_index=0, high_limit_index=None, riders_input=None, data_types=None):
+    log("---- START RESTORING ACTIVITY ANALYSIS PAGES ----", id=id)
+    riders = os.listdir(html_files_path)
+    if riders_input is not None:
+        riders = [str(r) for r in riders if (float(r) in riders_input)]
+    elif high_limit_index is not None:
+        riders = riders[low_limit_index:high_limit_index]
+    else:
+        riders = riders[low_limit_index:]
+    links_extractor = DataExtractor(pages=riders,
+                                    id=id,
+                                    html_files_path=html_files_path)
+    links_extractor.restore_activities_from_backup(data_types=data_types)
+
+    log("---- FINISHED RESTORING ACTIVITY ANALYSIS PAGES ----", id=id)
 
 
 if __name__ == '__main__':
@@ -327,14 +345,14 @@ if __name__ == '__main__':
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
-                                             users=users,riders=riders)
+                                             users=users, riders=riders)
             else:
                 download_time_interval_pages(id, csv_file_path, html_files_path, overwrite_mode=overwrite_mode,
-                                             users=users,riders=riders)
+                                             users=users, riders=riders)
 
         except:
             log(f'Problem in download_year_interval_pages function, '
-                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode,riders}',
+                f'args: {csv_file_path, html_files_path, low_limit_index, high_limit_index, overwrite_mode, riders}',
                 'ERROR', id=id)
 
     elif command == 'extract_rider_activity_links':
@@ -469,14 +487,39 @@ if __name__ == '__main__':
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_data_from_analysis_activities(id, html_files_path=html_files_path,
                                                       low_limit_index=low_limit_index,
-                                                      high_limit_index=high_limit_index,data_types=data_types)
+                                                      high_limit_index=high_limit_index, data_types=data_types)
             else:
                 extract_data_from_analysis_activities(id, html_files_path=html_files_path,
-                                                      riders_input=riders,data_types=data_types)
+                                                      riders_input=riders, data_types=data_types)
 
         except:
             log(f'Problem in extract_data_from_analysis_activities function, '
                 f'args: {html_files_path, csv_file_path, low_limit_index, high_limit_index, riders, data_types}',
+                'ERROR', id=id)
+
+
+    elif command == 'restore_activities_from_backup':
+        # run example : main.py -c restore_activities_from_backup -if link/riders_activity_pages -dt [\"overview\"]
+
+        num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
+        low_limit_index = args['low_limit_index']
+        high_limit_index = args['high_limit_index']
+        html_files_path = args['input_file']
+        riders = args['riders']
+        data_types = args['data_types']
+        try:
+            if (low_limit_index is not None) or (high_limit_index is not None):
+                log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
+                restore_activities_from_backup(id, html_files_path=html_files_path,
+                                               low_limit_index=low_limit_index,
+                                               high_limit_index=high_limit_index, data_types=data_types)
+            else:
+                restore_activities_from_backup(id, html_files_path=html_files_path,
+                                               riders_input=riders, data_types=data_types)
+
+        except:
+            log(f'Problem in restore_activities_from_backup function, '
+                f'args: {html_files_path, low_limit_index, high_limit_index, riders, data_types}',
                 'ERROR', id=id)
 
     # TODO: download the other pages of activities

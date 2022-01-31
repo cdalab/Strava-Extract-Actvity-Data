@@ -579,7 +579,7 @@ class DataExtractor(Browser):
             return True
         return False
 
-    def _restore_activities_from_backup(self, rider_id, data_types=None):
+    def restore_activities_from_backup(self, rider_id, data_types=None):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_activity_dirs = os.listdir(rider_dir_path)
