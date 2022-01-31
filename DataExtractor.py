@@ -272,7 +272,7 @@ class DataExtractor(Browser):
             rider_activity_dirs = os.listdir(rider_dir_path)
             i = 0
             for activity_id in rider_activity_dirs:
-                log(f"Fetching activity data from file {rider_dir_path}/{activity_id}, {i} / {len(rider_activity_dirs) - 1}",
+                log(f"Fetching activity data from {rider_dir_path}/{activity_id}, {i} / {len(rider_activity_dirs) - 1}",
                     id=self.id, debug=False)
                 activity_dir_path = f"{rider_dir_path}/{activity_id}"
                 rider_activity_files = os.listdir(activity_dir_path)
@@ -288,18 +288,27 @@ class DataExtractor(Browser):
                         'class': 'title'}).text.strip()
                     deli_idx = title.find('–')
                     activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
-                    if all(['overview' in f for f in [activity_file] + data_types]):
+                    if (data_types is not None) and all([f not in activity_file for f in data_types]):
+                        continue
+                    if 'overview' in activity_file:
                         activity_link += '/overview'
                         args = (activity_file, activity_link, rider_id, activity_id,activity_type)
                         self._handle_overview_page(soup, *args)
-                    elif all(['analysis' in f for f in [activity_file] + data_types]):
+                    elif 'analysis' in activity_file:
+                        activity_link += '/analysis'
+                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
                         self._handle_analysis_page(soup, *args)
-                    elif all(['power-curve' in f for f in [activity_file] + data_types]):
+                    elif 'power-curve' in activity_file:
+                        activity_link += '/power-curve' if 'est' not in activity_file else '/est-power-curve'
+                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
                         self._handle_power_curve_page(soup, *args)
-                    elif all(['heartrate' in f for f in [activity_file] + data_types]) or all(
-                            ['zone' in f for f in [activity_file] + data_types]):
+                    elif ('heartrate' in activity_file) or ('zone' in activity_file):
+                        activity_link += '/heartrate' if 'heartrate' in activity_file else '/zone-distribution'
+                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
                         self._handle_table_page(soup, *args)
-                    elif all(['power-distribution' in f for f in [activity_file] + data_types]):
+                    elif 'power-distribution' in activity_file:
+                        activity_link += '/power-distribution' if 'est' not in activity_file else '/est-power-distribution'
+                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
                         self._handle_power_distribution_page(soup, *args)
                     elif all([f[1:] not in activity_file for f in ANALYSIS_PAGE_TYPES]):
                         log(f'Could not fetch analysis data for activity file {rider_dir_path}/{activity_id}/{activity_file}, unknown type page.',
@@ -569,3 +578,23 @@ class DataExtractor(Browser):
             log(msg, "WARNING", id=self.id)
             return True
         return False
+
+    def _restore_activities_from_backup(self, rider_id, data_types=None):
+        try:
+            rider_dir_path = f"{self.html_files_path}/{rider_id}"
+            rider_activity_dirs = os.listdir(rider_dir_path)
+            i = 0
+            for activity_id in rider_activity_dirs:
+                log(f"Restoring activity page from {rider_dir_path}/{activity_id}, {i} / {len(rider_activity_dirs) - 1}",
+                    id=self.id, debug=False)
+                activity_dir_path = f"{rider_dir_path}/{activity_id}"
+                if not os.path.exists(f"{activity_dir_path}/backup"):
+                    continue
+                for file in os.listdir(f"{activity_dir_path}/backup"):
+                    if (data_types is None) or (any([f in file for f in data_types])):
+                        shutil.move(f"{activity_dir_path}/backup/{file}", f"{activity_dir_path}/{file}")
+                print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
+                                   length=50)
+                i += 1
+        except:
+            log(f'Could not restore activity pages for rider {rider_id}.', 'ERROR', id=self.id)
