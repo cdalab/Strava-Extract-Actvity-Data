@@ -536,9 +536,11 @@ class DataExtractor(Browser):
         Path(f'{src_dir}/backup').mkdir(parents=True, exist_ok=True)
         shutil.move(f"{src_dir}/{file}", f"{src_dir}/backup/{file}")
         csv_exists = os.path.exists(DOWNLOAD_AGAIN_FILE_PATH)
+        option_type = activity_link.split(f"{activity_id}")[-1]
         if (not csv_exists) or (activity_link not in list(pd.read_csv(DOWNLOAD_AGAIN_FILE_PATH)['activity_link'].values)):
             activity_of_overview = {'rider_id': rider_id,
-                                    'activity_link': activity_link,
+                                    'activity_option_link': activity_link,
+                                    'option_type':option_type,
                                     'activity_id': activity_id}
             append_row_to_csv(DOWNLOAD_AGAIN_FILE_PATH, activity_of_overview)
 
