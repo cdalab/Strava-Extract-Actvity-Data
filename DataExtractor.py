@@ -337,9 +337,9 @@ class DataExtractor(Browser):
                     value = string_to_time(value)
                 try:
                     value = float(value)
+                    data[label] = value
                 except Exception as err:
                     raise ValueError(f'Cannot parse li - label {label}, {err}')
-                data[label] = value
         return data
 
     def _handle_overview_div(self, activity_id, rider_id, div_table, data, args):
@@ -373,9 +373,9 @@ class DataExtractor(Browser):
                                 value = string_to_time(value)
                             try:
                                 value = float(value)
+                                data[label] = value
                             except Exception as err:
                                 raise ValueError(f'Cannot parse tr - label {label}, {err}')
-                            data[label] = value
                         else:
                             raise ValueError(
                                 f'Unknown structure in the overview page of activity {activity_id}, cyclist {rider_id}, are wrong.')
