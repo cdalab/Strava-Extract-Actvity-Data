@@ -18,7 +18,8 @@ OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new", "/overview", "/laps"
 UNDESIRED_UNITS = ["feet", "miles", "Degrees Fahrenheit", "miles per hour"]
 ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
 
-ACTIVITY_ANALYSIS_FILES = {'/analysis': ['analysis_distance', 'analysis_time'],
+ACTIVITY_ANALYSIS_FILES = {'/overview': ['overview'],
+                           '/analysis': ['analysis_distance', 'analysis_time'],
                            '/power-curve': ['power-curve_watts', 'power-curve_watts-kg'],
                            '/zone-distribution': ['zone-distribution'],
                            '/power-distribution': ['power-distribution'],
