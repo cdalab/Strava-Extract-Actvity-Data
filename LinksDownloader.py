@@ -14,7 +14,7 @@ def save_activity_type(rider_activity, activity_type, activity_title):
                'activity_link': rider_activity["activity_link"],
                'activity_id': rider_activity["activity_id"],
                'activity_type': activity_type,
-               'activity_title':activity_title}
+               'activity_title': activity_title}
         append_row_to_csv('link/activity_link_types.csv', row)
 
 
@@ -68,7 +68,7 @@ class LinksDownloader(Browser):
                 # t.sleep(random.random())
                 link_fetch_error_msg = f'Could not fetch rider id {rider["strava_id"]}.'
                 self._download_rider_page(link_fetch_error_msg, i,
-                                              **dict(rider=rider, overwrite_mode=overwrite_mode))
+                                          **dict(rider=rider, overwrite_mode=overwrite_mode))
                 i += 1
         except:
             log(f'Failed fetching riders pages, current rider fetched {rider}', 'ERROR', id=self.id)
@@ -289,7 +289,10 @@ class LinksDownloader(Browser):
     def download_analysis_pages_loop(self, prev_activity, i, rider_activity, overwrite_mode=None):
         if rider_activity["option_type"] == '/overview':
             rider_activity['activity_link'] = rider_activity['activity_option_link']
-            return self._download_rider_activity_pages(prev_activity, i, rider_activity, overwrite_mode)
+            link_fetch_error_msg = f'Could not fetch activity {rider_activity["activity_id"]}, for rider {rider_activity["rider_id"]}.'
+            return self._download_rider_activity_pages(link_fetch_error_msg, prev_activity, i,
+                                                       **dict(rider_activity=rider_activity,
+                                                              overwrite_mode=overwrite_mode))
         info_msg = f'Fetching {rider_activity["option_type"]} activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}'
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         files = ACTIVITY_ANALYSIS_FILES[rider_activity["option_type"]]
@@ -345,7 +348,6 @@ class LinksDownloader(Browser):
             return response
         return self.download_analysis_pages_loop(prev_activity, i, **dict(rider_activity=rider_activity,
                                                                           overwrite_mode=overwrite_mode))
-
 
     @driver_wrapper
     def download_activity_analysis_pages(self, overwrite_mode=None):
