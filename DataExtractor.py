@@ -362,6 +362,7 @@ class DataExtractor(Browser):
             if self._element_doesnt_exists((len(div.contents) == 0), warn_msg, *args):
                 return
             table = div.find('table')
+            device = div.find('div',attrs={'class':'device spans8'})
             if table is not None:
                 theads = table.find('thead').find_all('th')
                 for tr in table.find_all('tr')[1:]:
@@ -396,9 +397,13 @@ class DataExtractor(Browser):
                             raise ValueError(
                                 f'Unknown structure in the overview page of activity {activity_id}, cyclist {rider_id}, are wrong.')
                         j += 1
-            else:
+            elif device is not None:
                 data["Device"] = div.find('div').find('div').text.strip() if all(
                     [e is not None for e in [div.find('div'), div.find('div').find('div')]]) else None
+            elif 'Perceived Exertion' in div.text:
+                data["Perceived Exertion"] =div.find('span').text
+            else:
+                raise ValueError(f"Unfamiliar div type, activity {activity_id}, cyclist {rider_id}")
         return data
 
     def _handle_overview_table(self, overview_soup, data, file, activity_link, rider_id, activity_id, activity_type):

@@ -36,6 +36,9 @@ ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weigh
                             'Winter Sport', 'Backcountry Ski', 'Crossfit', 'Walk', 'E-Bike Ride', 'Stand Up Paddling',
                             'Rowing', 'Treadmill workout', 'Hike']
 
+WORKOUTS_STRAVA_COLS = ['Date','Duration','Location', 'Moving Time','MaxSpeed','Perceived Exertion',
+                        'Relative Effort', 'Distance', 'Elevation', 'AvgCadence', 'Temperature', 'AvgHeart Rate', 'Intensity', 'Historic Relative Effort', 'Elapsed Time', 'Calories', 'AvgSpeed', 'MaxCadence', 'AvgPower', 'Massive Relative Effort', 'MaxPower', 'Tough Relative Effort', 'Energy Output', 'Weighted Avg Power', 'Total Work', 'Device', 'Training Load', 'MaxHeart Rate', 'Estimated Avg Power', 'Speed']
+
 # TODO: ask robert -   'E-Bike Ride'
 
 USERS = [r'kev_backup@yahoo.com',
