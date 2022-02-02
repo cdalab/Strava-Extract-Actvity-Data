@@ -147,16 +147,23 @@ class LinksDownloader(Browser):
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
         if activity_type == 'Indoor Cycling':
-            self.browser.find_element(By.PARTIAL_LINK_TEXT, 'Overview').click()
-            self._is_valid_html()
-            view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
-            stacked_chart = WebDriverWait(view, 3).until(EC.visibility_of_element_located((By.ID, "stacked-chart")))
-            result = self._wait_for_chart(stacked_chart, rider_activity)
-            if isinstance(result, Exception):
+            overview_btn_lookup = self.browser.find_elements(By.PARTIAL_LINK_TEXT, 'Overview')
+            if len(overview_btn_lookup) > 0:
+                overview_btn_lookup[0].click()
+                self._is_valid_html()
+                view = WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.ID, "view")))
+                stacked_chart = WebDriverWait(view, 3).until(EC.visibility_of_element_located((By.ID, "stacked-chart")))
+                result = self._wait_for_chart(stacked_chart, rider_activity)
+                if isinstance(result, Exception):
+                    log(f'Cycling Indoor analysis activity: {rider_activity} ' +
+                        f'is not valid, html saved anyway. error details: {result}.',
+                        'WARNING', id=self.id)
+                else:
+                    WebDriverWait(stacked_chart, 3).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "label-box")))
+            else:
                 log(f'Cycling Indoor analysis activity: {rider_activity} ' +
-                    f'is not valid, html saved anyway. error details: {result}.',
+                    f'is not valid, partial data, html saved anyway.',
                     'WARNING', id=self.id)
-            WebDriverWait(stacked_chart, 3).until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "label-box")))
 
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         info_msg = f'Fetching activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}'
