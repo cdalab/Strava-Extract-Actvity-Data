@@ -362,7 +362,8 @@ class DataExtractor(Browser):
             if self._element_doesnt_exists((len(div.contents) == 0), warn_msg, *args):
                 return
             table = div.find('table')
-            device = div.find('div',attrs={'class':'device spans8'})
+            device = div.find('div', attrs={'class': 'device spans8'})
+            weather_div = div.find('div', attrs={'class': 'section weather'})
             if table is not None:
                 theads = table.find('thead').find_all('th')
                 for tr in table.find_all('tr')[1:]:
@@ -401,7 +402,18 @@ class DataExtractor(Browser):
                 data["Device"] = div.find('div').find('div').text.strip() if all(
                     [e is not None for e in [div.find('div'), div.find('div').find('div')]]) else None
             elif 'Perceived Exertion' in div.text:
-                data["Perceived Exertion"] =div.find('span').text
+                data["Perceived Exertion"] = div.find('span').text
+            elif weather_div is not None:
+                stats = weather_div.find_all('div', attrs={'class': 'weather-stat'})
+                for stat in stats:
+                    label, value = stat.find('div', attrs={'class': 'weather-label'}).text.strip(), stat.find('div',
+                                                                                                              attrs={
+                                                                                                                  'class': 'weather-value'})
+                    if value is not None:
+                        data[label] = value.text.strip()
+                    else:
+                        data['Weather'] = label
+
             else:
                 raise ValueError(f"Unfamiliar div type, activity {activity_id}, cyclist {rider_id}")
         return data
@@ -427,7 +439,7 @@ class DataExtractor(Browser):
         return data
 
     def _handle_date_and_location(self, overview_soup, data, file, activity_link, rider_id, activity_id, activity_type):
-        args = (file, activity_link, rider_id, activity_id,activity_type)
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         overview_details_container = overview_soup.find('div', attrs={'class': 'spans8 activity-summary mt-md mb-md'})
         overview_details = overview_details_container.find('div', attrs={'class': 'details'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - date and location don't exist."
@@ -452,6 +464,7 @@ class DataExtractor(Browser):
             if data is not None:
                 data = json.dumps(data)
                 append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
+                                  # TODO adding 'activity_type':activity_type
                                   columns=['rider_id', 'activity_id', 'data'])
                 with open('link/processed_analysis_files.txt', 'a+') as f:
                     file_path = f"{self.html_files_path}/{rider_id}/{activity_id}/{file}"
@@ -466,8 +479,8 @@ class DataExtractor(Browser):
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
         pass
 
-    def _section_and_header_handler(self, soup, file, activity_link, rider_id, activity_id,activity_type):
-        args = (file, activity_link, rider_id, activity_id,activity_type)
+    def _section_and_header_handler(self, soup, file, activity_link, rider_id, activity_id, activity_type):
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - section part is missing."
         section = soup.find('div', attrs={'id': 'view'}).find('section', attrs={'class': 'with-border'})
         if self._element_doesnt_exists(((section is None) or (len(section.contents) == 0)), warn_msg, *args):
@@ -486,8 +499,8 @@ class DataExtractor(Browser):
                 return
         return section
 
-    def _handle_table_page(self, soup, file, activity_link, rider_id, activity_id,activity_type):
-        args = (file, activity_link, rider_id, activity_id,activity_type)
+    def _handle_table_page(self, soup, file, activity_link, rider_id, activity_id, activity_type):
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         section = self._section_and_header_handler(soup, *args)
         if section is None:
             return
@@ -516,8 +529,8 @@ class DataExtractor(Browser):
         self._handle_analysis_stacked_chart(soup, *args)
         self._handle_elevation_chart(soup, *args)
 
-    def _handle_base_chart_and_svg(self, soup, file, activity_link, rider_id, activity_id,activity_type):
-        args = (file, activity_link, rider_id, activity_id,activity_type)
+    def _handle_base_chart_and_svg(self, soup, file, activity_link, rider_id, activity_id, activity_type):
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         base_chart = soup.find('div', attrs={'class': 'base-chart'})
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - base chart is missing."
         if self._element_doesnt_exists(((base_chart is None) or (len(base_chart.contents) == 0)), warn_msg, *args):
@@ -528,9 +541,9 @@ class DataExtractor(Browser):
             return
         return svg
 
-    def _handle_analysis_stacked_chart(self, soup, file, activity_link, rider_id, activity_id,activity_type):
+    def _handle_analysis_stacked_chart(self, soup, file, activity_link, rider_id, activity_id, activity_type):
         stacked_chart = soup.find('div', attrs={'id': 'stacked-chart'})
-        args = (file, activity_link, rider_id, activity_id,activity_type)
+        args = (file, activity_link, rider_id, activity_id, activity_type)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - stacked chart is missing."
         if self._element_doesnt_exists(stacked_chart is None, warn_msg, *args):
             return
@@ -565,7 +578,7 @@ class DataExtractor(Browser):
                                     'activity_type': activity_type}
             append_row_to_csv(DOWNLOAD_AGAIN_FILE_PATH, activity_to_download)
 
-    def _handle_elevation_chart(self, soup, file, activity_link, rider_id, activity_id,activity_type):
+    def _handle_elevation_chart(self, soup, file, activity_link, rider_id, activity_id, activity_type):
         elevation_chart = soup.find('div', attrs={'id': 'elevation-chart'})
         args = (file, activity_link, rider_id, activity_id, activity_type)
         warn_msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again - stacked chart is missing."
