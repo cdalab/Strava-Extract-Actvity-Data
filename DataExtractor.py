@@ -363,7 +363,7 @@ class DataExtractor(Browser):
                 return
             table = div.find('table')
             device = div.find('div', attrs={'class': 'device spans8'})
-            weather_div = div.find('div', attrs={'class': 'section weather'})
+            weather_div = div.select('div[class*="weather"]')
             if table is not None:
                 theads = table.find('thead').find_all('th')
                 for tr in table.find_all('tr')[1:]:
@@ -403,14 +403,14 @@ class DataExtractor(Browser):
                     [e is not None for e in [div.find('div'), div.find('div').find('div')]]) else None
             elif 'Perceived Exertion' in div.text:
                 data["Perceived Exertion"] = div.find('span').text
-            elif weather_div is not None:
-                stats = weather_div.find_all('div', attrs={'class': 'weather-stat'})
+            elif len(weather_div) != 0:
+                stats = div.select('div[class="weather-stat"]')
                 for stat in stats:
                     label, value = stat.find('div', attrs={'class': 'weather-label'}).text.strip(), stat.find('div',
                                                                                                               attrs={
                                                                                                                   'class': 'weather-value'})
                     if value is not None:
-                        data[label] = value.text.strip()
+                        data[label] = value.text.split()[0].strip()
                     else:
                         data['Weather'] = label
 
