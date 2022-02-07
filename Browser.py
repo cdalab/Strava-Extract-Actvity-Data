@@ -59,8 +59,8 @@ class Browser:
     def browser_error_log_validation(self):
         for err in self.browser.get_log('browser'):
             if err['source'] == 'network':
-                if '429' in err['message']:
-                    err_url = err['message'].split(' - ')[0]
+                err_url = err['message'].split(' - ')[0]
+                if '429' in err['message'].replace(err_url,''):
                     if 'strava' in err_url:
                         self.browser.get(err_url)
                         break
@@ -124,7 +124,7 @@ class Browser:
         '''
 
         options = webdriver.ChromeOptions()
-        options.add_argument('headless')
+        # options.add_argument('headless')
         # options.add_argument('--no-sandbox')
         options.add_argument('log-level=1')
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
