@@ -42,7 +42,7 @@ class LinksDownloader(Browser):
     @timeout_wrapper
     def _download_rider_page(self, i, rider, overwrite_mode=None):
         info_msg = f'Fetching page for cyclist {rider["strava_id"]}, {i} / {len(self.riders) - 1}'
-        self.browser.get(rider['strava_link'])
+        self.browser.get(rider['strava_link'].replace('//','/'))
         response = self._is_valid_html()
         if response is not None:
             return response
@@ -76,7 +76,7 @@ class LinksDownloader(Browser):
     @timeout_wrapper
     def _download_rider_time_interval_page(self, prev_interval_range, i,
                                            rider_time_interval, overwrite_mode=None):
-        self.browser.get(rider_time_interval['time_interval_link'])
+        self.browser.get(rider_time_interval['time_interval_link'].replace('//','/'))
         response = self._is_valid_html()
         if response is not None:
             return response
@@ -123,7 +123,7 @@ class LinksDownloader(Browser):
 
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
-        activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'
+        activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'.replace('//','/')
         self.browser.get(activity_url)
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         response = self._is_valid_html()
@@ -348,7 +348,7 @@ class LinksDownloader(Browser):
 
     @timeout_wrapper
     def _download_rider_activity_analysis_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
-        self.browser.get(rider_activity["activity_option_link"])
+        self.browser.get(rider_activity["activity_option_link"].replace('//','/'))
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         response = self._is_valid_html()
         if response is not None:

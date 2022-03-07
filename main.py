@@ -450,6 +450,7 @@ if __name__ == '__main__':
         csv_file_path = args['input_file']
         riders = args['riders']
         overwrite_mode = args['overwrite_mode']
+        data_types = args['data_types']
         if csv_file_path is None:
             csv_file_path = 'link/activity_analysis_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
