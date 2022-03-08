@@ -27,11 +27,11 @@ class LinksDownloader(Browser):
 
     def _get_interval_html_file_and_dir(self, strava_id, link):
         url_param_dict = dict(parse_qsl(link.split('?')[1]))
-        year_offset = url_param_dict['year_offset']
+        # year_offset = url_param_dict['year_offset']
         interval = url_param_dict['interval']
         interval_type = url_param_dict['interval_type']
         chart_type = url_param_dict['chart_type']
-        html_file_name = f"{interval}_{interval_type}_{chart_type}_{year_offset}"
+        html_file_name = f"{interval}_{interval_type}_{chart_type}"
         html_file_dir = f"{self.html_files_path}/{strava_id}"
         return html_file_dir, html_file_name
 

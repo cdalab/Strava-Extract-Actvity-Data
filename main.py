@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from LinksDownloader import LinksDownloader
 from DataExtractor import DataExtractor
-from utils import log, setting_up
+from utils import log, setting_up, check_int
 from consts import *
 
 
@@ -520,6 +520,34 @@ if __name__ == '__main__':
         except:
             log(f'Problem in restore_activities_from_backup function, '
                 f'args: {html_files_path, low_limit_index, high_limit_index, riders, data_types}',
+                'ERROR', id=id)
+
+    elif command == 'change_time_interval_file_names':
+        # run example : main.py -c change_time_interval_file_names -if link/riders_time_interval_pages
+
+        html_files_path = args['input_file']
+        try:
+            riders_pages = os.listdir(html_files_path)
+            i=1
+            for rider in riders_pages:
+                print(f"Rider\t{rider}\t{i}/{len(riders_pages)}")
+                rider_dir_path = f"{html_files_path}/{rider}"
+                if os.path.isdir(rider_dir_path):
+                    for html in os.listdir(rider_dir_path):
+                        time_interval_path = f"{rider_dir_path}/{html}"
+                        time_interval_path_parts = time_interval_path.replace('.html','').split('_')
+                        last_part = time_interval_path_parts[-1]
+                        if not check_int(last_part):
+                            continue
+                        time_interval_path_new = f"{'_'.join(time_interval_path_parts[:-1])}.html"
+                        if os.path.exists(time_interval_path_new):
+                            os.remove(time_interval_path)
+                        else:
+                            os.rename(time_interval_path,time_interval_path_new)
+                i+=1
+
+        except:
+            log(f'Problem in change_time_interval_file_names function',
                 'ERROR', id=id)
 
     # TODO: download the other pages of activities
