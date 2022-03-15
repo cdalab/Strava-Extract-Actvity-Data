@@ -209,7 +209,7 @@ if __name__ == '__main__':
         users = USERS
     if command == 'download_rider_pages':
         # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -of link/riders_time_interval_pages -t 2
-        # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -li 10 -hi 100
+        # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -li 10 -hi 100 -o 1
         riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         urls_file_path = args['input_file']
