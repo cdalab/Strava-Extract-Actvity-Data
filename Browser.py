@@ -8,7 +8,7 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time as t
-from utils import log, timeout_wrapper
+from utils import log, timeout_wrapper, append_row_to_csv
 from itertools import cycle
 import re
 
@@ -40,7 +40,7 @@ class Browser:
             WebDriverWait(self.browser, 2).until(
                 EC.presence_of_element_located((By.XPATH, metric_selection_xpath))).click()  # SELECT METRIC
             WebDriverWait(self.browser, 2).until(
-                EC.presence_of_element_located((By.ID, 'submit-button'))).send_keys(Keys.ENTER) # SAVE
+                EC.presence_of_element_located((By.ID, 'submit-button'))).send_keys(Keys.ENTER)  # SAVE
             raise ValueError(f"WRONG METRICS (KGs & KMs) - {self.curr_user}")
 
         # validate metrics: Celsius
@@ -52,15 +52,14 @@ class Browser:
             WebDriverWait(self.browser, 2).until(
                 EC.presence_of_element_located((By.XPATH, metric_selection_xpath))).click()  # SELECT METRIC
             WebDriverWait(self.browser, 2).until(
-                EC.presence_of_element_located((By.ID, 'submit-button'))).send_keys(Keys.ENTER) # SAVE
+                EC.presence_of_element_located((By.ID, 'submit-button'))).send_keys(Keys.ENTER)  # SAVE
             raise ValueError(f"WRONG METRICS (Celsius) - {self.curr_user}")
-
 
     def browser_error_log_validation(self):
         for err in self.browser.get_log('browser'):
             if err['source'] == 'network':
                 err_url = err['message'].split(' - ')[0]
-                if '429' in err['message'].replace(err_url,''):
+                if '429' in err['message'].replace(err_url, ''):
                     if 'strava' in err_url:
                         self.browser.get(err_url)
                         break
@@ -76,8 +75,6 @@ class Browser:
             if too_many_requests_error is None:
                 self.browser.get(current_url)
                 break
-
-
 
     def _is_valid_html(self):
         current_url = self.browser.current_url
@@ -96,12 +93,18 @@ class Browser:
         if error_500 is not None:
             log(f"Page is not available, url {current_url}", "WARNING", id=self.id)
             return 'error_500'
+        private_account = soup.find(lambda tag: (tag.name == "h3") and ("This Account Is Private" in tag.text))
+        if private_account is not None:
+            log(f"Page is not available, private_account, url {current_url}", "WARNING", id=self.id)
+            with open('log/cyclist_private_accounts.txt', 'a+') as f:
+                f.write(f'{self.browser.current_url}\n')
+            return 'private_account'
         error_unknown = soup.find(lambda tag: (tag.name == "div") and ('id' in tag.attrs) and ("error" in tag['id']))
         if error_unknown is not None:
             log(f"Unknown Error in page, url {current_url}", "WARNING", id=self.id)
             return 'error_unknown'
 
-    def _switch_account(self,url_last_session):
+    def _switch_account(self, url_last_session):
         '''
         Switch logged-in user
         '''
@@ -115,8 +118,6 @@ class Browser:
         '''
         self.curr_user = next(self.user_pool)
         return self.curr_user
-
-
 
     def _open_driver(self):
         '''
