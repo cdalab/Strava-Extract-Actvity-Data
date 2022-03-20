@@ -135,7 +135,8 @@ def error_handler(function, params, id=''):
     df['function'] = function
     if not os.path.exists(error_df_path):
         df.to_csv(error_df_path, index=False, header=True)
-    df.to_csv(error_df_path, mode='a', index=False, header=False)
+    else:
+        df.to_csv(error_df_path, mode='a', index=False, header=False)
 
 
 def get_overwrite_pred(dir, files, overwrite_mode):
