@@ -50,7 +50,7 @@ class LinksDownloader(Browser):
         intervals_graph = WebDriverWait(self.browser, 2).until(
             EC.presence_of_element_located((By.ID, "interval-graph")))
         WebDriverWait(intervals_graph, 2).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "options")))
+            EC.presence_of_element_located((By.CLASS_NAME, "selection")))
         week_btn = WebDriverWait(intervals_graph, 2).until(
             EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "Weekly")))
         first_link = week_btn.get_attribute('href')
