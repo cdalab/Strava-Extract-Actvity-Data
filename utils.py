@@ -41,7 +41,7 @@ def setting_up():
         high_limit_index=args.high_limit_index,
         riders_low_index=args.riders_low_index,
         riders_high_index=args.riders_high_index,
-        riders=json.loads(args.riders) if args.riders is not None else None,
+        riders=args.riders,
         num_of_threads=args.num_of_threads,
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
