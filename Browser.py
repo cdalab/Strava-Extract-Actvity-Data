@@ -125,7 +125,7 @@ class Browser:
         '''
 
         options = webdriver.ChromeOptions()
-        # options.add_argument('headless')
+        options.add_argument('headless')
         options.add_argument('log-level=1')
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
