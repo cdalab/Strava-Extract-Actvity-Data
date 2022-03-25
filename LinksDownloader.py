@@ -77,6 +77,11 @@ class LinksDownloader(Browser):
     @timeout_wrapper
     def _download_rider_time_interval_page(self, prev_interval_range, i,
                                            rider_time_interval, overwrite_mode=None):
+        html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
+                                                                             rider_time_interval[
+                                                                                 'time_interval_link'])
+        if is_file_handled(f'{html_file_dir}/{html_file_name}'):
+            return prev_interval_range
         self.browser.get(rider_time_interval['time_interval_link'].replace('//','/'))
         response = self._is_valid_html()
         if response is not None:
@@ -89,9 +94,6 @@ class LinksDownloader(Browser):
             raise ValueError(f'The relevant interval page has not loaded yet')
         feed = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "feed")))
         num_of_activities = len(feed.find_elements(By.XPATH, "./*"))
-        html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
-                                                                             rider_time_interval[
-                                                                                 'time_interval_link'])
         if num_of_activities > 0:
             WebDriverWait(self.browser, 5).until(
                 EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
@@ -127,6 +129,8 @@ class LinksDownloader(Browser):
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
         activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'.replace('//','/')
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
+        if is_file_handled(f"{html_file_dir}\overview"):
+            return prev_activity
         self.browser.get(activity_url)
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         response = self._is_valid_html()
