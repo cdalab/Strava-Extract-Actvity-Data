@@ -141,10 +141,21 @@ def error_handler(function, params, id=''):
 
 def get_overwrite_pred(dir, files, overwrite_mode):
     overwrite = (overwrite_mode is not None) and overwrite_mode
-    files_exists = True
+    files_exist = True
     for file in files:
-        files_exists = files_exists and os.path.exists(f"{dir}/{file}.html")
-    return overwrite or (not files_exists)
+        file_path = f"{dir}/{file}.html"
+        file_exists = os.path.exists(file_path)
+        if file_exists:
+            write_to_file_handler(file_path)
+        files_exist = files_exist and file_exists
+
+
+    return overwrite or (not files_exist)
+
+
+def write_to_file_handler(file_path):
+    with open(FILE_HANDLER_PATH,'a+') as f:
+        f.write(f'{file_path}\n')
 
 
 def download_files_wrapper(func):

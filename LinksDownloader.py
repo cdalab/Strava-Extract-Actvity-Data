@@ -58,6 +58,7 @@ class LinksDownloader(Browser):
                                                                              first_link)
         wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
         self._rider_page_general_handler(*wrapper_args, html_file_name)
+        write_to_file_handler(f'{html_file_dir}/{html_file_name}')
 
     @driver_wrapper
     def download_rider_pages(self, overwrite_mode=None):
@@ -88,15 +89,16 @@ class LinksDownloader(Browser):
             raise ValueError(f'The relevant interval page has not loaded yet')
         feed = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "feed")))
         num_of_activities = len(feed.find_elements(By.XPATH, "./*"))
+        html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
+                                                                             rider_time_interval[
+                                                                                 'time_interval_link'])
         if num_of_activities > 0:
             WebDriverWait(self.browser, 5).until(
                 EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
-            html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
-                                                                                 rider_time_interval[
-                                                                                     'time_interval_link'])
             info_msg = f'Fetching page for cyclist {rider_time_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}'
             wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
             self._rider_page_general_handler(*wrapper_args, html_file_name)
+        write_to_file_handler(f'{html_file_dir}/{html_file_name}')
         return current_interval_range
 
     @driver_wrapper
@@ -124,6 +126,7 @@ class LinksDownloader(Browser):
     @timeout_wrapper
     def _download_rider_activity_pages(self, prev_activity, i, rider_activity, overwrite_mode=None):
         activity_url = f'{rider_activity["activity_link"].replace("/overview", "")}/overview'.replace('//','/')
+        html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         self.browser.get(activity_url)
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         response = self._is_valid_html()
@@ -141,8 +144,10 @@ class LinksDownloader(Browser):
         activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
         save_activity_type(rider_activity, activity_type, self.browser.title)
         if activity_type in ACTIVITY_TYPES_TO_IGNORE:
+            write_to_file_handler(f"{html_file_dir}\overview")
             return current_activity
         if 'Ride' not in self.browser.title:
+            write_to_file_handler(f"{html_file_dir}\overview")
             return current_activity
         WebDriverWait(heading, 7).until(
             EC.visibility_of_all_elements_located((By.TAG_NAME, "li")))
@@ -165,10 +170,10 @@ class LinksDownloader(Browser):
                     f'is not valid, partial data, html saved anyway.',
                     'WARNING', id=self.id)
 
-        html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         info_msg = f'Fetching activity page for cyclist {rider_activity["rider_id"]}, activity {rider_activity["activity_id"]}, {i} / {len(self.riders) - 1}'
         wrapper_args = (info_msg, html_file_dir, ["overview"], overwrite_mode)
         self._rider_page_general_handler(*wrapper_args, "overview")
+        write_to_file_handler(f"{html_file_dir}\overview")
         return current_activity
 
     @driver_wrapper
@@ -318,6 +323,8 @@ class LinksDownloader(Browser):
         # /analysis
         if section_id == 'basic-analysis':
             self._handle_analysis_page_case(*wrapper_args, rider_activity, data_container)
+            for f in files:
+                write_to_file_handler(f"{html_file_dir}/{f}")
             return current_activity
         header = WebDriverWait(data_container, 2).until(EC.visibility_of_element_located((By.XPATH, 'header')))
         WebDriverWait(header, 2).until(EC.visibility_of_all_elements_located((By.TAG_NAME, 'li')))
@@ -327,16 +334,22 @@ class LinksDownloader(Browser):
         # /power-curve, /est-power-curve
         if chart_header.find('Power Curve') > -1:
             self._handle_power_charts_page(*wrapper_args, rider_activity, chart_container)
+            for f in files:
+                write_to_file_handler(f"{html_file_dir}/{f}")
             return current_activity
 
         # /power-distribution , /est-power-distribution
         if chart_header.find('Power Distribution') > -1:
             self._handle_power_distribution_page(*wrapper_args, rider_activity, chart_container)
+            for f in files:
+                write_to_file_handler(f"{html_file_dir}/{f}")
             return current_activity
 
         # /zone-distribution ,/heartrate
         if (chart_header.find('Zone Distribution') > -1) or (chart_header.find('Heart Rate') > -1):
             self._handle_table_page(*wrapper_args, rider_activity, chart_container)
+            for f in files:
+                write_to_file_handler(f"{html_file_dir}/{f}")
             return current_activity
 
         # unfamiliar chart header
@@ -344,6 +357,7 @@ class LinksDownloader(Browser):
             id=self.id)
         wrapper_args = (info_msg, html_file_dir, [f"{rider_activity['option_type'][1:]}_unknown"], overwrite_mode)
         self._rider_page_general_handler(*wrapper_args, f"{rider_activity['option_type'][1:]}_unknown")
+        write_to_file_handler(f"{html_file_dir}/{rider_activity['option_type'][1:]}_unknown")
         return current_activity
 
     @timeout_wrapper

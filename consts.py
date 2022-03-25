@@ -4,6 +4,7 @@ LOGGED_OUT_SLEEP = 15 * 60  # 15 minutes
 LOGIN_URL = f'{BASE_STRAVA_URL}login'
 ONBOARD_URL = f'{BASE_STRAVA_URL}onboarding'
 DASHBOARD_URL = f'{BASE_STRAVA_URL}dashboard'
+FILE_HANDLER_PATH = 'link/file_handler.txt'
 
 ERROR_DEFAULT_MSG = 'Failed while trying to login to STRAVA.'
 DEBUG = True
