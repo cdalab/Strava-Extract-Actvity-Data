@@ -110,7 +110,7 @@ class LinksDownloader(Browser):
                 html_file_dir, html_file_name = self._get_interval_html_file_and_dir(time_interval['rider_id'],
                                                                                      time_interval[
                                                                                          'time_interval_link'])
-                if get_overwrite_pred(html_file_dir, html_file_name, overwrite_mode):
+                if get_overwrite_pred(html_file_dir, [html_file_name], overwrite_mode):
                     link_fetch_error_msg = f'Could not fetch time interval {time_interval["time_interval_link"]}, for rider {time_interval["rider_id"]}.'
                     prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        prev_year_interval_range, i,
@@ -180,7 +180,7 @@ class LinksDownloader(Browser):
             for idx, activity in self.riders.iterrows():
                 html_file_dir = f"{self.html_files_path}/{activity['rider_id']}/{activity['activity_id']}"
 
-                if get_overwrite_pred(html_file_dir, "overview", overwrite_mode):
+                if get_overwrite_pred(html_file_dir, ["overview"], overwrite_mode):
                     # t.sleep(random.random())
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["rider_id"]}.'
                     prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
