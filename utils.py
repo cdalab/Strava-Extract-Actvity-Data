@@ -158,6 +158,8 @@ def write_to_file_handler(file_path):
         f.write(f'{file_path}\n')
 
 def is_file_handled(file_path):
+    if not os.path.exists(FILE_HANDLER_PATH):
+        return False
     with open(FILE_HANDLER_PATH) as f:
         file_paths = [p.replace('\n','') for p in f.readlines()]
         return file_path in file_paths
