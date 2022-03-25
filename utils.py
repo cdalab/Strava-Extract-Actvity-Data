@@ -145,7 +145,7 @@ def get_overwrite_pred(dir, files, overwrite_mode):
     for file in files:
         file_path = f"{dir}/{file}.html"
         file_exists = os.path.exists(file_path)
-        if file_exists:
+        if file_exists and (not is_file_handled(file_path)):
             write_to_file_handler(file_path)
         files_exist = files_exist and file_exists
 
