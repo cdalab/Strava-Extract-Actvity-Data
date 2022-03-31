@@ -190,7 +190,11 @@ def timeout_wrapper(func):
                     parent_dir = 'log/problematic_htmls'
                     file_name = datetime.now().strftime("%Y-%m-%d %H.%M.%S")
                     Path(parent_dir).mkdir(parents=True, exist_ok=True)
-                    write_to_html(parent_dir, file_name, self.browser.page_source)
+                    try:
+                        write_to_html(parent_dir, file_name, self.browser.page_source)
+                    except:
+                        log(f'Failed save error html file: {file_name}','WARNING',id=self.id)
+                        t.sleep(5)
                     log(msg, 'ERROR', id=self.id)
                     error_handler(func.__name__, params, id=self.id)
 
