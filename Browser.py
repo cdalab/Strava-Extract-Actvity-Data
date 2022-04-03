@@ -123,7 +123,7 @@ class Browser:
         '''
         Initialize selenium driver, then tries to login to STRAVA
         '''
-
+        
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
         options.add_argument('log-level=1')
@@ -137,20 +137,32 @@ class Browser:
         password.send_keys(PASSWORD)
         WebDriverWait(self.browser, 2).until(EC.element_to_be_clickable((By.ID, "login-button"))).click()
         current_url = self.browser.current_url
+        
+        
         if current_url == LOGIN_URL:
             log(f"IP BLOCKED - waiting for {LOGGED_OUT_SLEEP} seconds.", 'WARNING', id=self.id)
             self._close_driver()
             t.sleep(LOGGED_OUT_SLEEP)
             self._open_driver()
-
-        elif (not current_url == ONBOARD_URL) and (not current_url == DASHBOARD_URL):
-            log(f"BAD ACCOUNT {user} {current_url}: SWITCHING ACCOUNT", 'WARNING', id=self.id)
-            self._close_driver()
-            self._open_driver()
-
         else:
-            log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
-            return self.browser, user
+            new_user = False
+            while current_url in (WELCOME_URL, TERMS_OF_SERVICE_URL, PRIVACY_POLICY_URL, HEALTH_URL, ALL_SET_URL):
+                new_user = True
+                WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.CLASS_NAME, "btn-primary"))).click()
+                current_url = self.browser.current_url
+                
+                
+            if (not current_url == ONBOARD_URL) and (not current_url == DASHBOARD_URL):
+                log(f"BAD ACCOUNT {user} {current_url}: SWITCHING ACCOUNT", id=self.id)
+                self._close_driver()
+                self._open_driver()
+
+            else:
+                if new_user:
+                    log(f'LOGGED IN WITH NEW USER {user}, {self.browser.current_url}', id=self.id)
+                else:
+                    log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
+                return self.browser, user
 
     def _close_driver(self):
         self.browser.close()
