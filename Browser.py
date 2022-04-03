@@ -145,9 +145,9 @@ class Browser:
             t.sleep(LOGGED_OUT_SLEEP)
             self._open_driver()
         else:
-            NEW_USER = False
+            new_user = False
             while current_url in (WELCOME_URL, TERMS_OF_SERVICE_URL, PRIVACY_POLICY_URL, HEALTH_URL, ALL_SET_URL):
-                NEW_USER = True
+                new_user = True
                 WebDriverWait(self.browser, 2).until(EC.visibility_of_element_located((By.CLASS_NAME, "btn-primary"))).click()
                 current_url = self.browser.current_url
                 
@@ -158,7 +158,7 @@ class Browser:
                 self._open_driver()
 
             else:
-                if NEW_USER:
+                if new_user:
                     log(f'LOGGED IN WITH NEW USER {user}, {self.browser.current_url}', id=self.id)
                 else:
                     log(f'LOGGED IN WITH {user}, {self.browser.current_url}', id=self.id)
