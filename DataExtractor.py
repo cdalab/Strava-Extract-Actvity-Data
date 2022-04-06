@@ -22,13 +22,13 @@ class DataExtractor(Browser):
 
     def _fetch_rider_year_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
-            processed_files = set()
-            if os.path.exists('link/processed_time_intervals_files.txt'):
-                with open('link/processed_time_intervals_files.txt') as f:
-                    processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             for rider_html_file in os.listdir(rider_dir_path):
-                if f'{rider_dir_path}/{rider_html_file}\n' in processed_files:
+                if is_file_handled(f'{rider_dir_path}/{rider_html_file}',MAIN_PAGE_HANDLER_PATH):
+                    continue
+                if is_file_handled(f'{rider_dir_path}/{rider_html_file}',YEAR_TIME_INTERVAL_HANDLER_PATH):
+                    continue
+                if is_file_handled(f'{rider_dir_path}/{rider_html_file}',WEEK_TIME_INTERVAL_HANDLER_PATH):
                     continue
                 html_content = read_from_html(rider_dir_path, rider_html_file)
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
@@ -36,8 +36,7 @@ class DataExtractor(Browser):
                 option_list = options_soup.find('ul', 'options').find_all('a')
                 for time_interval in option_list:
                     self._handle_time_interval_page(rider_id, time_interval, csv_file_path, start_week, end_week)
-                with open('link/processed_time_intervals_files.txt', 'a+') as f:
-                    f.write(f'{rider_dir_path}/{rider_html_file}\n')
+                write_to_file_handler(f'{rider_dir_path}/{rider_html_file}',MAIN_PAGE_HANDLER_PATH)
 
         except:
             log(f'Could not fetch year interval links for rider {rider_id}.', 'ERROR', id=self.id)
@@ -76,25 +75,23 @@ class DataExtractor(Browser):
 
     def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_week, end_week):
         try:
-            processed_files = set()
-            if os.path.exists('link/processed_time_intervals_files.txt'):
-                with open('link/processed_time_intervals_files.txt') as f:
-                    processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_year_interval_files = os.listdir(rider_dir_path)
             i = 0
-            for year_interval_link in rider_year_interval_files:
-                if f'{rider_dir_path}/{year_interval_link}\n' in processed_files:
+            for year_interval_file in rider_year_interval_files:
+                if is_file_handled(f'{rider_dir_path}/{year_interval_file}', YEAR_TIME_INTERVAL_HANDLER_PATH):
                     continue
-                log(f'Fetching week interval links from file {year_interval_link}, {i} / {len(rider_year_interval_files) - 1}',
+                if is_file_handled(f'{rider_dir_path}/{year_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
+                    continue
+                log(f'Fetching week interval links from file {year_interval_file}, {i} / {len(rider_year_interval_files) - 1}',
                     id=self.id, debug=False)
-                html_content = read_from_html(rider_dir_path, year_interval_link)
+                html_content = read_from_html(rider_dir_path, year_interval_file)
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                 for week_interval in rider_intervals:
                     self._handle_time_interval_page(rider_id, week_interval, csv_file_path, start_week, end_week)
-                with open('link/processed_time_intervals_files.txt', 'a+') as f:
-                    f.write(f'{rider_dir_path}/{year_interval_link}\n')
+
+                write_to_file_handler(f'{rider_dir_path}/{year_interval_file}', YEAR_TIME_INTERVAL_HANDLER_PATH)
                 print_progress_bar(i + 1, len(rider_year_interval_files), prefix='Progress:', suffix='Complete',
                                    length=50)
                 i += 1
@@ -118,10 +115,12 @@ class DataExtractor(Browser):
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_week_interval_files = os.listdir(rider_dir_path)
             i = 0
-            for week_interval_link in rider_week_interval_files:
-                log(f'Fetching activity links from file {week_interval_link}, {i} / {len(rider_week_interval_files) - 1}',
+            for week_interval_file in rider_week_interval_files:
+                if is_file_handled(f'{rider_dir_path}/{week_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
+                    continue
+                log(f'Fetching activity links from file {week_interval_file}, {i} / {len(rider_week_interval_files) - 1}',
                     id=self.id, debug=False)
-                html_content = read_from_html(rider_dir_path, week_interval_link)
+                html_content = read_from_html(rider_dir_path, week_interval_file)
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 activities_soup = rider_soup.find('div', attrs={'class': 'feed'})
                 activities_list = activities_soup.find_all('div', attrs={
@@ -160,15 +159,18 @@ class DataExtractor(Browser):
                                    'activity_link': activity_link,
                                    'activity_id': activity_id}
                             append_row_to_csv(csv_file_path, row)
+
                     else:
                         if activity_card.find('div', attrs={'data-react-class': "Activity"}) is not None:
                             raise ValueError(
-                                f'Activity missed and should be recognized, interval file {week_interval_link}')
+                                f'Activity missed and should be recognized, interval file {week_interval_file}')
                         challenge = activity_card.find('div', attrs={'data-react-class': 'ChallengeJoin'})
                         join_club = activity_card.find('div', attrs={'data-react-class': "ClubJoin"})
                         if (challenge is None) and (join_club is None):
                             raise ValueError(
-                                f'Activity card type is not recognized, interval file {week_interval_link}')
+                                f'Activity card type is not recognized, interval file {week_interval_file}')
+                write_to_file_handler(f'{rider_dir_path}/{week_interval_file}',
+                                      WEEK_TIME_INTERVAL_HANDLER_PATH)
                 print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
                                    length=50)
                 i += 1

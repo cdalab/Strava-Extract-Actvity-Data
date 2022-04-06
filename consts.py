@@ -12,7 +12,13 @@ HEALTH_URL = f'{BASE_STRAVA_URL}athlete/consents/health'
 ALL_SET_URL = f'{BASE_STRAVA_URL}athlete/consents/all_set'
 # ==========================
 FILE_HANDLER_PATH = 'link/file_handler.txt'
+MAIN_PAGE_HANDLER_PATH = 'link/processed_rider_main_page_files.txt'
+YEAR_TIME_INTERVAL_HANDLER_PATH = 'link/processed_year_intervals_files.txt'
+WEEK_TIME_INTERVAL_HANDLER_PATH = 'link/processed_week_intervals_files.txt'
+ACTIVITY_HANDLER_PATH = 'link/processed_activity_files.txt'
 
+TIME_INTERVAL_DIR_PATH = 'link/riders_time_interval_pages'
+TIME_INTERVAL_HANDLERS_PATHS = [MAIN_PAGE_HANDLER_PATH,YEAR_TIME_INTERVAL_HANDLER_PATH,WEEK_TIME_INTERVAL_HANDLER_PATH]
 ERROR_DEFAULT_MSG = 'Failed while trying to login to STRAVA.'
 DEBUG = True
 LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}

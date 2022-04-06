@@ -149,20 +149,32 @@ def get_overwrite_pred(dir, files, overwrite_mode):
             write_to_file_handler(file_path)
         files_exist = files_exist and file_exists
 
-
     return overwrite or (not files_exist)
 
 
-def write_to_file_handler(file_path):
-    with open(FILE_HANDLER_PATH,'a+') as f:
+def write_to_file_handler(file_path, handler_path=FILE_HANDLER_PATH):
+    with open(handler_path, 'a+') as f:
         f.write(f'{file_path}\n')
 
-def is_file_handled(file_path):
-    if not os.path.exists(FILE_HANDLER_PATH):
+
+def is_file_handled(file_path, handler_path=FILE_HANDLER_PATH):
+    if not os.path.exists(handler_path):
         return False
-    with open(FILE_HANDLER_PATH) as f:
-        file_paths = [p.replace('\n','') for p in f.readlines()]
+    with open(handler_path) as f:
+        file_paths = [p.replace('\n', '') for p in f.readlines()]
         return file_path in file_paths
+
+
+def delete_line_from_file(path, line_to_delete):
+    if not os.path.exists(path):
+        return
+    with open(path, "r") as f:
+        lines = f.readlines()
+    if line_to_delete in lines:
+        with open(path, "w") as f:
+            for line in lines:
+                if line.strip("\n") != line_to_delete:
+                    f.write(line)
 
 
 def download_files_wrapper(func):
@@ -172,6 +184,15 @@ def download_files_wrapper(func):
             log(msg, id=self.id)
             for file in files_content.keys():
                 write_to_html(dir, file, files_content[file])
+                # Case of time interval page updated and re-extraction of links needed.
+                if TIME_INTERVAL_DIR_PATH in dir:
+                    # if the overwrite mode is on and the file to be downloaded is exists
+                    if (overwrite_mode is not None) and overwrite_mode:
+                        file_path = f"{dir}/{file}.html"
+                        file_exists = os.path.exists(file_path)
+                        if file_exists:
+                            for path in TIME_INTERVAL_HANDLERS_PATHS:
+                                delete_line_from_file(path, file_path)
 
     return wrap
 
@@ -193,7 +214,7 @@ def timeout_wrapper(func):
                     try:
                         write_to_html(parent_dir, file_name, self.browser.page_source)
                     except:
-                        log(f'Failed save error html file: {file_name}','WARNING',id=self.id)
+                        log(f'Failed save error html file: {file_name}', 'WARNING', id=self.id)
                         t.sleep(5)
                     log(msg, 'ERROR', id=self.id)
                     error_handler(func.__name__, params, id=self.id)

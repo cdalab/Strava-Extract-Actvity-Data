@@ -29,7 +29,7 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
     log("---- FINISHED DOWNLOADING RIDER PAGES ----", id=id)
 
 
-def extract_rider_year_interval_links(id, html_files_path='link/riders_time_interval_pages',
+def extract_rider_year_interval_links(id, html_files_path=TIME_INTERVAL_DIR_PATH,
                                       csv_file_path='link/riders_year_interval_links.csv', riders=None,
                                       low_limit_index=0, high_limit_index=None, week_range=None):
     log("---- START EXTRACTING YEAR INTERVAL LINKS ----", id=id)
@@ -53,7 +53,7 @@ def extract_rider_year_interval_links(id, html_files_path='link/riders_time_inte
 
 
 def download_time_interval_pages(id, csv_file_path,
-                                 html_files_path='link/riders_time_interval_pages', low_limit_index=0,
+                                 html_files_path=TIME_INTERVAL_DIR_PATH, low_limit_index=0,
                                  high_limit_index=None, overwrite_mode=None, riders=None, users=USERS):
     log("---- START DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
@@ -75,7 +75,7 @@ def download_time_interval_pages(id, csv_file_path,
     log("---- FINISHED DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
 
-def extract_rider_week_interval_links(id, html_files_path='link/riders_time_interval_pages',
+def extract_rider_week_interval_links(id, html_files_path=TIME_INTERVAL_DIR_PATH,
                                       csv_file_path='link/riders_week_interval_links.csv',
                                       low_limit_index=0, high_limit_index=None, riders=None, week_range=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
@@ -98,7 +98,7 @@ def extract_rider_week_interval_links(id, html_files_path='link/riders_time_inte
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
 
 
-def extract_rider_activity_links(id, html_files_path='link/riders_time_interval_pages',
+def extract_rider_activity_links(id, html_files_path=TIME_INTERVAL_DIR_PATH,
                                  csv_file_path='link/riders_activity_links.csv', low_limit_index=0,
                                  high_limit_index=None, riders=None):
     log("---- START EXTRACTING ACTIVITY LINKS ----", id=id)
@@ -233,18 +233,19 @@ if __name__ == '__main__':
     if users is None:
         users = USERS
     if command == 'download_rider_pages':
-        # run example : main.py -c download_rider_pages -if data/all_cyclists_strava_urls.csv -of link/riders_time_interval_pages -t 2
+        # run example : main.py -c download_rider_pages -if data/all_cyclists_strava_urls.csv-t 2
         # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -li 10 -hi 100 -o 1
         riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         urls_file_path = args['input_file']
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
-        html_files_path = args['output_file']
         overwrite_mode = args['overwrite_mode']
 
+        # Changed to be constant
+        html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = 'link/riders_time_interval_pages'
+            html_files_path = TIME_INTERVAL_DIR_PATH
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -262,18 +263,23 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_rider_year_interval_links':
-        # run example : main.py -c extract_rider_year_interval_links -if link/riders_time_interval_pages -of link/riders_year_interval_links -t 2
+        # run example : main.py -c extract_rider_year_interval_links  -of link/riders_year_interval_links.csv
         # run example : main.py -c extract_rider_year_interval_links -li 10 -hi 100
         riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
+
+        # Changed to be constant
         html_files_path = args['input_file']
+        if html_files_path is None:
+            html_files_path = TIME_INTERVAL_DIR_PATH
+
         csv_file_path = args['output_file']
         week_range = args['week_range']
         if csv_file_path is None:
             csv_file_path = f'link/riders_year_interval_links'
-        csv_file_path = f'{csv_file_path}.csv'
+        csv_file_path = f"{csv_file_path.replace('.csv','')}.csv"
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
@@ -290,18 +296,20 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'download_year_interval_pages':
-        # run example : main.py -c download_year_interval_pages -if link/riders_year_interval_links.csv -of link/riders_time_interval_pages -t 2
+        # run example : main.py -c download_year_interval_pages -if link/riders_year_interval_links.csv
         # run example : main.py -c download_year_interval_pages -li 10 -hi 100
 
         riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
-        html_files_path = args['output_file']
         csv_file_path = args['input_file']
         overwrite_mode = args['overwrite_mode']
-        if csv_file_path is None:
-            csv_file_path = 'link/riders_time_interval_pages'
+
+        # Changed to be constant
+        html_files_path = args['output_file']
+        if html_files_path is None:
+            html_files_path = TIME_INTERVAL_DIR_PATH
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -319,13 +327,18 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_rider_week_interval_links':
-        # run example : main.py -c extract_rider_week_interval_links -if link/riders_time_interval_pages -of link/riders_week_interval_links -r "data\riders tracking\111-10.txt"
+        # run example : main.py -c extract_rider_week_interval_links -of link/riders_week_interval_links -r "data\riders tracking\111-10.txt"
         # run example : main.py -c extract_rider_week_interval_links -li 10 -hi 100
 
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
+
+        # Changed to be constant
         html_files_path = args['input_file']
+        if html_files_path is None:
+            html_files_path = TIME_INTERVAL_DIR_PATH
+
         csv_file_path = args['output_file']
         riders = args['riders']
         week_range = args['week_range']
@@ -352,20 +365,25 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'download_week_interval_pages':
-        # run example : main.py -c download_week_interval_pages -if link/riders_week_interval_links.csv -of link/riders_time_interval_pages -t 2
+        # run example : main.py -c download_week_interval_pages -if link/riders_week_interval_links.csv -t 2
         # run example : main.py -c download_week_interval_pages -li 10 -hi 100
-        # "C:\Users\User\OneDrive - post.bgu.ac.il\STRAVA data\link\riders_time_interval_pages"
 
         riders = args['riders']
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
-        html_files_path = args['output_file']
         csv_file_path = args['input_file']
         overwrite_mode = args['overwrite_mode']
-        if csv_file_path is None:
-            csv_file_path = 'link/riders_time_interval_pages'
+
+
+        # Changed to be constant
+        html_files_path = args['output_file']
+        if html_files_path is None:
+            html_files_path = TIME_INTERVAL_DIR_PATH
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
+
+        if csv_file_path is None:
+            csv_file_path = 'link/riders_week_interval_links.csv'
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
@@ -382,13 +400,19 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'extract_rider_activity_links':
-        # run example : main.py -c extract_rider_activity_links -if link/riders_time_interval_pages -of link/riders_activity_links.csv -r "data\riders tracking\111-10.txt"
+        # run example : main.py -c extract_rider_activity_links -of link/riders_activity_links.csv -r "data\riders tracking\111-10.txt"
         # run example : main.py -c extract_rider_activity_links -li 10 -hi 100
         # insert -li or -hi is the index of rider (not index of link)
         num_of_threads = args['num_of_threads'] if args['num_of_threads'] else 1
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
+
+
+        # Changed to be constant
         html_files_path = args['input_file']
+        if html_files_path is None:
+            html_files_path = TIME_INTERVAL_DIR_PATH
+
         csv_file_path = args['output_file']
         riders = args['riders']
         if csv_file_path is None:
@@ -542,7 +566,7 @@ if __name__ == '__main__':
                                                high_limit_index=high_limit_index, data_types=data_types)
             else:
                 restore_activities_from_backup(id, html_files_path=html_files_path,
-                                               riders_input=riders, data_types=data_types)
+                                               riders=riders, data_types=data_types)
 
         except:
             log(f'Problem in restore_activities_from_backup function, '
@@ -550,9 +574,12 @@ if __name__ == '__main__':
                 'ERROR', id=id)
 
     elif command == 'change_time_interval_file_names':
-        # run example : main.py -c change_time_interval_file_names -if link/riders_time_interval_pages
+        # run example : main.py -c change_time_interval_file_names
 
+        # Changed to be constant
         html_files_path = args['input_file']
+        if html_files_path is None:
+            html_files_path = TIME_INTERVAL_DIR_PATH
         try:
             riders_pages = os.listdir(html_files_path)
             i = 1
