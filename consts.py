@@ -58,7 +58,7 @@ WORKOUTS_STRAVA_COLS = ['rider_id','activity_id','activity_type','Date','Duratio
                         'Humidity', 'Weather', 'Wind Direction', 'Wind Speed']
 # TODO: ask robert -   'E-Bike Ride'
 
-# 876 users, 42 computers, 20.857 users/comp
+# 1077 users, 42 computers, 25.64 users/comp
 USERS = [r'cyc161@proton.com',
         r'cyc162@proton.com',
         r'cyc163@proton.com',
