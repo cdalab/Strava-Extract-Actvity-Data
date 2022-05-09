@@ -22,6 +22,7 @@ def setting_up():
     parser.add_argument('-c', '--command', type=str)
     parser.add_argument('-if', '--input-file', type=str)
     parser.add_argument('-of', '--output-file', type=str)
+    parser.add_argument('-id', '--identity', type=str)
     parser.add_argument('-li', '--low-limit-index', type=int)
     parser.add_argument('-hi', '--high-limit-index', type=int)
     parser.add_argument('-r', '--riders', type=str)
@@ -52,9 +53,10 @@ def setting_up():
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
 
-    ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
-    id = f"{ip_addrs}_{args.command}"
-    args_dict['id'] = id
+    if args.id is None:
+        ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
+        id = f"{ip_addrs}_{args.command}"
+        args_dict['id'] = id
     log(f'', id=id)
     log(f'', id=id)
     log(f'====================================================================', id=id)
@@ -145,19 +147,17 @@ def get_overwrite_pred(dir, files, overwrite_mode):
     for file in files:
         file_path = f"{dir}/{file}.html"
         file_exists = os.path.exists(file_path)
-        if file_exists and (not is_file_handled(file_path)):
-            write_to_file_handler(file_path)
         files_exist = files_exist and file_exists
 
     return overwrite or (not files_exist)
 
 
-def write_to_file_handler(file_path, handler_path=FILE_HANDLER_PATH):
+def write_to_file_handler(file_path, handler_path):
     with open(handler_path, 'a+') as f:
         f.write(f'{file_path}\n')
 
 
-def is_file_handled(file_path, handler_path=FILE_HANDLER_PATH):
+def is_file_handled(file_path, handler_path):
     if not os.path.exists(handler_path):
         return False
     with open(handler_path) as f:

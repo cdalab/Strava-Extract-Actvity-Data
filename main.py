@@ -245,7 +245,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -273,7 +273,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
 
         csv_file_path = args['output_file']
         week_range = args['week_range']
@@ -309,7 +309,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -337,7 +337,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
 
         csv_file_path = args['output_file']
         riders = args['riders']
@@ -379,7 +379,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
 
         if csv_file_path is None:
@@ -411,7 +411,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
 
         csv_file_path = args['output_file']
         riders = args['riders']
@@ -579,7 +579,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = TIME_INTERVAL_DIR_PATH
+            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
         try:
             riders_pages = os.listdir(html_files_path)
             i = 1
