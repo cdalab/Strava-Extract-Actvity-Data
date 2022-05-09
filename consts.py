@@ -43,7 +43,7 @@ ACTIVITY_TYPES_TO_IGNORE = ['Nordic Ski', 'Run', 'Workout', 'Roller Ski', 'Weigh
                             'Winter Sport', 'Backcountry Ski', 'Crossfit', 'Walk', 'E-Bike Ride', 'Stand Up Paddling',
                             'Rowing', 'Treadmill workout', 'Hike']
 
-WORKOUTS_STRAVA_COLS = ['rider_id','activity_id','activity_type','Date','Duration','Location', 'Moving Time','MaxSpeed',
+WORKOUTS_STRAVA_COLS = ['rider_id','activity_id','activity_type','Date','Duration','Title','Location', 'Moving Time','MaxSpeed',
                         'Relative Effort', 'Distance', 'Elevation', 'AvgCadence', 'Temperature', 'AvgHeart Rate', 'Intensity',
                         'Historic Relative Effort', 'Elapsed Time', 'Calories', 'AvgSpeed', 'MaxCadence', 'AvgPower', 'Massive Relative Effort',
                         'MaxPower', 'Tough Relative Effort', 'Energy Output', 'Weighted Avg Power', 'Total Work', 'Device',
