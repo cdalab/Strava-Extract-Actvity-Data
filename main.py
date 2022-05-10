@@ -638,7 +638,7 @@ if __name__ == '__main__':
                 i += 1
 
         except:
-            log(f'Problem in change_time_interval_file_names function',
+            log(f'Problem in unify_all_computers_csv_files function',
                 'ERROR', id=id)
 
 
