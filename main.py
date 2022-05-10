@@ -609,7 +609,7 @@ if __name__ == '__main__':
         # run example : main.py -c unify_all_computers_csv_files -if M:/Maor/STRAVA -of M:/Maor/STRAVA/Strava-Extract-Actvity-Data
 
         input_path = args['input_file']
-        output_path = args['input_file']
+        output_path = args['output_file']
         if input_path is None:
             input_path = "M:/Maor/STRAVA"
         if output_path is None:
