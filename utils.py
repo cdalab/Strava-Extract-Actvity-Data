@@ -53,10 +53,12 @@ def setting_up():
     if args.command is None:
         raise ValueError('Cannot run the job without a command')
 
-    if args.id is None:
+    if args.identity is None:
         ip_addrs = requests.get('http://ipinfo.io/json').json()['ip']
         id = f"{ip_addrs}_{args.command}"
         args_dict['id'] = id
+    else:
+        args_dict['id'] = args.identity
     log(f'', id=id)
     log(f'', id=id)
     log(f'====================================================================', id=id)

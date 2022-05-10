@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from LinksDownloader import LinksDownloader
 from DataExtractor import DataExtractor
-from utils import log, setting_up, check_int
+from utils import log, setting_up, check_int, append_row_to_csv
 from consts import *
 
 
@@ -29,7 +29,7 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
     log("---- FINISHED DOWNLOADING RIDER PAGES ----", id=id)
 
 
-def extract_rider_year_interval_links(id, html_files_path=TIME_INTERVAL_DIR_PATH,
+def extract_rider_year_interval_links(id, html_files_path=None,
                                       csv_file_path='link/riders_year_interval_links.csv', riders=None,
                                       low_limit_index=0, high_limit_index=None, week_range=None):
     log("---- START EXTRACTING YEAR INTERVAL LINKS ----", id=id)
@@ -53,7 +53,7 @@ def extract_rider_year_interval_links(id, html_files_path=TIME_INTERVAL_DIR_PATH
 
 
 def download_time_interval_pages(id, csv_file_path,
-                                 html_files_path=TIME_INTERVAL_DIR_PATH, low_limit_index=0,
+                                 html_files_path=None, low_limit_index=0,
                                  high_limit_index=None, overwrite_mode=None, riders=None, users=USERS):
     log("---- START DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
@@ -75,7 +75,7 @@ def download_time_interval_pages(id, csv_file_path,
     log("---- FINISHED DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
 
-def extract_rider_week_interval_links(id, html_files_path=TIME_INTERVAL_DIR_PATH,
+def extract_rider_week_interval_links(id, html_files_path=None,
                                       csv_file_path='link/riders_week_interval_links.csv',
                                       low_limit_index=0, high_limit_index=None, riders=None, week_range=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
@@ -98,7 +98,7 @@ def extract_rider_week_interval_links(id, html_files_path=TIME_INTERVAL_DIR_PATH
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
 
 
-def extract_rider_activity_links(id, html_files_path=TIME_INTERVAL_DIR_PATH,
+def extract_rider_activity_links(id, html_files_path=None,
                                  csv_file_path='link/riders_activity_links.csv', low_limit_index=0,
                                  high_limit_index=None, riders=None):
     log("---- START EXTRACTING ACTIVITY LINKS ----", id=id)
@@ -603,6 +603,46 @@ if __name__ == '__main__':
         except:
             log(f'Problem in change_time_interval_file_names function',
                 'ERROR', id=id)
+
+
+    elif command == 'unify_all_computers_csv_files':
+        # run example : main.py -c unify_all_computers_csv_files -if M:/Maor/STRAVA -of M:/Maor/STRAVA/Strava-Extract-Actvity-Data
+
+        input_path = args['input_file']
+        output_path = args['input_file']
+        if input_path is None:
+            input_path = "M:/Maor/STRAVA"
+        if output_path is None:
+            output_path = "M:/Maor/STRAVA/Strava-Extract-Actvity-Data"
+        try:
+            computers = list(filter(lambda f: output_path!=f'{input_path}/{f}',os.listdir(input_path)))
+            i = 1
+            for c in computers:
+                print(f"Computer\t{c}\t{i}/{len(computers)}")
+                c_dir_path = f"{input_path}/{c}"
+                for file in os.listdir(f"{c_dir_path}/link"):
+                    if ('.csv' in file) and (file not in CSV_FILES_TO_IGNORE):
+                        csv_content = pd.read_csv(f"{c_dir_path}/link/{file}")
+                        file_exists = os.path.exists(f'{output_path}/link/{file}')
+                        if file_exists:
+                            exists_content = pd.read_csv(f'{output_path}/{file}')
+                            for i, r in csv_content.iterrows():
+                                is_record_exists_pred = True
+                                for col in csv_content.columns:
+                                    is_record_exists_pred = is_record_exists_pred & (exists_content[col]==r[col])
+                                if exists_content[is_record_exists_pred].empty:
+                                    append_row_to_csv(f'{output_path}/link/{file}',r,csv_content.columns)
+                        else:
+                            csv_content.to_csv(f'{output_path}/link/{file}',index=False,header=True)
+
+                i += 1
+
+        except:
+            log(f'Problem in change_time_interval_file_names function',
+                'ERROR', id=id)
+
+
+
 
     # TODO: download the other pages of activities
     # TODO: pay attention to the different structure of indoor cycling activities and virtual rides

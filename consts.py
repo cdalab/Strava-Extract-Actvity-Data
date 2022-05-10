@@ -18,7 +18,7 @@ LOG_LEVEL_DICT = {'ERROR': 0, 'WARNING': 1, 'INFO': 2}
 TIMEOUT = 3
 PASSWORD = '12345678'
 
-
+CSV_FILES_TO_IGNORE = ['links_to_download_again.csv']
 
 OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new", "/overview", "/laps"]
 
