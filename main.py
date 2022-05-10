@@ -625,7 +625,7 @@ if __name__ == '__main__':
                         csv_content = pd.read_csv(f"{c_dir_path}/link/{file}")
                         file_exists = os.path.exists(f'{output_path}/link/{file}')
                         if file_exists:
-                            exists_content = pd.read_csv(f'{output_path}/{file}')
+                            exists_content = pd.read_csv(f'{output_path}/link/{file}')
                             for i, r in csv_content.iterrows():
                                 is_record_exists_pred = True
                                 for col in csv_content.columns:
