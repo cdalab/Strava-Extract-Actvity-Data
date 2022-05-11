@@ -21,6 +21,7 @@ TIME_INTERVAL_DIR_PATH = 'link/riders_time_interval_pages'
 TIME_INTERVAL_HANDLERS_PATHS = [MAIN_PAGE_HANDLER_PATH,YEAR_TIME_INTERVAL_HANDLER_PATH,WEEK_TIME_INTERVAL_HANDLER_PATH]
 DOWNLOAD_AGAIN_FILE_PATH = 'link/links_to_download_again.csv'
 OVERVIEW_DATA_PATH = f'data/overview_data.csv'
+RIDERS_TRACKING_DIR = 'data/riders tracking'
 
 ERROR_DEFAULT_MSG = 'Failed while trying to login to STRAVA.'
 DEBUG = True

@@ -242,10 +242,13 @@ if __name__ == '__main__':
         high_limit_index = args['high_limit_index']
         overwrite_mode = args['overwrite_mode']
 
+        if urls_file_path is None:
+            urls_file_path = 'data/all_cyclists_strava_urls.csv'
+        urls_file_path = f"{urls_file_path.replace('.csv', '')}.csv"
         # Changed to be constant
         html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = "link/riders_time_interval_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -273,13 +276,13 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = f"link/riders_time_interval_pages"
 
         csv_file_path = args['output_file']
         week_range = args['week_range']
         if csv_file_path is None:
             csv_file_path = f'link/riders_year_interval_links'
-        csv_file_path = f"{csv_file_path.replace('.csv','')}.csv"
+        csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
@@ -306,10 +309,14 @@ if __name__ == '__main__':
         csv_file_path = args['input_file']
         overwrite_mode = args['overwrite_mode']
 
+        if csv_file_path is None:
+            csv_file_path = f"link/riders_year_interval_links"
+        csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
+
         # Changed to be constant
         html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = f"link/riders_time_interval_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -337,7 +344,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = f"link/riders_time_interval_pages"
 
         csv_file_path = args['output_file']
         riders = args['riders']
@@ -375,15 +382,15 @@ if __name__ == '__main__':
         csv_file_path = args['input_file']
         overwrite_mode = args['overwrite_mode']
 
-
         # Changed to be constant
         html_files_path = args['output_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = f"link/riders_time_interval_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
 
         if csv_file_path is None:
             csv_file_path = 'link/riders_week_interval_links.csv'
+        csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
@@ -407,11 +414,10 @@ if __name__ == '__main__':
         low_limit_index = args['low_limit_index']
         high_limit_index = args['high_limit_index']
 
-
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = f"link/riders_time_interval_pages"
 
         csv_file_path = args['output_file']
         riders = args['riders']
@@ -426,7 +432,8 @@ if __name__ == '__main__':
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
-                                             low_limit_index=low_limit_index, high_limit_index=high_limit_index,riders=riders)
+                                             low_limit_index=low_limit_index, high_limit_index=high_limit_index,
+                                             riders=riders)
             else:
                 extract_rider_activity_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                              riders=riders)
@@ -449,12 +456,17 @@ if __name__ == '__main__':
         riders = args['riders']
         if csv_file_path is None:
             csv_file_path = 'link/riders_activity_links'
+        csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
+
+        if html_files_path is None:
+            html_files_path = f"link/riders_activity_pages"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING ACTIVITIES INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 download_activity_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
-                                        high_limit_index=high_limit_index, overwrite_mode=overwrite_mode, users=users, riders=riders,)
+                                        high_limit_index=high_limit_index, overwrite_mode=overwrite_mode, users=users,
+                                        riders=riders, )
             else:
                 download_activity_pages(id, csv_file_path, html_files_path, riders=riders,
                                         overwrite_mode=overwrite_mode, users=users)
@@ -473,6 +485,7 @@ if __name__ == '__main__':
         html_files_path = args['input_file']
         csv_file_path = args['output_file']
         riders = args['riders']
+
         if csv_file_path is None:
             csv_file_path = f'link/activity_analysis_links'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
@@ -480,7 +493,8 @@ if __name__ == '__main__':
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
-                                                low_limit_index=low_limit_index, high_limit_index=high_limit_index,riders=riders)
+                                                low_limit_index=low_limit_index, high_limit_index=high_limit_index,
+                                                riders=riders)
             else:
                 extract_activity_analysis_links(id, html_files_path=html_files_path, csv_file_path=csv_file_path,
                                                 riders=riders)
@@ -502,6 +516,10 @@ if __name__ == '__main__':
         riders = args['riders']
         overwrite_mode = args['overwrite_mode']
         data_types = args['data_types']
+
+        if html_files_path is None:
+            html_files_path = f"link/riders_activity_pages"
+
         if csv_file_path is None:
             csv_file_path = 'link/activity_analysis_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
@@ -530,6 +548,10 @@ if __name__ == '__main__':
         csv_file_path = args['output_file']
         riders = args['riders']
         data_types = args['data_types']
+
+        if html_files_path is None:
+            html_files_path = f"link/riders_activity_pages"
+
         if csv_file_path is None:
             csv_file_path = f'link/activity_link_types'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
@@ -538,7 +560,8 @@ if __name__ == '__main__':
                 log(f'STARTING LINK INDEX: {low_limit_index}_{high_limit_index}', id=id)
                 extract_data_from_analysis_activities(id, html_files_path=html_files_path,
                                                       low_limit_index=low_limit_index,
-                                                      high_limit_index=high_limit_index,riders=riders, data_types=data_types)
+                                                      high_limit_index=high_limit_index, riders=riders,
+                                                      data_types=data_types)
             else:
                 extract_data_from_analysis_activities(id, html_files_path=html_files_path,
                                                       riders=riders, data_types=data_types)
@@ -579,7 +602,7 @@ if __name__ == '__main__':
         # Changed to be constant
         html_files_path = args['input_file']
         if html_files_path is None:
-            html_files_path = f"link/{args['id']}/riders_time_interval_pages"
+            html_files_path = f"link/riders_time_interval_pages"
         try:
             riders_pages = os.listdir(html_files_path)
             i = 1
@@ -614,7 +637,7 @@ if __name__ == '__main__':
         if output_path is None:
             output_path = "M:/Maor/STRAVA/Strava-Extract-Actvity-Data"
         try:
-            computers = list(filter(lambda f: output_path!=f'{input_path}/{f}',os.listdir(input_path)))
+            computers = list(filter(lambda f: output_path != f'{input_path}/{f}', os.listdir(input_path)))
             i = 1
             for c in computers:
                 log(f"Computer\t{c}\t{i}/{len(computers)}")
@@ -624,15 +647,14 @@ if __name__ == '__main__':
                         csv_content = pd.read_csv(f"{c_dir_path}/link/{file}")
                         file_exists = os.path.exists(f'{output_path}/link/{file}')
                         if file_exists:
-                            csv_content.to_csv(f'{output_path}/link/{file}',mode='a',index=False,header=False)
+                            csv_content.to_csv(f'{output_path}/link/{file}', mode='a', index=False, header=False)
                         else:
-                            csv_content.to_csv(f'{output_path}/link/{file}',index=False,header=True)
+                            csv_content.to_csv(f'{output_path}/link/{file}', index=False, header=True)
 
                 i += 1
         except:
             log(f'Problem in unify_all_computers_csv_files function',
                 'ERROR', id=id)
-
 
     # TODO: download the other pages of activities
     # TODO: pay attention to the different structure of indoor cycling activities and virtual rides

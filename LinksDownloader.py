@@ -32,7 +32,7 @@ class LinksDownloader(Browser):
                    'activity_id': rider_activity["activity_id"],
                    'activity_type': activity_type,
                    'activity_title': activity_title}
-            append_row_to_csv(f'link/{self.id}activity_link_types.csv', row)
+            append_row_to_csv(f'link/{self.id}/activity_link_types.csv', row)
 
     def _get_interval_html_file_and_dir(self, strava_id, link):
         url_param_dict = dict(parse_qsl(link.split('?')[1]))

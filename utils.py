@@ -25,7 +25,7 @@ def setting_up():
     parser.add_argument('-id', '--identity', type=str)
     parser.add_argument('-li', '--low-limit-index', type=int)
     parser.add_argument('-hi', '--high-limit-index', type=int)
-    parser.add_argument('-r', '--riders', type=str)
+    parser.add_argument('-r', '--riders-filtering', type=int)
     parser.add_argument('-rl', '--riders-low-index', type=int)
     parser.add_argument('-rh', '--riders-high-index', type=int)
     parser.add_argument('-t', '--num-of-threads', type=int)
@@ -42,7 +42,7 @@ def setting_up():
         high_limit_index=args.high_limit_index,
         riders_low_index=args.riders_low_index,
         riders_high_index=args.riders_high_index,
-        riders=args.riders,
+        riders=args.riders_filtering if args.riders_filtering is not None else 1,
         num_of_threads=args.num_of_threads,
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
@@ -59,6 +59,13 @@ def setting_up():
         args_dict['id'] = id
     else:
         args_dict['id'] = args.identity
+        if args_dict['riders']:
+            computers_list = os.listdir(RIDERS_TRACKING_DIR)
+            s_idx = computers_list.index(args_dict['id'])
+            step = len(USERS)/len(computers_list)
+            e_idx = s_idx + step
+            args_dict['users'] = USERS[s_idx:e_idx]
+            args_dict['riders'] = f"{RIDERS_TRACKING_DIR}/{args_dict['id']}.txt"
     log(f'', id=id)
     log(f'', id=id)
     log(f'====================================================================', id=id)
