@@ -60,14 +60,15 @@ def setting_up():
         id = f"{ip_addrs}_{args.command}"
         args_dict['id'] = id
     else:
-        args_dict['id'] = args.identity
+        id = args.identity
+        args_dict['id'] = id
         if args_dict['riders']:
             computers_list = os.listdir(RIDERS_TRACKING_DIR)
-            s_idx = computers_list.index(f"{args_dict['id']}.txt")
+            s_idx = computers_list.index(f"{id}.txt")
             step = int(len(USERS)/len(computers_list))
             e_idx = s_idx + step
             args_dict['users'] = USERS[s_idx:e_idx]
-            args_dict['riders'] = f"{RIDERS_TRACKING_DIR}/{args_dict['id']}.txt"
+            args_dict['riders'] = f"{RIDERS_TRACKING_DIR}/{id}.txt"
     log(f'', id=id)
     log(f'', id=id)
     log(f'====================================================================', id=id)
