@@ -61,8 +61,8 @@ def setting_up():
         args_dict['id'] = args.identity
         if args_dict['riders']:
             computers_list = os.listdir(RIDERS_TRACKING_DIR)
-            s_idx = computers_list.index(args_dict['id'])
-            step = len(USERS)/len(computers_list)
+            s_idx = computers_list.index(f"{args_dict['id']}.txt")
+            step = int(len(USERS)/len(computers_list))
             e_idx = s_idx + step
             args_dict['users'] = USERS[s_idx:e_idx]
             args_dict['riders'] = f"{RIDERS_TRACKING_DIR}/{args_dict['id']}.txt"
