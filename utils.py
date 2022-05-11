@@ -31,6 +31,7 @@ def setting_up():
     parser.add_argument('-t', '--num-of-threads', type=int)
     parser.add_argument('-o', '--overwrite-mode', type=int)
     parser.add_argument('-w', '--week-range', type=str)
+    parser.add_argument('-sy', '--start-year', type=int)
     parser.add_argument('-u', '--users-range', type=str)
     parser.add_argument('-dt', '--data-types', type=str)
     args = parser.parse_args()
@@ -46,6 +47,7 @@ def setting_up():
         num_of_threads=args.num_of_threads,
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
+        start_year=args.start_year,
         users=args.users_range,
         data_types=json.loads(args.data_types) if args.data_types is not None else None,
     )

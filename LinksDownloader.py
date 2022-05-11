@@ -8,8 +8,6 @@ from urllib.parse import parse_qsl
 from pathlib import Path
 
 
-
-
 class LinksDownloader(Browser):
 
     def __init__(self, id, users, riders, html_files_path):
@@ -19,7 +17,7 @@ class LinksDownloader(Browser):
         Path(f'link/{self.id}').mkdir(parents=True, exist_ok=True)
         self.file_handler_path = f'link/{self.id}/file_handler.txt'
 
-    def save_activity_type(self,rider_activity, activity_type, activity_title):
+    def save_activity_type(self, rider_activity, activity_type, activity_title):
         csv_exists = os.path.exists(f'link/{self.id}/activity_link_types.csv')
         not_exists = (not csv_exists) or (
                 rider_activity["activity_link"] not in pd.read_csv(f'link/{self.id}/activity_link_types.csv').values)
@@ -84,11 +82,14 @@ class LinksDownloader(Browser):
             log(f'Failed fetching riders pages, current rider fetched {rider}', 'ERROR', id=self.id)
 
     @timeout_wrapper
-    def _download_rider_time_interval_page(self, prev_interval_range, i,
+    def _download_rider_time_interval_page(self, prev_interval_range, i, start_year,
                                            rider_time_interval, overwrite_mode=None):
         html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
                                                                              rider_time_interval[
                                                                                  'time_interval_link'])
+        curr_year = int(html_file_name[:4])
+        if (start_year is not None) and (curr_year < start_year):
+            return prev_interval_range
         if is_file_handled(f'{html_file_dir}/{html_file_name}', self.file_handler_path):
             return prev_interval_range
         if is_file_handled(f'{html_file_dir}/{html_file_name}', FILE_HANDLER_PATH):
@@ -115,7 +116,7 @@ class LinksDownloader(Browser):
         return current_interval_range
 
     @driver_wrapper
-    def download_time_interval_pages(self, overwrite_mode=None):
+    def download_time_interval_pages(self, start_year, overwrite_mode=None):
         try:
             time_interval = None
             prev_year_interval_range = None
@@ -129,9 +130,9 @@ class LinksDownloader(Browser):
                     link_fetch_error_msg = f'Could not fetch time interval {time_interval["time_interval_link"]}, for rider {time_interval["rider_id"]}.'
                     prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        prev_year_interval_range, i,
-                                                                                       **dict(
-                                                                                           rider_time_interval=time_interval,
-                                                                                           overwrite_mode=overwrite_mode))
+                                                                                       **dict(start_year=start_year,
+                                                                                              rider_time_interval=time_interval,
+                                                                                              overwrite_mode=overwrite_mode))
                 i += 1
         except:
             log(f'Failed fetching riders pages, current rider fetched {time_interval}', 'ERROR', id=self.id)
@@ -208,9 +209,8 @@ class LinksDownloader(Browser):
                     link_fetch_error_msg = f'Could not fetch activity {activity["activity_id"]}, for rider {activity["rider_id"]}.'
                     prev_activity = self._download_rider_activity_pages(link_fetch_error_msg,
                                                                         prev_activity, i,
-                                                                        **dict(
-                                                                            rider_activity=activity,
-                                                                            overwrite_mode=overwrite_mode))
+                                                                        **dict(rider_activity=activity,
+                                                                               overwrite_mode=overwrite_mode))
                 i += 1
         except:
             log(f'Failed fetching riders activity pages, current activity fetched {activity}.', 'ERROR', id=self.id)

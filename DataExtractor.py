@@ -30,7 +30,7 @@ class DataExtractor(Browser):
         html_file_dir = f"{self.html_files_path}/{strava_id}"
         return html_file_dir, html_file_name
 
-    def _fetch_rider_year_interval_links(self, rider_id, csv_file_path, start_week, end_week):
+    def _fetch_rider_year_interval_links(self, rider_id, csv_file_path,start_year, start_week, end_week):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             for rider_html_file in os.listdir(rider_dir_path):
@@ -51,25 +51,25 @@ class DataExtractor(Browser):
                 options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
                 option_list = options_soup.find('ul', 'options').find_all('a')
                 for time_interval in option_list:
-                    self._handle_time_interval_page(rider_id, time_interval, csv_file_path, start_week, end_week)
+                    self._handle_time_interval_page(rider_id, time_interval, csv_file_path,start_year, start_week, end_week)
                 write_to_file_handler(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path)
 
         except:
             log(f'Could not fetch year interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
-    def extract_rider_year_interval_links(self, csv_file_path, start_week, end_week):
+    def extract_rider_year_interval_links(self, csv_file_path,start_year, start_week, end_week):
         try:
             rider_id = None
             i = 0
             for rider_id in self.pages:
                 log(f'Fetching year interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                     id=self.id)
-                self._fetch_rider_year_interval_links(rider_id, csv_file_path, start_week, end_week)
+                self._fetch_rider_year_interval_links(rider_id, csv_file_path,start_year, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders year interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
 
-    def _handle_time_interval_page(self, rider_id, interval, csv_file_path, start_week, end_week):
+    def _handle_time_interval_page(self, rider_id, interval, csv_file_path,start_year, start_week, end_week):
         link = f"{BASE_STRAVA_URL}{interval.attrs['href']}"
         csv_exists = os.path.exists(csv_file_path)
         if csv_exists and (link in list(pd.read_csv(csv_file_path)['time_interval_link'].values)):
@@ -77,6 +77,8 @@ class DataExtractor(Browser):
         url_param_dict = dict(parse_qsl(link.split('?')[1]))
         interval = url_param_dict['interval']
         curr_year, curr_week = int(interval[:4]), int(interval[4:])
+        if (start_year is not None) and (curr_year < start_year):
+            return
         if start_week is not None:
             start_year, s_week = int(start_week[:4]), int(start_week[4:])
             if (curr_year < start_year) or (curr_week < s_week):
@@ -89,7 +91,7 @@ class DataExtractor(Browser):
                'time_interval_link': link}
         append_row_to_csv(csv_file_path, row)
 
-    def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_week, end_week):
+    def _fetch_rider_week_interval_links(self, rider_id, csv_file_path, start_year, start_week, end_week):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_year_interval_files = os.listdir(rider_dir_path)
@@ -109,7 +111,7 @@ class DataExtractor(Browser):
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
                 rider_intervals = rider_soup.find('ul', attrs={'class': 'intervals'}).find_all('a')
                 for week_interval in rider_intervals:
-                    self._handle_time_interval_page(rider_id, week_interval, csv_file_path, start_week, end_week)
+                    self._handle_time_interval_page(rider_id, week_interval, csv_file_path,start_year, start_week, end_week)
 
                 write_to_file_handler(f'{rider_dir_path}/{year_interval_file}', self.year_time_interval_handler_path)
                 print_progress_bar(i + 1, len(rider_year_interval_files), prefix='Progress:', suffix='Complete',
@@ -118,24 +120,27 @@ class DataExtractor(Browser):
         except:
             log(f'Could not fetch week interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
-    def extract_rider_week_interval_links(self, csv_file_path, start_week, end_week):
+    def extract_rider_week_interval_links(self, csv_file_path,start_year, start_week, end_week):
         try:
             rider_id = None
             i = 0
             for rider_id in self.pages:
                 log(f'Fetching week interval links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                     id=self.id)
-                self._fetch_rider_week_interval_links(rider_id, csv_file_path, start_week, end_week)
+                self._fetch_rider_week_interval_links(rider_id, csv_file_path,start_year, start_week, end_week)
                 i += 1
         except:
             log(f'Failed fetching riders week interval links, current rider fetched {rider_id}', 'ERROR', id=self.id)
 
-    def _fetch_rider_activity_links(self, rider_id, csv_file_path):
+    def _fetch_rider_activity_links(self, rider_id, csv_file_path, start_year):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_week_interval_files = os.listdir(rider_dir_path)
             i = 0
             for week_interval_file in rider_week_interval_files:
+                curr_year = int(week_interval_file[:4])
+                if (start_year is not None) and (curr_year < start_year):
+                    continue
                 if is_file_handled(f'{rider_dir_path}/{week_interval_file}', self.week_time_interval_handler_path):
                     continue
                 if is_file_handled(f'{rider_dir_path}/{week_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
@@ -200,14 +205,14 @@ class DataExtractor(Browser):
         except:
             log(f'Could not fetch time interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
-    def extract_rider_activity_links(self, csv_file_path):
+    def extract_rider_activity_links(self, csv_file_path,start_year):
         try:
             rider_id = None
             i = 0
             for rider_id in self.pages:
                 log(f'Fetching activity links for cyclist {rider_id}, {i} / {len(self.pages) - 1}',
                     id=self.id)
-                self._fetch_rider_activity_links(rider_id, csv_file_path)
+                self._fetch_rider_activity_links(rider_id, csv_file_path,start_year)
                 i += 1
 
         except:
