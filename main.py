@@ -604,7 +604,6 @@ if __name__ == '__main__':
             log(f'Problem in change_time_interval_file_names function',
                 'ERROR', id=id)
 
-
     elif command == 'unify_all_computers_csv_files':
         # run example : main.py -c unify_all_computers_csv_files -if M:/Maor/STRAVA -of M:/Maor/STRAVA/Strava-Extract-Actvity-Data
 
@@ -618,30 +617,21 @@ if __name__ == '__main__':
             computers = list(filter(lambda f: output_path!=f'{input_path}/{f}',os.listdir(input_path)))
             i = 1
             for c in computers:
-                print(f"Computer\t{c}\t{i}/{len(computers)}")
+                log(f"Computer\t{c}\t{i}/{len(computers)}")
                 c_dir_path = f"{input_path}/{c}"
                 for file in os.listdir(f"{c_dir_path}/link"):
                     if ('.csv' in file) and (file not in CSV_FILES_TO_IGNORE):
                         csv_content = pd.read_csv(f"{c_dir_path}/link/{file}")
                         file_exists = os.path.exists(f'{output_path}/link/{file}')
                         if file_exists:
-                            exists_content = pd.read_csv(f'{output_path}/link/{file}')
-                            for i, r in csv_content.iterrows():
-                                is_record_exists_pred = True
-                                for col in csv_content.columns:
-                                    is_record_exists_pred = is_record_exists_pred & (exists_content[col]==r[col])
-                                if exists_content[is_record_exists_pred].empty:
-                                    append_row_to_csv(f'{output_path}/link/{file}',r,csv_content.columns)
+                            csv_content.to_csv(f'{output_path}/link/{file}',mode='a',index=False,header=False)
                         else:
                             csv_content.to_csv(f'{output_path}/link/{file}',index=False,header=True)
 
                 i += 1
-
         except:
             log(f'Problem in unify_all_computers_csv_files function',
                 'ERROR', id=id)
-
-
 
 
     # TODO: download the other pages of activities

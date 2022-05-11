@@ -14,10 +14,13 @@ class DataExtractor(Browser):
         Browser.__init__(self, id)
         self.pages = pages
         self.html_files_path = html_files_path
+        Path(f'link/{self.id}').mkdir(parents=True, exist_ok=True)
+        self.overview_data_path = f'data/{self.id}/overview_data.csv'
         self.main_page_handler_path = f'link/{self.id}/processed_rider_main_page_files.txt'
         self.year_time_interval_handler_path = f'link/{self.id}/processed_year_intervals_files.txt'
         self.week_time_interval_handler_path = f'link/{self.id}/processed_week_intervals_files.txt'
         self.activity_handler_path = f'link/{self.id}/processed_activity_files.txt'
+        self.analysis_pages_handler_path = f'link/{self.id}/processed_analysis_files.txt'
         self.download_again_file_path = f'link/{self.id}/links_to_download_again.csv'
         self.time_interval_handlers_paths = [self.main_page_handler_path, self.year_time_interval_handler_path,
                                              self.week_time_interval_handler_path]
@@ -33,9 +36,15 @@ class DataExtractor(Browser):
             for rider_html_file in os.listdir(rider_dir_path):
                 if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path):
                     continue
+                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', MAIN_PAGE_HANDLER_PATH):
+                    continue
                 if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.year_time_interval_handler_path):
                     continue
+                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', YEAR_TIME_INTERVAL_HANDLER_PATH):
+                    continue
                 if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.week_time_interval_handler_path):
+                    continue
+                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
                     continue
                 html_content = read_from_html(rider_dir_path, rider_html_file)
                 rider_soup = BeautifulSoup(html_content, 'html.parser')
@@ -88,7 +97,11 @@ class DataExtractor(Browser):
             for year_interval_file in rider_year_interval_files:
                 if is_file_handled(f'{rider_dir_path}/{year_interval_file}', self.year_time_interval_handler_path):
                     continue
+                if is_file_handled(f'{rider_dir_path}/{year_interval_file}', YEAR_TIME_INTERVAL_HANDLER_PATH):
+                    continue
                 if is_file_handled(f'{rider_dir_path}/{year_interval_file}', self.week_time_interval_handler_path):
+                    continue
+                if is_file_handled(f'{rider_dir_path}/{year_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
                     continue
                 log(f'Fetching week interval links from file {year_interval_file}, {i} / {len(rider_year_interval_files) - 1}',
                     id=self.id, debug=False)
@@ -124,6 +137,8 @@ class DataExtractor(Browser):
             i = 0
             for week_interval_file in rider_week_interval_files:
                 if is_file_handled(f'{rider_dir_path}/{week_interval_file}', self.week_time_interval_handler_path):
+                    continue
+                if is_file_handled(f'{rider_dir_path}/{week_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
                     continue
                 log(f'Fetching activity links from file {week_interval_file}, {i} / {len(rider_week_interval_files) - 1}',
                     id=self.id, debug=False)
@@ -274,8 +289,8 @@ class DataExtractor(Browser):
     def _fetch_activity_analysis_data(self, rider_id, data_types):
         try:
             processed_files = set()
-            if os.path.exists(f'link/{self.id}/processed_analysis_files.txt'):
-                with open(f'link/{self.id}/processed_analysis_files.txt') as f:
+            if os.path.exists(self.analysis_pages_handler_path):
+                with open(self.analysis_pages_handler_path) as f:
                     processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_activity_dirs = os.listdir(rider_dir_path)
@@ -465,19 +480,23 @@ class DataExtractor(Browser):
     def _handle_overview_page(self, soup, file, activity_link, rider_id, activity_id, activity_type):
         try:
             args = (file, activity_link, rider_id, activity_id, activity_type)
-            csv_exists = os.path.exists(f'data/{self.id}/overview_data.csv')
-            csv_path = f'data/{self.id}/overview_data.csv'
+            csv_path = self.overview_data_path
+            csv_exists = os.path.exists(csv_path)
             if csv_exists and (activity_id in list(pd.read_csv(csv_path)['activity_id'].values)):
+                return
+            global_csv_exists = os.path.exists(OVERVIEW_DATA_PATH)
+            if global_csv_exists and (activity_id in list(pd.read_csv(OVERVIEW_DATA_PATH)['activity_id'].values)):
                 return
             data = {}
             data = self._handle_date_and_location(soup, data, *args)
             data = self._handle_overview_table(soup, data, *args) if data is not None else None
+            data['activity_type']=activity_type
             if data is not None:
                 data = json.dumps(data)
                 append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
-                                  # TODO adding 'activity_type':activity_type
+                                  # TODO checking activity_type added to data
                                   columns=['rider_id', 'activity_id', 'data'])
-                with open(f'link/{self.id}/processed_analysis_files.txt', 'a+') as f:
+                with open(self.analysis_pages_handler_path, 'a+') as f:
                     file_path = f"{self.html_files_path}/{rider_id}/{activity_id}/{file}"
                     f.write(f'{file_path}\n')
             if activity_type == 'Indoor Cycling':

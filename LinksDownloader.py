@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from urllib.parse import parse_qsl
-
+from pathlib import Path
 
 
 
@@ -16,12 +16,17 @@ class LinksDownloader(Browser):
         Browser.__init__(self, id, users)
         self.riders = riders
         self.html_files_path = html_files_path
+        Path(f'link/{self.id}').mkdir(parents=True, exist_ok=True)
         self.file_handler_path = f'link/{self.id}/file_handler.txt'
 
     def save_activity_type(self,rider_activity, activity_type, activity_title):
         csv_exists = os.path.exists(f'link/{self.id}/activity_link_types.csv')
-        if (not csv_exists) or (
-                rider_activity["activity_link"] not in pd.read_csv(f'link/{self.id}/activity_link_types.csv').values):
+        not_exists = (not csv_exists) or (
+                rider_activity["activity_link"] not in pd.read_csv(f'link/{self.id}/activity_link_types.csv').values)
+        csv_global_exists = os.path.exists(f'link/activity_link_types.csv')
+        not_exists_in_global = (not csv_global_exists) or (
+                rider_activity["activity_link"] not in pd.read_csv(f'link/activity_link_types.csv').values)
+        if not_exists and not_exists_in_global:
             row = {'rider_id': rider_activity["rider_id"],
                    'activity_link': rider_activity["activity_link"],
                    'activity_id': rider_activity["activity_id"],
@@ -86,6 +91,8 @@ class LinksDownloader(Browser):
                                                                                  'time_interval_link'])
         if is_file_handled(f'{html_file_dir}/{html_file_name}', self.file_handler_path):
             return prev_interval_range
+        if is_file_handled(f'{html_file_dir}/{html_file_name}', FILE_HANDLER_PATH):
+            return prev_interval_range
         self.browser.get(rider_time_interval['time_interval_link'].replace('//', '/'))
         response = self._is_valid_html()
         if response is not None:
@@ -135,6 +142,8 @@ class LinksDownloader(Browser):
         html_file_dir = f"{self.html_files_path}/{rider_activity['rider_id']}/{rider_activity['activity_id']}"
         if is_file_handled(f"{html_file_dir}/overview", self.file_handler_path):
             return prev_activity
+        if is_file_handled(f"{html_file_dir}/overview", FILE_HANDLER_PATH):
+            return prev_activity
         self.browser.get(activity_url)
         # t.sleep(random.random() + 0.5 + random.randint(1, 3))
         response = self._is_valid_html()
@@ -150,7 +159,7 @@ class LinksDownloader(Browser):
         title = WebDriverWait(heading, 7).until(EC.visibility_of_element_located((By.TAG_NAME, "h2"))).text
         deli_idx = title.find('–')
         activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
-        save_activity_type(rider_activity, activity_type, self.browser.title)
+        self.save_activity_type(rider_activity, activity_type, self.browser.title)
         if activity_type in ACTIVITY_TYPES_TO_IGNORE:
             write_to_file_handler(f"{html_file_dir}/overview", self.file_handler_path)
             return current_activity
