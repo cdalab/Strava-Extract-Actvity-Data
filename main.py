@@ -282,7 +282,7 @@ if __name__ == '__main__':
         csv_file_path = args['output_file']
         week_range = args['week_range']
         if csv_file_path is None:
-            csv_file_path = f'link/riders_year_interval_links'
+            csv_file_path = f'link/{id}/riders_year_interval_links'
         csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -311,7 +311,7 @@ if __name__ == '__main__':
         overwrite_mode = args['overwrite_mode']
 
         if csv_file_path is None:
-            csv_file_path = f"link/riders_year_interval_links"
+            csv_file_path = f"link/{id}/riders_year_interval_links"
         csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
 
         # Changed to be constant
@@ -351,7 +351,7 @@ if __name__ == '__main__':
         riders = args['riders']
         week_range = args['week_range']
         if csv_file_path is None:
-            csv_file_path = f'link/riders_week_interval_links'
+            csv_file_path = f'link/{id}/riders_week_interval_links'
         # if (low_limit_index is not None) or (high_limit_index is not None):
         #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         # if high_limit_index is not None:
@@ -390,7 +390,7 @@ if __name__ == '__main__':
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
 
         if csv_file_path is None:
-            csv_file_path = 'link/riders_week_interval_links.csv'
+            csv_file_path = f'link/{id}/riders_week_interval_links.csv'
         csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -423,7 +423,7 @@ if __name__ == '__main__':
         csv_file_path = args['output_file']
         riders = args['riders']
         if csv_file_path is None:
-            csv_file_path = f'link/riders_activity_links'
+            csv_file_path = f'link/{id}/riders_activity_links'
         # if (low_limit_index is not None) or (high_limit_index is not None):
         #     csv_file_path = f'{csv_file_path}_from_{low_limit_index}'
         # if high_limit_index is not None:
@@ -456,7 +456,7 @@ if __name__ == '__main__':
         overwrite_mode = args['overwrite_mode']
         riders = args['riders']
         if csv_file_path is None:
-            csv_file_path = 'link/riders_activity_links'
+            csv_file_path = f'link/{id}/riders_activity_links'
         csv_file_path = f"{csv_file_path.replace('.csv', '')}.csv"
 
         if html_files_path is None:
@@ -488,7 +488,7 @@ if __name__ == '__main__':
         riders = args['riders']
 
         if csv_file_path is None:
-            csv_file_path = f'link/activity_analysis_links'
+            csv_file_path = f'link/{id}/activity_analysis_links'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -522,7 +522,7 @@ if __name__ == '__main__':
             html_files_path = f"link/riders_activity_pages"
 
         if csv_file_path is None:
-            csv_file_path = 'link/activity_analysis_links'
+            csv_file_path = f'link/{id}/activity_analysis_links'
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
@@ -554,7 +554,7 @@ if __name__ == '__main__':
             html_files_path = f"link/riders_activity_pages"
 
         if csv_file_path is None:
-            csv_file_path = f'link/activity_link_types'
+            csv_file_path = f'link/{id}/activity_link_types'
         csv_file_path = f'{csv_file_path.replace(".csv", "")}.csv'
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
