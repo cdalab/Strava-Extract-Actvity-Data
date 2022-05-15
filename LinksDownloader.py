@@ -82,7 +82,7 @@ class LinksDownloader(Browser):
             log(f'Failed fetching riders pages, current rider fetched {rider}', 'ERROR', id=self.id)
 
     @timeout_wrapper
-    def _download_rider_time_interval_page(self, prev_interval_range, i, start_year,
+    def _download_rider_time_interval_page(self, prev_interval_range, i, time_interval_type, start_year,
                                            rider_time_interval, overwrite_mode=None):
         html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
                                                                              rider_time_interval[
@@ -104,19 +104,24 @@ class LinksDownloader(Browser):
         current_interval_range = current_interval_range_element.text
         if prev_interval_range == current_interval_range:
             raise ValueError(f'The relevant interval page has not loaded yet')
-        feed = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "feed")))
-        num_of_activities = len(feed.find_elements(By.XPATH, "./*"))
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.ID, "interval-graph")))
+        feed_container = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, "interval-rides")))
+        feed = feed_container.find_elements(By.XPATH, "./*")[0]
+        activities = feed.find_elements(By.XPATH, "./*")
+        num_of_activities = len(activities)
+        info_msg = f'Fetching page for cyclist {rider_time_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}'
+        wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
         if num_of_activities > 0:
-            WebDriverWait(self.browser, 5).until(
-                EC.visibility_of_all_elements_located((By.CLASS_NAME, "react-card-container")))
-            info_msg = f'Fetching page for cyclist {rider_time_interval["rider_id"]}, file {html_file_name}, {i} / {len(self.riders) - 1}'
-            wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
+            WebDriverWait(feed, 5).until(
+                EC.visibility_of_all_elements_located((By.XPATH, "div/*")))
             self._rider_page_general_handler(*wrapper_args, html_file_name)
+        self._rider_page_general_handler(*wrapper_args, html_file_name)
         write_to_file_handler(f'{html_file_dir}/{html_file_name}', self.file_handler_path)
         return current_interval_range
 
     @driver_wrapper
-    def download_time_interval_pages(self, start_year, overwrite_mode=None):
+    def download_time_interval_pages(self, time_interval_type, start_year, overwrite_mode=None):
         try:
             time_interval = None
             prev_year_interval_range = None
@@ -130,6 +135,7 @@ class LinksDownloader(Browser):
                     link_fetch_error_msg = f'Could not fetch time interval {time_interval["time_interval_link"]}, for rider {time_interval["rider_id"]}.'
                     prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        prev_year_interval_range, i,
+                                                                                       time_interval_type,
                                                                                        **dict(start_year=start_year,
                                                                                               rider_time_interval=time_interval,
                                                                                               overwrite_mode=overwrite_mode))
@@ -411,3 +417,4 @@ class LinksDownloader(Browser):
         except:
             log(f'Failed fetching rider analisys activity pages, current activity fetched {activity}.', 'ERROR',
                 id=self.id)
+

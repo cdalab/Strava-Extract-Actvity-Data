@@ -52,7 +52,7 @@ def extract_rider_year_interval_links(id, html_files_path=None,
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
 
 
-def download_time_interval_pages(id, csv_file_path,
+def download_time_interval_pages(id, csv_file_path, time_interval_type=None,
                                  html_files_path=None, low_limit_index=0,
                                  high_limit_index=None, overwrite_mode=None, riders=None, users=USERS,start_year=None):
     log("---- START DOWNLOADING TIME INTERVAL PAGES ----", id=id)
@@ -70,7 +70,7 @@ def download_time_interval_pages(id, csv_file_path,
         else:
             riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, users=users, html_files_path=html_files_path)
-    downloader.download_time_interval_pages(start_year,overwrite_mode)
+    downloader.download_time_interval_pages(time_interval_type,start_year,overwrite_mode)
 
     log("---- FINISHED DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
@@ -322,11 +322,11 @@ if __name__ == '__main__':
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
+                download_time_interval_pages(id, csv_file_path, YEAR_TIME_INTERVAL, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
                                              users=users, riders=riders,start_year=start_year)
             else:
-                download_time_interval_pages(id, csv_file_path, html_files_path, overwrite_mode=overwrite_mode,
+                download_time_interval_pages(id, csv_file_path,YEAR_TIME_INTERVAL, html_files_path, overwrite_mode=overwrite_mode,
                                              users=users, riders=riders,start_year=start_year)
 
         except:
@@ -395,11 +395,11 @@ if __name__ == '__main__':
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                download_time_interval_pages(id, csv_file_path, html_files_path, low_limit_index=low_limit_index,
+                download_time_interval_pages(id, csv_file_path,WEEK_TIME_INTERVAL, html_files_path, low_limit_index=low_limit_index,
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
                                              users=users, riders=riders,start_year=start_year)
             else:
-                download_time_interval_pages(id, csv_file_path, html_files_path, overwrite_mode=overwrite_mode,
+                download_time_interval_pages(id, csv_file_path,WEEK_TIME_INTERVAL, html_files_path, overwrite_mode=overwrite_mode,
                                              users=users, riders=riders,start_year=start_year)
 
         except:
@@ -656,6 +656,9 @@ if __name__ == '__main__':
         except:
             log(f'Problem in unify_all_computers_csv_files function',
                 'ERROR', id=id)
+
+    else:
+        raise ValueError('Invalid command')
 
     # TODO: download the other pages of activities
     # TODO: pay attention to the different structure of indoor cycling activities and virtual rides
