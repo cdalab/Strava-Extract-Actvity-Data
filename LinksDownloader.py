@@ -82,7 +82,7 @@ class LinksDownloader(Browser):
             log(f'Failed fetching riders pages, current rider fetched {rider}', 'ERROR', id=self.id)
 
     @timeout_wrapper
-    def _download_rider_time_interval_page(self, prev_interval_range, i, time_interval_type, start_year,
+    def _download_rider_time_interval_page(self, prev_interval_range, i, start_year,
                                            rider_time_interval, overwrite_mode=None):
         html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider_time_interval['rider_id'],
                                                                              rider_time_interval[
@@ -121,7 +121,7 @@ class LinksDownloader(Browser):
         return current_interval_range
 
     @driver_wrapper
-    def download_time_interval_pages(self, time_interval_type, start_year, overwrite_mode=None):
+    def download_time_interval_pages(self, start_year, overwrite_mode=None):
         try:
             time_interval = None
             prev_year_interval_range = None
@@ -135,7 +135,6 @@ class LinksDownloader(Browser):
                     link_fetch_error_msg = f'Could not fetch time interval {time_interval["time_interval_link"]}, for rider {time_interval["rider_id"]}.'
                     prev_year_interval_range = self._download_rider_time_interval_page(link_fetch_error_msg,
                                                                                        prev_year_interval_range, i,
-                                                                                       time_interval_type,
                                                                                        **dict(start_year=start_year,
                                                                                               rider_time_interval=time_interval,
                                                                                               overwrite_mode=overwrite_mode))

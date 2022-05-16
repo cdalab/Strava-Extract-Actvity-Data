@@ -30,7 +30,8 @@ def download_rider_pages(urls_file_path, id, html_files_path='link/riders_time_i
 
 
 def extract_rider_year_interval_links(id, html_files_path=None,
-                                      csv_file_path=None,global_csv_file_path='link/riders_year_interval_links.csv', riders=None,
+                                      csv_file_path=None, global_csv_file_path='link/riders_year_interval_links.csv',
+                                      riders=None,
                                       low_limit_index=0, high_limit_index=None, week_range=None, start_year=None):
     log("---- START EXTRACTING YEAR INTERVAL LINKS ----", id=id)
     riders_list = os.listdir(html_files_path)
@@ -47,17 +48,22 @@ def extract_rider_year_interval_links(id, html_files_path=None,
         week_range = json.loads(week_range)
         start_week, end_week = str(week_range[0]), str(week_range[1])
     links_extractor = DataExtractor(pages=riders_list, id=id, html_files_path=html_files_path)
-    links_extractor.extract_rider_year_interval_links(csv_file_path,global_csv_file_path, start_year, start_week, end_week)
+    links_extractor.extract_rider_year_interval_links(csv_file_path, global_csv_file_path, start_year, start_week,
+                                                      end_week)
 
     log("---- FINISHED EXTRACTING YEAR INTERVAL LINKS ----", id=id)
 
 
-def download_time_interval_pages(id, csv_file_path, time_interval_type=None,
-                                 html_files_path=None, low_limit_index=0,
+def download_time_interval_pages(id, csv_file_path
+                                 , html_files_path=None, low_limit_index=0, global_csv_file_path=None,
                                  high_limit_index=None, overwrite_mode=None, riders=None, users=USERS, start_year=None):
     log("---- START DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
-    riders_intervals_links_df = pd.read_csv(f"{csv_file_path}")
+    riders_intervals_links_df = pd.DataFrame()
+    if os.path.exists(csv_file_path):
+        riders_intervals_links_df = pd.read_csv(csv_file_path)
+    if os.path.exists(global_csv_file_path):
+        riders_intervals_links_df = pd.concat([riders_intervals_links_df, pd.read_csv(global_csv_file_path)])
     riders_intervals_links_df = riders_intervals_links_df.loc[~riders_intervals_links_df['time_interval_link'].isna()]
     if riders is not None:
         with open(riders) as f:
@@ -70,13 +76,13 @@ def download_time_interval_pages(id, csv_file_path, time_interval_type=None,
         else:
             riders_intervals_links_df = riders_intervals_links_df.iloc[low_limit_index:]
     downloader = LinksDownloader(riders=riders_intervals_links_df, id=id, users=users, html_files_path=html_files_path)
-    downloader.download_time_interval_pages(time_interval_type, start_year, overwrite_mode)
+    downloader.download_time_interval_pages(start_year, overwrite_mode)
 
     log("---- FINISHED DOWNLOADING TIME INTERVAL PAGES ----", id=id)
 
 
 def extract_rider_week_interval_links(id, html_files_path=None,
-                                      csv_file_path=None,global_csv_file_path='link/riders_week_interval_links.csv',
+                                      csv_file_path=None, global_csv_file_path='link/riders_week_interval_links.csv',
                                       low_limit_index=0, high_limit_index=None, riders=None, week_range=None,
                                       start_year=None):
     log("---- START EXTRACTING WEEK INTERVAL LINKS ----", id=id)
@@ -94,13 +100,15 @@ def extract_rider_week_interval_links(id, html_files_path=None,
         week_range = json.loads(week_range)
         start_week, end_week = str(week_range[0]), str(week_range[1])
     links_extractor = DataExtractor(pages=riders_list, id=id, html_files_path=html_files_path)
-    links_extractor.extract_rider_week_interval_links(csv_file_path,global_csv_file_path, start_year, start_week, end_week)
+    links_extractor.extract_rider_week_interval_links(csv_file_path, global_csv_file_path, start_year, start_week,
+                                                      end_week)
 
     log("---- FINISHED EXTRACTING WEEK INTERVAL LINKS ----", id=id)
 
 
 def extract_rider_activity_links(id, html_files_path=None,
-                                 csv_file_path=None,global_csv_file_path='link/riders_activity_links.csv', low_limit_index=0,
+                                 csv_file_path=None, global_csv_file_path='link/riders_activity_links.csv',
+                                 low_limit_index=0,
                                  high_limit_index=None, riders=None, start_year=None):
     log("---- START EXTRACTING ACTIVITY LINKS ----", id=id)
     riders_list = os.listdir(html_files_path)
@@ -120,12 +128,16 @@ def extract_rider_activity_links(id, html_files_path=None,
     log("---- FINISHED EXTRACTING ACTIVITY LINKS ----", id=id)
 
 
-def download_activity_pages(id, csv_file_path='link/riders_activity_links.csv',
+def download_activity_pages(id, csv_file_path=None, global_csv_file_path='link/riders_activity_links.csv',
                             html_files_path='link/riders_activity_pages', low_limit_index=0,
                             high_limit_index=None, riders=None, overwrite_mode=None, users=USERS):
     log("---- START DOWNLOADING ACTIVITY PAGES ----", id=id)
 
-    riders_activity_links_df = pd.read_csv(f"{csv_file_path}")
+    riders_activity_links_df = pd.DataFrame()
+    if os.path.exists(csv_file_path):
+        riders_activity_links_df = pd.read_csv(csv_file_path)
+    if os.path.exists(global_csv_file_path):
+        riders_activity_links_df = pd.concat([riders_activity_links_df, pd.read_csv(global_csv_file_path)])
     riders_activity_links_df = riders_activity_links_df.loc[~riders_activity_links_df['activity_link'].isna()]
     if riders is not None:
         with open(riders) as f:
@@ -234,6 +246,7 @@ if __name__ == '__main__':
     start_year = args['start_year']
     if users is None:
         users = USERS
+
     if command == 'download_rider_pages':
         # run example : main.py -c download_rider_pages -if data/all_cyclists_strava_urls.csv-t 2
         # run example : main.py -c download_rider_pages -if data/ISN_merged_strava_urls.csv -li 10 -hi 100 -o 1
@@ -323,12 +336,14 @@ if __name__ == '__main__':
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                download_time_interval_pages(id, csv_file_path, YEAR_TIME_INTERVAL, html_files_path,
+                download_time_interval_pages(id, csv_file_path, html_files_path,
                                              low_limit_index=low_limit_index,
+                                             global_csv_file_path='link/riders_year_interval_links.csv',
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
                                              users=users, riders=riders, start_year=start_year)
             else:
-                download_time_interval_pages(id, csv_file_path, YEAR_TIME_INTERVAL, html_files_path,
+                download_time_interval_pages(id, csv_file_path, html_files_path,
+                                             global_csv_file_path='link/riders_year_interval_links.csv',
                                              overwrite_mode=overwrite_mode,
                                              users=users, riders=riders, start_year=start_year)
 
@@ -398,12 +413,14 @@ if __name__ == '__main__':
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
                 log(f'STARTING TIME INTERVAL INDEX: {low_limit_index}_{high_limit_index}', id=id)
-                download_time_interval_pages(id, csv_file_path, WEEK_TIME_INTERVAL, html_files_path,
+                download_time_interval_pages(id, csv_file_path, html_files_path,
                                              low_limit_index=low_limit_index,
+                                             global_csv_file_path='link/riders_week_interval_links.csv',
                                              high_limit_index=high_limit_index, overwrite_mode=overwrite_mode,
                                              users=users, riders=riders, start_year=start_year)
             else:
-                download_time_interval_pages(id, csv_file_path, WEEK_TIME_INTERVAL, html_files_path,
+                download_time_interval_pages(id, csv_file_path, html_files_path,
+                                             global_csv_file_path='link/riders_week_interval_links.csv',
                                              overwrite_mode=overwrite_mode,
                                              users=users, riders=riders, start_year=start_year)
 
