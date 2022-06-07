@@ -165,7 +165,7 @@ def get_overwrite_pred(dir, files, overwrite_mode):
 
 
 def write_to_file_handler(file_path, handler_path):
-    with open(handler_path, 'a+') as f:
+    with open(handler_path, mode='a+') as f:
         f.write(f'{file_path}\n')
 
 
