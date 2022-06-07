@@ -34,7 +34,7 @@ CSV_FILES_TO_IGNORE = ['links_to_download_again.csv']
 OPTIONS_TO_IGNORE = ["/route", "/export_gpx", "/flags/new", "/overview", "/laps"]
 
 UNDESIRED_UNITS = ["feet", "miles", "Degrees Fahrenheit", "miles per hour"]
-ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin"]
+ACTIVITY_POST_TYPES = ["Activity", "GroupActivity", "ChallengeJoin", "ClubJoin","Challenge","Club"]
 YEAR_TIME_INTERVAL,WEEK_TIME_INTERVAL='year','week'
 ACTIVITY_ANALYSIS_FILES = {'/overview': ['overview'],
                            '/analysis': ['analysis_distance', 'analysis_time'],
