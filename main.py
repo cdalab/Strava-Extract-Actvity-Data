@@ -128,8 +128,8 @@ def extract_rider_activity_links(id, html_files_path=None,
     log("---- FINISHED EXTRACTING ACTIVITY LINKS ----", id=id)
 
 
-def download_activity_pages(id, csv_file_path=None, global_csv_file_path='link/riders_activity_links.csv',
-                            html_files_path='link/riders_activity_pages', low_limit_index=0,
+def download_activity_pages(id, csv_file_path=None, html_files_path='link/riders_activity_pages',
+                            global_csv_file_path='link/riders_activity_links.csv', low_limit_index=0,
                             high_limit_index=None, riders=None, overwrite_mode=None, users=USERS):
     log("---- START DOWNLOADING ACTIVITY PAGES ----", id=id)
 
@@ -483,7 +483,6 @@ if __name__ == '__main__':
 
         if html_files_path is None:
             html_files_path = f"link/riders_activity_pages"
-        html_files_path = f"{html_files_path.replace('.csv', '')}.csv"
         Path(html_files_path).mkdir(parents=True, exist_ok=True)
         try:
             if (low_limit_index is not None) or (high_limit_index is not None):
