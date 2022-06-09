@@ -34,6 +34,7 @@ class DataExtractor(Browser):
                                          end_week):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
+            rider_html_file=None
             for rider_html_file in os.listdir(rider_dir_path):
                 if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path):
                     continue
@@ -58,7 +59,7 @@ class DataExtractor(Browser):
                 write_to_file_handler(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path)
 
         except:
-            log(f'Could not fetch year interval links for rider {rider_id}.', 'ERROR', id=self.id)
+            log(f'Could not fetch year interval links for rider {rider_id}, file {rider_html_file}.', 'ERROR', id=self.id)
 
     def extract_rider_year_interval_links(self, csv_file_path, global_csv_file_path, start_year, start_week, end_week):
         try:
