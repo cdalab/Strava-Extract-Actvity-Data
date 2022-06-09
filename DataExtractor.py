@@ -148,6 +148,7 @@ class DataExtractor(Browser):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_week_interval_files = os.listdir(rider_dir_path)
+            week_interval_file = None
             i = 0
             for week_interval_file in rider_week_interval_files:
                 curr_year = int(week_interval_file[:4])
@@ -181,7 +182,7 @@ class DataExtractor(Browser):
                 i += 1
 
         except:
-            log(f'Could not fetch time interval links for rider {rider_id}.', 'ERROR', id=self.id)
+            log(f'Could not fetch time interval links for rider {rider_id}, file {week_interval_file}.', 'ERROR', id=self.id)
 
     def handle_activities_extraction_old_structure(self, activities_soup, csv_file_path, global_csv_file_path, rider_id,
                                                    week_interval_file):
