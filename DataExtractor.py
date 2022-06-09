@@ -34,32 +34,35 @@ class DataExtractor(Browser):
                                          end_week):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
-            rider_html_file=None
             for rider_html_file in os.listdir(rider_dir_path):
-                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', MAIN_PAGE_HANDLER_PATH):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.year_time_interval_handler_path):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', YEAR_TIME_INTERVAL_HANDLER_PATH):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.week_time_interval_handler_path):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{rider_html_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
-                    continue
-                html_content = read_from_html(rider_dir_path, rider_html_file)
-                rider_soup = BeautifulSoup(html_content, 'html.parser')
-                options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
-                option_list = options_soup.find('ul', 'options').find_all('a')
-                for time_interval in option_list:
-                    self._handle_time_interval_page(rider_id, time_interval, csv_file_path, global_csv_file_path,
-                                                    start_year, start_week,
-                                                    end_week)
-                write_to_file_handler(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path)
+                try:
+                    if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{rider_html_file}', MAIN_PAGE_HANDLER_PATH):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.year_time_interval_handler_path):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{rider_html_file}', YEAR_TIME_INTERVAL_HANDLER_PATH):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{rider_html_file}', self.week_time_interval_handler_path):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{rider_html_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
+                        continue
+                    html_content = read_from_html(rider_dir_path, rider_html_file)
+                    rider_soup = BeautifulSoup(html_content, 'html.parser')
+                    options_soup = rider_soup.find('div', attrs={'class': 'drop-down-menu drop-down-sm enabled'})
+                    option_list = options_soup.find('ul', 'options').find_all('a')
+                    for time_interval in option_list:
+                        self._handle_time_interval_page(rider_id, time_interval, csv_file_path, global_csv_file_path,
+                                                        start_year, start_week,
+                                                        end_week)
+                    write_to_file_handler(f'{rider_dir_path}/{rider_html_file}', self.main_page_handler_path)
+                except:
+                    log(f'Could not fetch year interval links for rider {rider_id}, file {rider_html_file}.', 'ERROR',
+                        id=self.id)
 
         except:
-            log(f'Could not fetch year interval links for rider {rider_id}, file {rider_html_file}.', 'ERROR', id=self.id)
+            log(f'Could not fetch year interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
     def extract_rider_year_interval_links(self, csv_file_path, global_csv_file_path, start_year, start_week, end_week):
         try:
@@ -149,41 +152,44 @@ class DataExtractor(Browser):
         try:
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_week_interval_files = os.listdir(rider_dir_path)
-            week_interval_file = None
             i = 0
             for week_interval_file in rider_week_interval_files:
-                curr_year = int(week_interval_file[:4])
-                if (start_year is not None) and (curr_year < start_year):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{week_interval_file}', self.week_time_interval_handler_path):
-                    continue
-                if is_file_handled(f'{rider_dir_path}/{week_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
-                    continue
-                log(f'Fetching activity links from file {week_interval_file}, {i} / {len(rider_week_interval_files) - 1}',
-                    id=self.id, debug=False)
-                html_content = read_from_html(rider_dir_path, week_interval_file)
-                rider_soup = BeautifulSoup(html_content, 'html.parser')
-                activities_feed_container = rider_soup.select('div[id="interval-rides"]')[0]
-                old_structure_container = activities_feed_container.select('div[class="feed"]')
-                if len(old_structure_container) > 0:
-                    activities_soup = old_structure_container[0]
-                    self.handle_activities_extraction_old_structure(activities_soup, csv_file_path,
-                                                                    global_csv_file_path, rider_id,
-                                                                    week_interval_file)
-                else:
-                    new_structure_container = activities_feed_container.select('div[class*="feed-component"]')
-                    activities_soup = new_structure_container[0]
-                    self.handle_activities_extraction_new_structure(activities_soup, csv_file_path,
-                                                                    global_csv_file_path, rider_id)
+                try:
+                    curr_year = int(week_interval_file[:4])
+                    if (start_year is not None) and (curr_year < start_year):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{week_interval_file}', self.week_time_interval_handler_path):
+                        continue
+                    if is_file_handled(f'{rider_dir_path}/{week_interval_file}', WEEK_TIME_INTERVAL_HANDLER_PATH):
+                        continue
+                    log(f'Fetching activity links from file {week_interval_file}, {i} / {len(rider_week_interval_files) - 1}',
+                        id=self.id, debug=False)
+                    html_content = read_from_html(rider_dir_path, week_interval_file)
+                    rider_soup = BeautifulSoup(html_content, 'html.parser')
+                    activities_feed_container = rider_soup.select('div[id="interval-rides"]')[0]
+                    old_structure_container = activities_feed_container.select('div[class="feed"]')
+                    if len(old_structure_container) > 0:
+                        activities_soup = old_structure_container[0]
+                        self.handle_activities_extraction_old_structure(activities_soup, csv_file_path,
+                                                                        global_csv_file_path, rider_id,
+                                                                        week_interval_file)
+                    else:
+                        new_structure_container = activities_feed_container.select('div[class*="feed-component"]')
+                        activities_soup = new_structure_container[0]
+                        self.handle_activities_extraction_new_structure(activities_soup, csv_file_path,
+                                                                        global_csv_file_path, rider_id)
 
-                write_to_file_handler(f'{rider_dir_path}/{week_interval_file}',
-                                      self.week_time_interval_handler_path)
-                print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
-                                   length=50)
-                i += 1
+                    write_to_file_handler(f'{rider_dir_path}/{week_interval_file}',
+                                          self.week_time_interval_handler_path)
+                    print_progress_bar(i + 1, len(rider_week_interval_files), prefix='Progress:', suffix='Complete',
+                                       length=50)
+                    i += 1
+                except:
+                    log(f'Could not fetch time interval links for rider {rider_id}, file {week_interval_file}.', 'ERROR',
+                        id=self.id)
 
         except:
-            log(f'Could not fetch time interval links for rider {rider_id}, file {week_interval_file}.', 'ERROR', id=self.id)
+            log(f'Could not fetch time interval links for rider {rider_id}.', 'ERROR', id=self.id)
 
     def handle_activities_extraction_old_structure(self, activities_soup, csv_file_path, global_csv_file_path, rider_id,
                                                    week_interval_file):
