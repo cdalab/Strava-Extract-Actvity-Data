@@ -475,6 +475,8 @@ class DataExtractor(Browser):
                                 label = f'{theads[j].text}{label_suffix}'
                             value = c.contents[0].text.replace(',', '').strip()
                             if '—' in value:
+                                #TODO - test it is fine
+                                data[label] = None
                                 continue
                             if any([(l in label.lower()) for l in ['time', 'duration']]):
                                 value = string_to_time(value)
