@@ -186,7 +186,8 @@ class DataExtractor(Browser):
                                        length=50)
                     i += 1
                 except:
-                    log(f'Could not fetch time interval links for rider {rider_id}, file {week_interval_file}.', 'ERROR',
+                    log(f'Could not fetch time interval links for rider {rider_id}, file {week_interval_file}.',
+                        'ERROR',
                         id=self.id)
 
         except:
@@ -311,35 +312,50 @@ class DataExtractor(Browser):
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_activity_files = os.listdir(rider_dir_path)
             i = 0
+            activity_type, activity_option_link = None, None
+            file = 'overview.html'
             for activity_id in rider_activity_files:
-                log(f"Fetching activity analysis from file {rider_dir_path}/{activity_id}/overview.html, {i} / {len(rider_activity_files) - 1}",
-                    id=self.id, debug=False)
-                html_content = read_from_html(f"{rider_dir_path}/{activity_id}", 'overview.html')
-                activity_soup = BeautifulSoup(html_content, 'html.parser')
-                title = activity_soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
-                    'class': 'title'}).text.replace('\n', '')
-                deli_idx = title.find('–')
-                activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
-                if activity_type not in ACTIVITY_TYPES:
-                    log(f"New activity type found: {activity_type}", 'WARNING', id=self.id)
-                menu_options = activity_soup.find('nav', attrs={'class': 'sidenav'}).find_all('a')
-                self._validate_activity_page(activity_soup, rider_id, activity_id)
-                for option in menu_options:
-                    ref = option.attrs['href']
-                    activity_option_link = f"{BASE_STRAVA_URL}{ref}"
-                    option_type = ref.split(f"{activity_id}")[-1]
-                    csv_exist = os.path.exists(csv_file_path)
-                    if (option_type in OPTIONS_TO_IGNORE) or (csv_exist and (
-                            activity_option_link in list(pd.read_csv(csv_file_path)['activity_option_link'].values))):
+                try:
+                    log(f"Fetching activity analysis from file {rider_dir_path}/{activity_id}/overview.html, {i} / {len(rider_activity_files) - 1}",
+                        id=self.id, debug=False)
+                    if is_file_handled(f"{rider_dir_path}/{activity_id}/overview.html",self.activity_handler_path):
                         continue
-                    if option_type not in ANALYSIS_PAGE_TYPES:
-                        log(f"New activity analysis type found: {option_type}", 'WARNING', id=self.id)
-                    row = {'rider_id': rider_id,
-                           'activity_id': activity_id,
-                           'activity_option_link': activity_option_link,
-                           'option_type': option_type,
-                           'activity_type': activity_type}
-                    append_row_to_csv(csv_file_path, row)
+                    if is_file_handled(f"{rider_dir_path}/{activity_id}/overview.html",ACTIVITY_HANDLER_PATH):
+                        continue
+                    html_content = read_from_html(f"{rider_dir_path}/{activity_id}", file)
+                    activity_soup = BeautifulSoup(html_content, 'html.parser')
+                    title = activity_soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
+                        'class': 'title'}).text.replace('\n', '')
+                    deli_idx = title.find('–')
+                    activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
+                    if activity_type not in ACTIVITY_TYPES:
+                        log(f"New activity type found: {activity_type}", 'WARNING', id=self.id)
+                    menu_options = activity_soup.find('nav', attrs={'class': 'sidenav'}).find_all('a')
+                    self._validate_activity_page(activity_soup, rider_id, activity_id)
+                    for option in menu_options:
+                        ref = option.attrs['href']
+                        activity_option_link = f"{BASE_STRAVA_URL}{ref}"
+                        option_type = ref.split(f"{activity_id}")[-1]
+                        csv_exist = os.path.exists(csv_file_path)
+                        if (option_type in OPTIONS_TO_IGNORE) or (csv_exist and (
+                                activity_option_link in list(
+                            pd.read_csv(csv_file_path)['activity_option_link'].values))):
+                            continue
+                        if option_type not in ANALYSIS_PAGE_TYPES:
+                            log(f"New activity analysis type found: {option_type}", 'WARNING', id=self.id)
+                        row = {'rider_id': rider_id,
+                               'activity_id': activity_id,
+                               'activity_option_link': activity_option_link,
+                               'option_type': option_type,
+                               'activity_type': activity_type}
+                        append_row_to_csv(csv_file_path, row)
+                        write_to_file_handler(f"{rider_dir_path}/{activity_id}/overview.html",self.activity_handler_path)
+                except:
+                    # TODO-check if it is working
+                    msg = f"Activity {activity_id} of rider {rider_id} should be downloaded again."
+                    args = file, activity_option_link, rider_id, activity_id, activity_type
+                    self._save_activity_page_to_download_again(*args)
+                    log(msg, "ERROR", id=self.id)
                 print_progress_bar(i + 1, len(rider_activity_files), prefix='Progress:', suffix='Complete',
                                    length=50)
                 i += 1
@@ -362,10 +378,6 @@ class DataExtractor(Browser):
 
     def _fetch_activity_analysis_data(self, rider_id, data_types):
         try:
-            processed_files = set()
-            if os.path.exists(self.analysis_pages_handler_path):
-                with open(self.analysis_pages_handler_path) as f:
-                    processed_files = set(f.readlines())
             rider_dir_path = f"{self.html_files_path}/{rider_id}"
             rider_activity_dirs = os.listdir(rider_dir_path)
             i = 0
@@ -375,42 +387,51 @@ class DataExtractor(Browser):
                 activity_dir_path = f"{rider_dir_path}/{activity_id}"
                 rider_activity_files = os.listdir(activity_dir_path)
                 for activity_file in rider_activity_files:
-                    if f'{activity_dir_path}/{activity_file}\n' in processed_files:
-                        continue
-                    if os.path.isdir(f"{activity_dir_path}/{activity_file}"):
-                        continue
-                    activity_link = f"{BASE_STRAVA_URL}/activities/{activity_id}"
-                    html_content = read_from_html(activity_dir_path, activity_file)
-                    soup = BeautifulSoup(html_content, 'html.parser')
-                    title = soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
-                        'class': 'title'}).text.strip()
-                    deli_idx = title.find('–')
-                    activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
-                    if (data_types is not None) and all([f not in activity_file for f in data_types]):
-                        continue
-                    if 'overview' in activity_file:
-                        activity_link += '/overview'
-                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
-                        self._handle_overview_page(soup, *args)
-                    elif 'analysis' in activity_file:
-                        activity_link += '/analysis'
-                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
-                        self._handle_analysis_page(soup, *args)
-                    elif 'power-curve' in activity_file:
-                        activity_link += '/power-curve' if 'est' not in activity_file else '/est-power-curve'
-                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
-                        self._handle_power_curve_page(soup, *args)
-                    elif ('heartrate' in activity_file) or ('zone' in activity_file):
-                        activity_link += '/heartrate' if 'heartrate' in activity_file else '/zone-distribution'
-                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
-                        self._handle_table_page(soup, *args)
-                    elif 'power-distribution' in activity_file:
-                        activity_link += '/power-distribution' if 'est' not in activity_file else '/est-power-distribution'
-                        args = (activity_file, activity_link, rider_id, activity_id, activity_type)
-                        self._handle_power_distribution_page(soup, *args)
-                    elif all([f[1:] not in activity_file for f in ANALYSIS_PAGE_TYPES]):
-                        log(f'Could not fetch analysis data for activity file {rider_dir_path}/{activity_id}/{activity_file}, unknown type page.',
-                            'ERROR', id=self.id)
+                    activity_type, activity_link = None, None
+                    try:
+                        if os.path.isdir(f"{activity_dir_path}/{activity_file}"):
+                            continue
+                        if is_file_handled(f'{activity_dir_path}/{activity_file}', self.analysis_pages_handler_path):
+                            continue
+                        if is_file_handled(f'{activity_dir_path}/{activity_file}', ANALYSIS_HANDLER_PATH):
+                            continue
+                        activity_link = f"{BASE_STRAVA_URL}/activities/{activity_id}"
+                        html_content = read_from_html(activity_dir_path, activity_file)
+                        soup = BeautifulSoup(html_content, 'html.parser')
+                        title = soup.find('section', attrs={'id': 'heading'}).find('span', attrs={
+                            'class': 'title'}).text.strip()
+                        deli_idx = title.find('–')
+                        activity_type = title[deli_idx + 1:].strip() if deli_idx > 0 else None
+                        if (data_types is not None) and all([f not in activity_file for f in data_types]):
+                            continue
+                        if 'overview' in activity_file:
+                            activity_link += '/overview'
+                            args = (activity_file, activity_link, rider_id, activity_id, activity_type)
+                            self._handle_overview_page(soup, *args)
+                        elif 'analysis' in activity_file:
+                            activity_link += '/analysis'
+                            args = (activity_file, activity_link, rider_id, activity_id, activity_type)
+                            self._handle_analysis_page(soup, *args)
+                        elif 'power-curve' in activity_file:
+                            activity_link += '/power-curve' if 'est' not in activity_file else '/est-power-curve'
+                            args = (activity_file, activity_link, rider_id, activity_id, activity_type)
+                            self._handle_power_curve_page(soup, *args)
+                        elif ('heartrate' in activity_file) or ('zone' in activity_file):
+                            activity_link += '/heartrate' if 'heartrate' in activity_file else '/zone-distribution'
+                            args = (activity_file, activity_link, rider_id, activity_id, activity_type)
+                            self._handle_table_page(soup, *args)
+                        elif 'power-distribution' in activity_file:
+                            activity_link += '/power-distribution' if 'est' not in activity_file else '/est-power-distribution'
+                            args = (activity_file, activity_link, rider_id, activity_id, activity_type)
+                            self._handle_power_distribution_page(soup, *args)
+                        elif all([f[1:] not in activity_file for f in ANALYSIS_PAGE_TYPES]):
+                            log(f'Could not fetch analysis data for activity file {rider_dir_path}/{activity_id}/{activity_file}, unknown type page.',
+                                'ERROR', id=self.id)
+                    except:
+                        msg = f"Activity {activity_id}, file {activity_file} of rider {rider_id} should be downloaded again."
+                        args = activity_file, activity_link, rider_id, activity_id, activity_type
+                        self._save_activity_page_to_download_again(*args)
+                        log(msg, "ERROR", id=self.id)
                 print_progress_bar(i + 1, len(rider_activity_dirs), prefix='Progress:', suffix='Complete',
                                    length=50)
                 i += 1
@@ -484,7 +505,7 @@ class DataExtractor(Browser):
                                 label = f'{theads[j].text}{label_suffix}'
                             value = c.contents[0].text.replace(',', '').strip()
                             if '—' in value:
-                                #TODO - test it is fine
+                                # TODO - test it is fine
                                 data[label] = None
                                 continue
                             if any([(l in label.lower()) for l in ['time', 'duration']]):
@@ -570,11 +591,8 @@ class DataExtractor(Browser):
             if data is not None:
                 data = json.dumps(data)
                 append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
-                                  # TODO checking activity_type added to data
                                   columns=['rider_id', 'activity_id', 'data'])
-                with open(self.analysis_pages_handler_path, 'a+') as f:
-                    file_path = f"{self.html_files_path}/{rider_id}/{activity_id}/{file}"
-                    f.write(f'{file_path}\n')
+                write_to_file_handler(f"{self.html_files_path}/{rider_id}/{activity_id}/{file}", self.analysis_pages_handler_path)
             if activity_type == 'Indoor Cycling':
                 self._handle_analysis_stacked_chart(soup, *args)
         except:
