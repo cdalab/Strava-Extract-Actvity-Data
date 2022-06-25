@@ -15,7 +15,7 @@ class DataExtractor(Browser):
         self.pages = pages
         self.html_files_path = html_files_path
         Path(f'link/{self.id}').mkdir(parents=True, exist_ok=True)
-        Path(f'data/{self.id}').mkdir(parents=True, exist_ok=True)
+        Path(f'data/overview_data').mkdir(parents=True, exist_ok=True)
         self.overview_data_path = f'data/overview_data/{self.id}.csv'
         self.main_page_handler_path = f'link/{self.id}/processed_rider_main_page_files.txt'
         self.year_time_interval_handler_path = f'link/{self.id}/processed_year_intervals_files.txt'
