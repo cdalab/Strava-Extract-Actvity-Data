@@ -575,30 +575,25 @@ class DataExtractor(Browser):
         return data
 
     def _handle_overview_page(self, soup, file, activity_link, rider_id, activity_id, activity_type):
-        try:
-            args = (file, activity_link, rider_id, activity_id, activity_type)
-            csv_path = self.overview_data_path
-            csv_exists = os.path.exists(csv_path)
-            if csv_exists and (activity_id in list(pd.read_csv(csv_path)['activity_id'].values)):
-                return
-            global_csv_exists = os.path.exists(OVERVIEW_DATA_PATH)
-            if global_csv_exists and (activity_id in list(pd.read_csv(OVERVIEW_DATA_PATH)['activity_id'].values)):
-                return
-            data = {}
-            data = self._handle_date_and_location(soup, data, *args)
-            data = self._handle_overview_table(soup, data, *args) if data is not None else None
-            data['activity_type'] = activity_type
-            if data is not None:
-                data = json.dumps(data)
-                append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
-                                  columns=['rider_id', 'activity_id', 'data'])
-                write_to_file_handler(f"{self.html_files_path}/{rider_id}/{activity_id}/{file}", self.analysis_pages_handler_path)
-            if activity_type == 'Indoor Cycling':
-                self._handle_analysis_stacked_chart(soup, *args)
-        except:
-            log(f'Failed fetching overview activity data, current rider fetched {rider_id}, activity {activity_id}',
-                'ERROR',
-                id=self.id)
+        args = (file, activity_link, rider_id, activity_id, activity_type)
+        csv_path = self.overview_data_path
+        csv_exists = os.path.exists(csv_path)
+        if csv_exists and (activity_id in list(pd.read_csv(csv_path)['activity_id'].values)):
+            return
+        global_csv_exists = os.path.exists(OVERVIEW_DATA_PATH)
+        if global_csv_exists and (activity_id in list(pd.read_csv(OVERVIEW_DATA_PATH)['activity_id'].values)):
+            return
+        data = {}
+        data = self._handle_date_and_location(soup, data, *args)
+        data = self._handle_overview_table(soup, data, *args) if data is not None else None
+        data['activity_type'] = activity_type
+        if data is not None:
+            data = json.dumps(data)
+            append_row_to_csv(csv_path, {'rider_id': rider_id, 'activity_id': activity_id, 'data': data},
+                              columns=['rider_id', 'activity_id', 'data'])
+            write_to_file_handler(f"{self.html_files_path}/{rider_id}/{activity_id}/{file}", self.analysis_pages_handler_path)
+        if activity_type == 'Indoor Cycling':
+            self._handle_analysis_stacked_chart(soup, *args)
 
     def _handle_power_curve_page(self, file, soup, activity_link, rider_id, activity_id):
         pass
