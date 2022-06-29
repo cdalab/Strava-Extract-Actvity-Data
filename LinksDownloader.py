@@ -68,7 +68,7 @@ class LinksDownloader(Browser):
             self._rider_page_general_handler(*wrapper_args, html_file_name)
             write_to_file_handler(f'{html_file_dir}/{html_file_name}', self.file_handler_path)
         except:
-            log(f'Failed fetching rider main page, current rider fetched {rider}, link {rider["strava_link"]}', 'ERROR', id=self.id)
+            log(f'Failed fetching rider main page, current rider link {rider["strava_link"]}', 'ERROR', id=self.id)
 
     @driver_wrapper
     def download_rider_pages(self, overwrite_mode=None):
