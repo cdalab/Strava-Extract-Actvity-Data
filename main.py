@@ -656,31 +656,32 @@ if __name__ == '__main__':
         input_path = args['input_file']
         output_path = args['output_file']
         if input_path is None:
-            input_path = "M:/Maor/STRAVA/link"
+            input_path = "M:/Maor/STRAVA/Strava-Extract-Actvity-Data/link"
         if output_path is None:
-            output_path = "M:/Maor/STRAVA/Strava-Extract-Actvity-Data"
+            output_path = "M:/Maor/STRAVA/Strava-Extract-Actvity-Data/link"
         try:
-            computers = list(filter(lambda f: output_path != f'{input_path}/{f}', os.listdir(input_path)))
-            computers = [c for c in computers if os.path.isdir(c)]
+            computers = [c for c in os.listdir(input_path) if os.path.isdir(f"{input_path}/{c}")]
             i = 1
             for c in computers:
-                log(f"Computer\t{c}\t{i}/{len(computers)}")
                 c_dir_path = f"{input_path}/{c}"
-                for file in os.listdir(f"{c_dir_path}/link"):
+                if c in ['riders_activity_pages','riders_time_interval_pages']:
+                    continue
+                log(f"Computer\t{c}\t{i}/{len(computers)}")
+                for file in os.listdir(f"{c_dir_path}"):
                     if ('.csv' in file) and (file not in CSV_FILES_TO_IGNORE):
-                        csv_content = pd.read_csv(f"{c_dir_path}/link/{file}")
-                        file_exists = os.path.exists(f'{output_path}/link/{file}')
+                        csv_content = pd.read_csv(f"{c_dir_path}/{file}")
+                        file_exists = os.path.exists(f'{output_path}/{file}')
                         if file_exists:
-                            csv_content.to_csv(f'{output_path}/link/{file}', mode='a', index=False, header=False)
+                            csv_content.to_csv(f'{output_path}/{file}', mode='a', index=False, header=False)
                         else:
-                            csv_content.to_csv(f'{output_path}/link/{file}', index=False, header=True)
+                            csv_content.to_csv(f'{output_path}/{file}', index=False, header=True)
 
                 i += 1
-            for file in os.listdir(f'{output_path}/link'):
+            for file in os.listdir(f'{output_path}'):
                 if ('.csv' in file) and (file not in CSV_FILES_TO_IGNORE):
-                    unified_df = pd.read_csv(f'{output_path}/link/{file}')
+                    unified_df = pd.read_csv(f'{output_path}/{file}')
                     unified_unique_records_df = unified_df.drop_duplicates()
-                    unified_unique_records_df.to_csv(f'{output_path}/link/{file}', index=False, header=True)
+                    unified_unique_records_df.to_csv(f'{output_path}/{file}', index=False, header=True)
         except:
             log(f'Problem in unify_all_computers_csv_files function',
                 'ERROR', id=id)
