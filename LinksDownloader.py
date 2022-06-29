@@ -53,19 +53,22 @@ class LinksDownloader(Browser):
         response = self._is_valid_html()
         if response is not None:
             return response
-        # t.sleep(random.random() + random.randint(0, 1))
-        intervals_graph = WebDriverWait(self.browser, 2).until(
-            EC.presence_of_element_located((By.ID, "interval-graph")))
-        WebDriverWait(intervals_graph, 2).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "selection")))
-        week_btn = WebDriverWait(intervals_graph, 2).until(
-            EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "Weekly")))
-        first_link = week_btn.get_attribute('href')
-        html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['strava_id'],
-                                                                             first_link)
-        wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
-        self._rider_page_general_handler(*wrapper_args, html_file_name)
-        write_to_file_handler(f'{html_file_dir}/{html_file_name}', self.file_handler_path)
+        try:
+            # t.sleep(random.random() + random.randint(0, 1))
+            intervals_graph = WebDriverWait(self.browser, 2).until(
+                EC.presence_of_element_located((By.ID, "interval-graph")))
+            WebDriverWait(intervals_graph, 2).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "selection")))
+            week_btn = WebDriverWait(intervals_graph, 2).until(
+                EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "Weekly")))
+            first_link = week_btn.get_attribute('href')
+            html_file_dir, html_file_name = self._get_interval_html_file_and_dir(rider['strava_id'],
+                                                                                 first_link)
+            wrapper_args = (info_msg, html_file_dir, [html_file_name], overwrite_mode)
+            self._rider_page_general_handler(*wrapper_args, html_file_name)
+            write_to_file_handler(f'{html_file_dir}/{html_file_name}', self.file_handler_path)
+        except:
+            log(f'Failed fetching rider main page, current rider fetched {rider}, link {rider["strava_link"]}', 'ERROR', id=self.id)
 
     @driver_wrapper
     def download_rider_pages(self, overwrite_mode=None):
