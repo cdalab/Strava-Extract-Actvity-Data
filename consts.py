@@ -64,6 +64,7 @@ WORKOUTS_STRAVA_COLS = ['rider_id','activity_id','activity_type','Date','Duratio
 # TODO: ask robert -   'E-Bike Ride'
 
 # 1077 users, 42 computers, 25.64 users/comp
+# DavidMekaliav@gmail.com
 USERS = [r'cyc161@proton.com',
         r'cyc162@proton.com',
         r'cyc163@proton.com',
