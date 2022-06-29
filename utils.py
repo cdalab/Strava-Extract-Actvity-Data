@@ -32,7 +32,8 @@ def setting_up():
     parser.add_argument('-o', '--overwrite-mode', type=int)
     parser.add_argument('-w', '--week-range', type=str)
     parser.add_argument('-sy', '--start-year', type=int)
-    parser.add_argument('-u', '--users-range', type=str)
+    parser.add_argument('-ur', '--users-range', type=str)
+    parser.add_argument('-u', '--users', type=str)
     parser.add_argument('-dt', '--data-types', type=str)
     args = parser.parse_args()
     args_dict = dict(
@@ -48,7 +49,7 @@ def setting_up():
         overwrite_mode=args.overwrite_mode,
         week_range=args.week_range,
         start_year=args.start_year,
-        users=args.users_range,
+        users_range=args.users_range,
         data_types=json.loads(args.data_types) if args.data_types is not None else None,
     )
 
@@ -89,6 +90,12 @@ def setting_up():
         else:
             raise ValueError('User range input is not valid.')
         args_dict['users'] = USERS[s_idx:e_idx]
+    if args.users is not None:
+        users_input = json.loads(args.users)
+        users = []
+        for u in users_input:
+            users.append(u)
+        args_dict['users'] = users
 
     return args_dict
 
